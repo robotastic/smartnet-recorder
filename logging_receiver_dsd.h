@@ -7,8 +7,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
 #include <gr_io_signature.h>
 #include <gr_hier_block2.h>
 #include <gr_firdes.h>
@@ -62,7 +66,7 @@ public:
 	void unmute();	
 	char *get_filename();
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
-
+	static bool logging;
 private:
 	float center, freq;
 	bool muted;
@@ -71,7 +75,8 @@ private:
 	time_t starttime;
 	char filename[160];
 	int num;
-    
+    	
+	bool iam_logging;
 
     /* GR blocks */
     	gr_fir_filter_ccf_sptr lpf;
