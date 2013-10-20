@@ -98,16 +98,21 @@ double center_freq;
 
 gr_top_block_sptr tb;
 osmosdr_source_c_sptr src;
-vector<log_dsd_sptr> loggers;
+
+/* static loggers
+vector<log_dsd_sptr> loggers;*/
+
 vector<log_dsd_sptr> active_loggers;
 
 
 void init_loggers(int num, float center_freq) {
+
+/* static loggers
 	for (int i = 0; i < num; i++) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
 		loggers.push_back(log);
  	}
-
+*/
 }
 
 float getfreq(int cmd) {
@@ -142,12 +147,9 @@ float parse_message(string s) {
 	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
 	//vector<string> x = split(s, ","); 
 	int address = atoi( x[0].c_str() ) & 0xFFF0;
-	int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
-	int timeout = 0;
-	int elapsed = 0;
-            
+	    
         if (command < 0x2d0) {
 
 		if ( lastcmd == 0x308) {
@@ -173,10 +175,7 @@ float parse_message(string s) {
 			log_dsd_sptr rx = *it;
 			
 						
-			if (rx->get_talkgroup() == address) {
-				
-				timeout = rx->timeout();
-				elapsed = rx->elapsed();
+			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
 					rx->tune_offset(retfreq);
 				}
@@ -195,18 +194,26 @@ float parse_message(string s) {
 		if ((!rxfound)){ 
 			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << "\t  Flag: "<< groupflag << endl;
 
+			/* static loggers			
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
-			loggers.erase(loggers.begin());
+			loggers.erase(loggers.begin());*/
 			//cout << "smartnet.cc: Moved Logger, Loggers " << loggers.size() << " Active Loggers " << active_loggers.size() << endl;
 			
-						
+					
 			
 			tb->lock();
-			/*log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, thread_num++);			
-			active_loggers.push_back(log);*/
+
+			// Dynamic Logger			
+			log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
+			active_loggers.push_back(log);
+
 			tb->connect(src, 0, log, 0);
+
+			/* static loggers
 			log->activate(retfreq, address);
+			*/
+
 			tb->unlock();
 			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
 		}
@@ -236,7 +243,10 @@ float parse_message(string s) {
 			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
 			system(shell_command);
 
+			/* static loggers
 			loggers.push_back(move(rx));
+			*/
+
 			it = active_loggers.erase(it);
 			
 
@@ -359,11 +369,9 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 
-  	//audio_sink::sptr sink = audio_make_sink(44100);
 
-	
 
-	tb->connect(offset_sig, 0, mixer, 0);
+		tb->connect(offset_sig, 0, mixer, 0);
 	tb->connect(src, 0, mixer, 1);
 	tb->connect(mixer, 0, downsample, 0);
 	tb->connect(downsample, 0, carriertrack, 0);
