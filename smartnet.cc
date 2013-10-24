@@ -76,7 +76,7 @@
 #include <gr_file_sink.h>
 #include <gr_complex.h>
 #include <gr_fir_filter_ccf.h>
-#include <gr_top_block.h>
+ #include <gr_top_block.h>
 #include <gr_multiply_cc.h>
 
 
@@ -150,6 +150,7 @@ float parse_message(string s) {
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
 	    
+
         if (command < 0x2d0) {
 
 		if ( lastcmd == 0x308) {
@@ -203,6 +204,8 @@ float parse_message(string s) {
 					
 			
 			tb->lock();
+			//tb->stop();
+			//tb->wait();
 
 			// Dynamic Logger			
 			log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
@@ -215,6 +218,8 @@ float parse_message(string s) {
 			*/
 
 			tb->unlock();
+			//tb->start();
+
 			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
 		}
 		
@@ -229,9 +234,15 @@ float parse_message(string s) {
 			//cout << "smartnet.cc: Deleting Logger - TG: " << rx->get_talkgroup() << "\t Freq: " << rx->get_freq() << endl;
 			
 			tb->lock();
+			//tb->stop();
+			//tb->wait();
+
 			tb->disconnect(src, 0, rx, 0);
-			rx->deactivate();
+rx->deactivate();
+
 			tb->unlock();
+			
+			//tb->start();
 			
 						
 			
@@ -385,7 +396,32 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 	
 
 	tb->start();
+/*
+for (int i=0; i < 8; i++ ){
+			tb->lock();
 
+			// Dynamic Logger			
+			log_dsd_sptr log = make_log_dsd( 856.6, 856.6, 1616, 0);			
+			
+
+			tb->connect(src, 0, log, 0);
+
+			tb->unlock();
+active_loggers.push_back(log);
+usleep(1000);
+}
+
+
+			usleep(1000*1000*30);
+	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
+		log_dsd_sptr rx = *it;
+			tb->lock();
+			tb->disconnect(src, 0, rx, 0);
+			rx->deactivate();
+			tb->unlock();
+			
+it = active_loggers.erase(it);
+}*/
 	while (1) {
 		if (!queue->empty_p())
 		{
