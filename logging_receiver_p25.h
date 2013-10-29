@@ -12,6 +12,9 @@
 
 
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
 #include <gr_io_signature.h>
 #include <gr_hier_block2.h>
 #include <gr_firdes.h>
@@ -66,6 +69,7 @@ public:
 	void close();
 	void mute();
 	void unmute();	
+	char *get_filename();
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
 
 private:
@@ -73,7 +77,9 @@ private:
 	bool muted;
 	long talkgroup;
 	time_t timestamp;
-    
+    	time_t starttime;
+
+char filename[160];
 
     /* GR blocks */
     	gr_fir_filter_ccf_sptr lpf;

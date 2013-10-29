@@ -77,6 +77,9 @@ private:
 	int num;
     	
 	bool iam_logging;
+	std::vector<float> lpf_taps;
+	std::vector<float> resampler_taps;
+	std::vector<float> sym_taps;
 
     /* GR blocks */
     	gr_fir_filter_ccf_sptr lpf;

@@ -56,24 +56,26 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	
 
 
-
-    
+	
+    	lpf_taps =  gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
 	prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
-						       gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000),
+						      lpf_taps,
 						       offset, 
 						       samp_rate);
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
+	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
-	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, design_filter(channel_rate, pre_channel_rate)); 
+	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
 
 	demod = gr_make_quadrature_demod_cf(1.6);
 
-	const float a[] = { 0.1, 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};
-
-   	std::vector<float> data( a,a + sizeof( a ) / sizeof( a[0] ) );
-	sym_filter = gr_make_fir_filter_fff(1, data); 
+	
+	for (int i=0; i < 10; i++) {
+		sym_taps.push_back(0.1);
+	}
+	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
@@ -148,14 +150,14 @@ void log_dsd::close() {
 
 	std::cout<< "logging_receiver_dsd.cc: close()" <<std::endl;
 	wav_sink->close();
-/*
+
 	disconnect(self(), 0, prefilter, 0);	
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
-*/		
+		
 	//std::cout<< "logging_receiver_dsd.cc: finished close()" <<std::endl;
 }
 
@@ -178,14 +180,14 @@ void log_dsd::deactivate() {
 
 
 
-	/*	disconnect(self(), 0, prefilter, 0);	
+	disconnect(self(), 0, prefilter, 0);	
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 
-	*/
+	
 
 /*	
 	wav_sink.reset();

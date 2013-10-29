@@ -44,11 +44,10 @@ log_p25::log_p25(float f, float c, long t)
 	center = c;
 	talkgroup = t;
 	float offset = center - (f*1000000);
-	char filename[160];
-	//int samp_per_sym = 10;
-	int samp_per_sym = 6;
-	double samp_rate = 4000000;
-	int decim = 80;
+	
+	int samp_per_sym = 10;  //6
+	double samp_rate = 5000000;
+	int decim = 160;  //20
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
 	double pre_channel_rate = double(samp_rate/decim);
@@ -59,7 +58,7 @@ log_p25::log_p25(float f, float c, long t)
 	const double pi = M_PI; //boost::math::constants::pi<double>();
 
 	timestamp = time(NULL);
-
+	starttime = time(NULL);
 
 
 
@@ -114,7 +113,21 @@ null_sink = gr_make_null_sink(sizeof(float));
 	copier = gr_make_kludge_copy(sizeof(gr_complex));
 	head_source = gr_make_head(sizeof(gr_complex),0);
 	sprintf(filename, "%ld-%ld.wav", talkgroup,timestamp);
-	wav_sink = gr_make_wavfile_sink(filename,1,8000,16); 
+
+
+	tm *ltm = localtime(&starttime);
+	
+	std::stringstream path_stream;
+	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
+	
+	boost::filesystem::create_directories(path_stream.str());
+	//sprintf(filename, "%s/%ld-%ld.wav", path_stream.str().c_str(),talkgroup,timestamp);
+
+	sprintf(filename, "%ld-%ld.wav",talkgroup,timestamp);
+	
+	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+
+	
 	//gr_file_sink_sptr fs = gr_make_file_sink(sizeof(float),"sym_filter.dat");
 
 
@@ -190,6 +203,10 @@ float log_p25::get_freq() {
 
 long log_p25::timeout() {
 	return time(NULL) - timestamp;
+}
+
+char *log_p25::get_filename() {
+	return filename;
 }
 
 void log_p25::close() {
