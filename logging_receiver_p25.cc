@@ -43,18 +43,23 @@ log_p25::log_p25(float f, float c, long t)
 	freq = f;
 	center = c;
 	talkgroup = t;
-	double capture_rate = 5000000;
+	double capture_rate = 4000000;
 	float offset = center - (f*1000000);
 	
-        float system_channel_rate = 125000;
+        float system_channel_rate = 48000; //125000;
         float symbol_rate = 4800;
         double symbol_deviation = 600.0;
-	double channel_decim = capture_rate / system_channel_rate;
-        double channel_rate = capture_rate / channel_decim;
+	double channel_decim = floor(capture_rate / system_channel_rate);
+        double channel_rate = floor(capture_rate / channel_decim);
         double trans_width = 12500 / 2;
         double trans_centre = trans_width + (trans_width / 2);
 	std::vector<float> sym_taps;
 	const double pi = M_PI; //boost::math::constants::pi<double>();
+
+timestamp = time(NULL);
+	starttime = time(NULL);
+
+std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans center: " << trans_centre << std::endl;
 
 /*
         coeffs = gr.firdes.low_pass(1.0, capture_rate, trans_centre, trans_width, gr.firdes.WIN_HANN)
@@ -90,12 +95,13 @@ log_p25::log_p25(float f, float c, long t)
 		capture_rate);
 	int squelch_db = 0;
 	//squelch = gr_make_pwr_squelch_cc(squelch_db, 0.001, 0, true);
-	double fm_demod_gain = channel_rate / (2.0 * pi * symbol_deviation);
+	double fm_demod_gain = floor(channel_rate / (2.0 * pi * symbol_deviation));
 	demod = gr_make_quadrature_demod_cf(fm_demod_gain);
 
 	double symbol_decim = 1;
-        double samples_per_symbol = channel_rate / symbol_rate;
-
+        double samples_per_symbol = floor(channel_rate / symbol_rate);
+	std::cout << " FM Gain: " << fm_demod_gain << " Samples per sym: " << samples_per_symbol <<  std::endl;
+	
 	for (int i=0; i < samples_per_symbol; i++) {
 		sym_taps.push_back(1.0 / samples_per_symbol);
 	}
@@ -105,7 +111,7 @@ log_p25::log_p25(float f, float c, long t)
 	traffic_queue = gr_make_msg_queue();
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
 	std::vector<float> levels( l,l + sizeof( l ) / sizeof( l[0] ) );
-	op25_demod = op25_make_fsk4_demod_ff(tune_queue, channel_rate, 4800);
+	op25_demod = op25_make_fsk4_demod_ff(tune_queue, channel_rate, symbol_rate);
 	op25_decoder = op25_make_decoder_bf();
 	op25_slicer = op25_make_fsk4_slicer_fb(levels);
 	op25_decoder->set_msgq(traffic_queue);
@@ -321,6 +327,12 @@ char *log_p25::get_filename() {
 void log_p25::close() {
 	mute();
 	wav_sink->close();	
+	disconnect(prefilter, 0, demod, 0);
+	disconnect(demod, 0, sym_filter, 0);
+	disconnect(sym_filter, 0, op25_demod, 0);
+	disconnect(op25_demod,0, op25_slicer, 0);
+	disconnect(op25_slicer,0, op25_decoder,0);
+	disconnect(op25_decoder, 0, wav_sink,0);
 }
 
 /*
