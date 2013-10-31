@@ -48,13 +48,15 @@ log_p25::log_p25(float f, float c, long t)
 	
         float system_channel_rate = 125000;
         float symbol_rate = 4800;
-        int symbol_deviation = 600.0;
-	double channel_decim = capture_rate / system_channel_rate
-        double channel_rate = capture_rate / channel_decim
+        double symbol_deviation = 600.0;
+	double channel_decim = capture_rate / system_channel_rate;
+        double channel_rate = capture_rate / channel_decim;
         double trans_width = 12500 / 2;
-        double trans_centre = trans_width + (trans_width / 2)
+        double trans_centre = trans_width + (trans_width / 2);
+	std::vector<float> sym_taps;
+	const double pi = M_PI; //boost::math::constants::pi<double>();
 
-
+/*
         coeffs = gr.firdes.low_pass(1.0, capture_rate, trans_centre, trans_width, gr.firdes.WIN_HANN)
         self.channel_filter = gr.freq_xlating_fir_filter_ccf(channel_decim, coeffs, 0.0, capture_rate)
         self.set_channel_offset(0.0, 0, self.spectrum.win._units)
@@ -78,16 +80,27 @@ log_p25::log_p25(float f, float c, long t)
         demod_fsk4 = op25.fsk4_demod_ff(autotuneq, channel_rate, self.symbol_rate)
         # symbol slicer
         levels = [ -2.0, 0.0, 2.0, 4.0 ]
-        slicer = op25.fsk4_slicer_fb(levels)
+        slicer = op25.fsk4_slicer_fb(levels)*/
 
 
 
-prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim, 
-						       gr_firdes::low_pass(1.0, capture_rate, trans_centre, trans_width),
-						       offset, 
-						       capture_rate);
+	prefilter = gr_make_freq_xlating_fir_filter_ccf(int(channel_decim),
+		gr_firdes::low_pass(1.0, capture_rate, trans_centre, trans_width),
+		offset, 
+		capture_rate);
+	int squelch_db = 0;
+	//squelch = gr_make_pwr_squelch_cc(squelch_db, 0.001, 0, true);
+	double fm_demod_gain = channel_rate / (2.0 * pi * symbol_deviation);
+	demod = gr_make_quadrature_demod_cf(fm_demod_gain);
 
+	double symbol_decim = 1;
+        double samples_per_symbol = channel_rate / symbol_rate;
 
+	for (int i=0; i < samples_per_symbol; i++) {
+		sym_taps.push_back(1.0 / samples_per_symbol);
+	}
+        //symbol_coeffs = (1.0/samples_per_symbol,)*samples_per_symbol
+        sym_filter =  gr_make_fir_filter_fff(symbol_decim, sym_taps);
 	tune_queue = gr_make_msg_queue();
 	traffic_queue = gr_make_msg_queue();
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
@@ -97,15 +110,15 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	op25_slicer = op25_make_fsk4_slicer_fb(levels);
 	op25_decoder->set_msgq(traffic_queue);
 
-	demod = gr_make_quadrature_demod_cf(channel_rate/(2.0 * pi * symbol_deviation));
 
+/*
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, design_filter(channel_rate, pre_channel_rate)); 
 
-
+*/
 	
 /*
 	d = GCD(audio_rate, vocoder_rate);
@@ -118,7 +131,7 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	
 
 	//const float a[] = { 0.1, 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};
-	const float a[] = { 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};
+	/*const float a[] = { 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};
 
 
    	std::vector<float> data( a,a + sizeof( a ) / sizeof( a[0] ) );
@@ -132,7 +145,7 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	
 	boost::filesystem::create_directories(path_stream.str());
 	//sprintf(filename, "%s/%ld-%ld.wav", path_stream.str().c_str(),talkgroup,timestamp);
-
+*/
 	sprintf(filename, "%ld-%ld.wav",talkgroup,timestamp);
 	
 	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
@@ -147,14 +160,13 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	
 	muted  = true;
 
-	connect(prefilter, 0, downsample_sig, 0);
-	connect(downsample_sig, 0, demod, 0);
+	connect(prefilter, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_decoder,0);
 	connect(op25_decoder, 0, wav_sink,0);
-
+/*
 
 
 	int samp_per_sym = 10;  //6
@@ -198,7 +210,7 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, design_filter(channel_rate, pre_channel_rate)); 
 
-
+*/
 	
 /*
 	d = GCD(audio_rate, vocoder_rate);
@@ -211,7 +223,7 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	
 
 	//const float a[] = { 0.1, 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};
-	const float a[] = { 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};
+/*	const float a[] = { 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6, 1.0/6};
 
 
    	std::vector<float> data( a,a + sizeof( a ) / sizeof( a[0] ) );
@@ -246,7 +258,7 @@ prefilter = gr_make_freq_xlating_fir_filter_ccf(channel_decim,
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_decoder,0);
-	connect(op25_decoder, 0, wav_sink,0);
+	connect(op25_decoder, 0, wav_sink,0);*/
 	//connect(sym_filter, 0, wav_sink,0);
 		
 	
