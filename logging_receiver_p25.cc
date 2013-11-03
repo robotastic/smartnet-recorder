@@ -90,11 +90,11 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 
 
 	prefilter = gr_make_freq_xlating_fir_filter_ccf(int(channel_decim),
-		gr_firdes::low_pass(1.0, capture_rate, trans_centre, trans_width),
+		gr_firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr_firdes::WIN_HANN),
 		offset, 
 		capture_rate);
-	int squelch_db = 0;
-	//squelch = gr_make_pwr_squelch_cc(squelch_db, 0.001, 0, true);
+	int squelch_db = 40;
+	squelch = gr_make_pwr_squelch_cc(squelch_db, 0.001, 0, true);
 	double fm_demod_gain = floor(channel_rate / (2.0 * pi * symbol_deviation));
 	demod = gr_make_quadrature_demod_cf(fm_demod_gain);
 
@@ -166,7 +166,10 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 	
 	muted  = true;
 
-	connect(prefilter, 0, demod, 0);
+	connect(prefilter, 0, squelch, 0); 
+	connect(squelch, 0, demod, 0);
+//connect(demod, 0, wav_sink,0);
+
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
@@ -327,12 +330,12 @@ char *log_p25::get_filename() {
 void log_p25::close() {
 	mute();
 	wav_sink->close();	
-	disconnect(prefilter, 0, demod, 0);
+	/*disconnect(prefilter, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_decoder,0);
-	disconnect(op25_decoder, 0, wav_sink,0);
+	disconnect(op25_decoder, 0, wav_sink,0);*/
 }
 
 /*

@@ -32,6 +32,7 @@
 #include <gr_rational_resampler_base_ccf.h>
 #include <gr_rational_resampler_base_fff.h>
 #include <gr_block.h>
+#include <gr_pwr_squelch_cc.h>
 
 #include <op25_decoder_bf.h>
 #include <op25_fsk4_demod_ff.h>
@@ -94,7 +95,7 @@ char filename[160];
 	gr_rational_resampler_base_fff_sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
 	gr_quadrature_demod_cf_sptr demod;
-
+	gr_pwr_squelch_cc_sptr squelch;
 	gr_wavfile_sink_sptr wav_sink;
 	//smartnet_wavsink_sptr wav_sink
 	//gr::blocks::wavfile_sink::sptr wav_sink;

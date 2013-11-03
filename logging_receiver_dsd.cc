@@ -48,8 +48,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	float offset = center - (f*1000000);
 
 	int samp_per_sym = 10;
-	double samp_rate = 5000000;
-	int decim = 80;
+	double samp_rate = 5000000;	int decim = 80;
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
 	double pre_channel_rate = double(samp_rate/decim);
@@ -68,7 +67,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
-
+	quiet = gr_make_multiply_const_ff(0.75);
 	demod = gr_make_quadrature_demod_cf(1.6);
 
 	
@@ -79,7 +78,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
@@ -100,7 +99,9 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, dsd, 0);
+	connect(sym_filter,0, quiet,0);
+	connect(quiet,0, dsd,0);
+	//connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 
 	//connect(sym_filter, 0, wav_sink, 0);
@@ -184,7 +185,9 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, dsd, 0);
+	disconnect(sym_filter,0, quiet,0);
+	disconnect(quiet,0, dsd,0);
+	//disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 
 	

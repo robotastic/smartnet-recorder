@@ -15,6 +15,7 @@
 
 #include <gr_io_signature.h>
 #include <gr_hier_block2.h>
+#include <gr_multiply_const_ff.h>
 #include <gr_firdes.h>
 #include <gr_fir_filter_ccf.h>
 #include <gr_fir_filter_fff.h>
@@ -89,6 +90,7 @@ private:
 
 	gr_multiply_cc_sptr mixer;
 	gr_file_sink_sptr fs;
+ gr_multiply_const_ff_sptr quiet;
 
 	gr_rational_resampler_base_ccf_sptr downsample_sig;
 	gr_rational_resampler_base_fff_sptr upsample_audio;
