@@ -1,5 +1,5 @@
-#ifndef LPF_H
-#define LPF_H
+#ifndef LPOCSAG_H
+#define LPOCSAG_H
 
 #include <cstdio>
 #include <stdio.h>
