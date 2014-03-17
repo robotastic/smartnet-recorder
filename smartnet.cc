@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "logging_receiver_dsd.h"
+#include "logging_receiver_pocsag.h"
 //#include "logging_receiver_p25.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
@@ -104,6 +105,8 @@ osmosdr_source_c_sptr src;
 vector<log_dsd_sptr> loggers;*/
 
 vector<log_dsd_sptr> active_loggers;
+vector<log_pocsag_sptr> active_pocsags;
+
 //vector<log_p25_sptr> active_loggers;
 
 volatile sig_atomic_t exit_flag = 0;
@@ -161,12 +164,12 @@ float parse_message(string s) {
 
 		if ( lastcmd == 0x308) {
 		        // Channel Grant
-			if ((address != 56016) && (address != 8176)) {
+			if (  (address != 8176)) {
 				retfreq = getfreq(command);
 			}
 		} else {
 			// Call continuation
-			if  ((address != 56016) && (address != 8176))  {
+			if  ( (address != 8176))  {  //(address != 56016) &&
 				retfreq = getfreq(command);
 			}
 		}
@@ -200,6 +203,30 @@ float parse_message(string s) {
 				}
 			}
 		}
+		for(vector<log_pocsag_sptr>::iterator it = active_pocsags.begin(); it != active_pocsags.end(); ++it) {	
+			log_pocsag_sptr rx = *it;	
+		/*for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {		
+		
+			log_p25_sptr rx = *it;
+		*/	
+						
+			if (rx->get_talkgroup() == address) {		
+				if (rx->get_freq() != retfreq) {
+					rx->tune_offset(retfreq);
+				}
+				rx->unmute();
+				
+				rxfound = true;
+			} else {
+				if (rx->get_freq() == retfreq) {
+					
+					cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
+					rx->mute();
+					
+				}
+			}
+		}
+
 		if ((!rxfound)){ 
 			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << "\t  Flag: "<< groupflag << endl;
 
@@ -215,19 +242,30 @@ float parse_message(string s) {
 			//tb->stop();
 			//tb->wait();
 
-			// Dynamic Logger			
-			log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
-			//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
-						
-			active_loggers.push_back(log);
+			// Dynamic Logger	
+			if (address != 56016) {		
+				log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
+				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
+							
+				active_loggers.push_back(log);
 
-			tb->connect(src, 0, log, 0);
+				tb->connect(src, 0, log, 0);
 
-			/* static loggers
-			log->activate(retfreq, address);
-			*/
+				/* static loggers
+				log->activate(retfreq, address);
+				*/
+			} else {
+				log_pocsag_sptr log = make_log_pocsag( retfreq, center_freq, address, thread_num++);			
+				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
+							
+				active_pocsags.push_back(log);
 
-			tb->unlock();
+				tb->connect(src, 0, log, 0);
+			}
+
+
+				tb->unlock();
+			
 			//tb->start();
 
 			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
@@ -273,6 +311,29 @@ float parse_message(string s) {
 			/* static loggers
 			loggers.push_back(move(rx));
 			*/
+
+			it = active_loggers.erase(it);
+			
+
+		} else {
+			++it;
+		}
+	}
+	for(vector<log_pocsag_sptr>::iterator it = active_pocsags.begin(); it != active_pocsags.end();) {
+		log_pocsag_sptr rx = *it;
+
+		if (rx->timeout() > 5.0) {
+			
+			tb->lock();
+
+			tb->disconnect(src, 0, rx, 0);
+			
+			rx->deactivate();
+
+			tb->unlock();
+						
+//			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
+//			system(shell_command);
 
 			it = active_loggers.erase(it);
 			
