@@ -7,7 +7,7 @@ log_pocsag_sptr make_log_pocsag(float freq, float center, long t, int n)
 {
     return gnuradio::get_initial_sptr(new log_pocsag(freq, center, t, n));
 }
-unsigned GCD(unsigned u, unsigned v) {
+unsigned pocsag_GCD(unsigned u, unsigned v) {
     while ( v != 0) {
         unsigned r = u % v;
         u = v;
@@ -62,7 +62,7 @@ log_pocsag::log_pocsag(float f, float c, long t, int n)
 						      lpf_taps,
 						       offset, 
 						       samp_rate);
-	unsigned int d = GCD(channel_rate, pre_channel_rate);
+	unsigned int d = pocsag_GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 	resampler_taps = pocsag_design_filter(channel_rate, pre_channel_rate);
