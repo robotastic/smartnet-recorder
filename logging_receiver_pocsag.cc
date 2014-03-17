@@ -16,7 +16,7 @@ unsigned GCD(unsigned u, unsigned v) {
     return u;
 }
 
-std::vector<float> design_filter(double interpolation, double deci) {
+std::vector<float> pocsag_design_filter(double interpolation, double deci) {
     float beta = 5.0;
     float trans_width = 0.5 - 0.4;
     float mid_transition_band = 0.5 - trans_width/2;
@@ -65,7 +65,7 @@ log_pocsag::log_pocsag(float f, float c, long t, int n)
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
-	resampler_taps = design_filter(channel_rate, pre_channel_rate);
+	resampler_taps = pocsag_design_filter(channel_rate, pre_channel_rate);
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
 	quiet = gr_make_multiply_const_ff(0.75);
