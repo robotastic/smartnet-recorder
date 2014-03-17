@@ -16,6 +16,23 @@ unsigned GCD(unsigned u, unsigned v) {
     return u;
 }
 
+std::vector<float> log_pocsag::design_filter(double interpolation, double deci) {
+    float beta = 5.0;
+    float trans_width = 0.5 - 0.4;
+    float mid_transition_band = 0.5 - trans_width/2;
+
+	std::vector<float> result = gr_firdes::low_pass(
+		              interpolation,
+				1,	                     
+	                      mid_transition_band/interpolation, 
+                              trans_width/interpolation,         
+                              gr_firdes::WIN_KAISER,
+                              beta                               
+                              );
+
+	return result;
+}
+
 log_pocsag::log_pocsag(float f, float c, long t, int n)
     : gr_hier_block2 ("log_pocsag",
           gr_make_io_signature  (1, 1, sizeof(gr_complex)),
