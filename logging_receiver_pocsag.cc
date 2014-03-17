@@ -1,5 +1,5 @@
 
-#include "logging_receiver_dsd.h"
+#include "logging_receiver_pocsag.h"
 
 bool log_pocsag::logging = false;
 
