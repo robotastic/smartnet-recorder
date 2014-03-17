@@ -335,7 +335,7 @@ float parse_message(string s) {
 //			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
 //			system(shell_command);
 
-			it = active_loggers.erase(it);
+			it = active_pocsags.erase(it);
 			
 
 		} else {
