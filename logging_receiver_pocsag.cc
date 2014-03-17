@@ -16,7 +16,7 @@ unsigned GCD(unsigned u, unsigned v) {
     return u;
 }
 
-std::vector<float> log_pocsag::design_filter(double interpolation, double deci) {
+std::vector<float> design_filter(double interpolation, double deci) {
     float beta = 5.0;
     float trans_width = 0.5 - 0.4;
     float mid_transition_band = 0.5 - trans_width/2;
