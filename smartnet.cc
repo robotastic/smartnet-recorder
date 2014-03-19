@@ -164,12 +164,12 @@ float parse_message(string s) {
 
 		if ( lastcmd == 0x308) {
 		        // Channel Grant
-			if (  (address != 8176)) {
+			if (  (address != 56016) && (address != 8176)) {
 				retfreq = getfreq(command);
 			}
 		} else {
 			// Call continuation
-			if  ( (address != 8176))  {  //(address != 56016) &&
+			if  ( (address != 56016) && (address != 8176))  {  //(address != 56016) &&
 				retfreq = getfreq(command);
 			}
 		}
