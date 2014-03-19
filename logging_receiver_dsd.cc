@@ -52,7 +52,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	double decim = 80;
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
-	double pre_channel_rate = double(samp_rate/decim);
+	double pre_channel_rate = samp_rate/decim;
 	
 
 
@@ -68,12 +68,12 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
-	quiet = gr_make_multiply_const_ff(0.75);
-	demod = gr_make_quadrature_demod_cf(1.6);
+	//quiet = gr_make_multiply_const_ff(0.75);
+	demod = gr_make_quadrature_demod_cf(1.4); //1.6);
 
 	
-	for (int i=0; i < 10; i++) {
-		sym_taps.push_back(0.1);
+	for (int i=0; i < samp_per_sym; i++) {
+		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
 	if (!logging) {
@@ -92,7 +92,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
 	
 	boost::filesystem::create_directories(path_stream.str());
-	sprintf(filename, "%s/%ld-%ld.wav", path_stream.str().c_str(),talkgroup,timestamp);
+	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 
 
@@ -100,9 +100,9 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter,0, quiet,0);
-	connect(quiet,0, dsd,0);
-	//connect(sym_filter, 0, dsd, 0);
+	/*connect(sym_filter,0, quiet,0);
+	connect(quiet,0, dsd,0);*/
+	connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 
 	//connect(sym_filter, 0, wav_sink, 0);
@@ -186,9 +186,9 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter,0, quiet,0);
-	disconnect(quiet,0, dsd,0);
-	//disconnect(sym_filter, 0, dsd, 0);
+	/*disconnect(sym_filter,0, quiet,0);
+	disconnect(quiet,0, dsd,0);*/
+	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 
 	
