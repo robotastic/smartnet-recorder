@@ -1,6 +1,6 @@
 if(NOT LIBOSMOSDR_FOUND)
   pkg_check_modules (LIBOSMOSDR_PKG libosmosdr)
-  find_path(LIBOSMOSDR_INCLUDE_DIR NAMES osmosdr_api.h
+  find_path(LIBOSMOSDR_INCLUDE_DIR NAMES api.h
     PATHS
     ${LIBOSMOSDR_PKG_INCLUDE_DIRS}
     /usr/include

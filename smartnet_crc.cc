@@ -26,9 +26,9 @@
 #endif
 
 #include "smartnet_crc.h"
-#include <gr_io_signature.h>
+#include <gnuradio/io_signature.h>
 #include <stdio.h>
-#include <gr_tags.h>
+#include <gnuradio/tags.h>
 #include <sstream>
 #include "smartnet_types.h"
 
@@ -38,15 +38,15 @@
  * Create a new instance of smartnet_crc and return
  * a boost shared_ptr.  This is effectively the public constructor.
  */
-smartnet_crc_sptr smartnet_make_crc(gr_msg_queue_sptr queue)
+smartnet_crc_sptr smartnet_make_crc(gr::msg_queue::sptr queue)
 {
   return smartnet_crc_sptr (new smartnet_crc (queue));
 }
 
-smartnet_crc::smartnet_crc (gr_msg_queue_sptr queue)
-  : gr_sync_block ("crc",
-                   gr_make_io_signature (1, 1, sizeof (char)),
-                   gr_make_io_signature (0, 0, 0))
+smartnet_crc::smartnet_crc (gr::msg_queue::sptr queue)
+  : gr::sync_block ("crc",
+                   gr::io_signature::make (1, 1, sizeof (char)),
+                   gr::io_signature::make (0, 0, 0))
 {
     set_output_multiple(38);
     d_queue = queue;
@@ -148,14 +148,14 @@ smartnet_crc::work (int noutput_items,
     }
 
     uint64_t abs_sample_cnt = nitems_read(0);
-    std::vector<gr_tag_t> frame_tags;
+    std::vector<gr::tag_t> frame_tags;
 
-    get_tags_in_range(frame_tags, 0, abs_sample_cnt, abs_sample_cnt + size, pmt::pmt_string_to_symbol("smartnet_frame"));
+    get_tags_in_range(frame_tags, 0, abs_sample_cnt, abs_sample_cnt + size, pmt::string_to_symbol("smartnet_frame"));
     if(frame_tags.size() == 0) {
 	return 0; //sad trombone
     }
 
-    std::vector<gr_tag_t>::iterator tag_iter;
+    std::vector<gr::tag_t>::iterator tag_iter;
     for(tag_iter = frame_tags.begin(); tag_iter != frame_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
 	if(VERBOSE) std::cout << "found a frame at " << mark << std::endl;
@@ -173,7 +173,7 @@ smartnet_crc::work (int noutput_items,
 	    std::ostringstream payload;
 	    payload.str("");
 	    payload << pkt.address << "," << pkt.groupflag << "," << pkt.command;
-	    gr_message_sptr msg = gr_make_message_from_string(std::string(payload.str()));
+	    gr::message::sptr msg = gr::message::make_from_string(std::string(payload.str()));
 	    d_queue->handle(msg);
 	} else if (VERBOSE) std::cout << "CRC FAILED" << std::endl;
     }

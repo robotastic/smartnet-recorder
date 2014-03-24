@@ -49,37 +49,42 @@
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
 
-#include <osmosdr_source_c.h>
-#include <osmosdr_sink_c.h>
+#include <osmosdr/source.h>
+#include <osmosdr/sink.h>
 
 #include <boost/program_options.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 
-#include <filter/freq_xlating_fir_filter_ccf.h>
-#include <filter/firdes.h>
+#include <gnuradio/msg_queue.h>
+#include <gnuradio/message.h>
+#include <gnuradio/blocks/file_sink.h>
+#include <gnuradio/gr_complex.h>
 
-#include <digital_fll_band_edge_cc.h>
-#include <digital_clock_recovery_mm_ff.h>
-#include <digital_binary_slicer_fb.h>
+#include <gnuradio/top_block.h>
+#include <gnuradio/blocks/multiply_cc.h>
 
-#include <gr_firdes.h>
-#include <gr_fir_filter_ccf.h>
+#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
 
-#include <gr_pll_freqdet_cf.h>
-#include <gr_sig_source_f.h>
-#include <gr_sig_source_c.h>
-#include <gr_audio_sink.h>
-#include <gr_correlate_access_code_tag_bb.h>
-#include <gr_msg_queue.h>
-#include <gr_message.h>
-#include <gr_file_sink.h>
-#include <gr_complex.h>
-#include <gr_fir_filter_ccf.h>
- #include <gr_top_block.h>
-#include <gr_multiply_cc.h>
+#include <gnuradio/digital/fll_band_edge_cc.h>
+#include <gnuradio/digital/clock_recovery_mm_ff.h>
+#include <gnuradio/digital/binary_slicer_fb.h>
+#include <gnuradio/digital/correlate_access_code_tag_bb.h>
+
+
+
+#include <gnuradio/analog/pll_freqdet_cf.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/sig_source_c.h>
+
+
 
 
 
@@ -98,8 +103,8 @@ int lastcmd = 0;
 int thread_num=0;
 double center_freq;
 
-gr_top_block_sptr tb;
-osmosdr_source_c_sptr src;
+gr::top_block_sptr tb;
+osmosdr::source::sptr src;
 
 /* static loggers
 vector<log_dsd_sptr> loggers;*/
@@ -388,10 +393,10 @@ std::string device_addr;
 
 
  signal(SIGINT, exit_interupt);
- 	tb = gr_make_top_block("smartnet");
+ 	tb = gr::make_top_block("Smartnet");
 
-	
-	src = osmosdr_make_source_c();
+	src = osmosdr::source::make();
+
 	cout << "Setting sample rate to: " << samp_rate << endl;
 	src->set_sample_rate(samp_rate);
 	cout << "Tunning to " << center_freq - error << "hz" << endl;
@@ -425,14 +430,14 @@ std::string device_addr;
 */
 
 	init_loggers(10, center_freq);
-	gr_msg_queue_sptr queue = gr_make_msg_queue();
+	gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 
-	gr_sig_source_c_sptr offset_sig = gr_make_sig_source_c(samp_rate, GR_SIN_WAVE, offset, 1.0, 0.0);
+	gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0, 0.0);
 
-	gr_multiply_cc_sptr mixer = gr_make_multiply_cc();
+	gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();
 	
-	gr_fir_filter_ccf_sptr downsample = gr_make_fir_filter_ccf(decim, gr_firdes::low_pass(1, samples_per_second, 10000, 5000, gr_firdes::WIN_HANN));
+	gr::filter::fir_filter_ccf::sptr downsample = gr::filter::fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 5000, gr::filter::firdes::WIN_HANN));
 
 	/*prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
 						       gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000),
@@ -441,16 +446,16 @@ std::string device_addr;
 
 	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
 
-	gr_pll_freqdet_cf_sptr pll_demod = gr_make_pll_freqdet_cf(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
+	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
 										-2*pi/clockrec_oversample);
 
-	digital_fll_band_edge_cc_sptr carriertrack = digital_make_fll_band_edge_cc(sps, 0.6, 64, 1.0);
+	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 1.0);
 
-	digital_clock_recovery_mm_ff_sptr softbits = digital_make_clock_recovery_mm_ff(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
+	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
 
 
-	digital_binary_slicer_fb_sptr slicer =  digital_make_binary_slicer_fb();
-gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access_code_tag_bb("10101100",0,"smartnet_preamble");
+	gr::digital::binary_slicer_fb::sptr slicer =  gr::digital::binary_slicer_fb::make();
+	gr::digital::correlate_access_code_tag_bb::sptr start_correlator = gr::digital::correlate_access_code_tag_bb::make("10101100",0,"smartnet_preamble");
 
 
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
@@ -508,7 +513,7 @@ it = active_loggers.erase(it);
 		if (!queue->empty_p())
 		{
 			std::string sentence;
-			gr_message_sptr msg;
+			gr::message::sptr msg;
 			msg = queue->delete_head();
 			sentence = msg->to_string();
 			parse_message(sentence);	

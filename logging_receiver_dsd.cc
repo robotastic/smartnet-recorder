@@ -21,21 +21,21 @@ std::vector<float> design_filter(double interpolation, double deci) {
     float trans_width = 0.5 - 0.4;
     float mid_transition_band = 0.5 - trans_width/2;
 
-	std::vector<float> result = gr_firdes::low_pass(
+	std::vector<float> result = gr::filter::firdes::low_pass(
 		              interpolation,
 				1,	                     
 	                      mid_transition_band/interpolation, 
                               trans_width/interpolation,         
-                              gr_firdes::WIN_KAISER,
+                              gr::filter::firdes::WIN_KAISER,
                               beta                               
                               );
 
 	return result;
 }
 log_dsd::log_dsd(float f, float c, long t, int n)
-    : gr_hier_block2 ("log_dsd",
-          gr_make_io_signature  (1, 1, sizeof(gr_complex)),
-          gr_make_io_signature  (0, 0, sizeof(float)))
+    : gr::hier_block2 ("log_dsd",
+          gr::io_signature::make  (1, 1, sizeof(gr_complex)),
+          gr::io_signature::make  (0, 0, sizeof(float)))
 {
 	freq = f;
 	center = c;
@@ -57,8 +57,8 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 
 	
-    	lpf_taps =  gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
-	prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
+    	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
+	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
 						      lpf_taps,
 						       offset, 
 						       samp_rate);
@@ -67,15 +67,15 @@ log_dsd::log_dsd(float f, float c, long t, int n)
     	pre_channel_rate = floor(pre_channel_rate / d);
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
-	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
 	//quiet = gr_make_multiply_const_ff(0.75);
-	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
+	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
 
 	
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
-	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
+	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps); 
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
@@ -93,7 +93,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 
 
 	connect(self(), 0, prefilter, 0);	

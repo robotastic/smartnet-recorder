@@ -20,7 +20,7 @@
 
 
 cmake_minimum_required(VERSION 2.6)
-project(gr-osmosdr CXX C)
+project(Smartnet-Recorder CXX C)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -29,8 +29,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 ########################################################################
 # Find build dependencies
 ########################################################################
-find_package(Gruel)
-find_package(GnuradioCore)
+find_package(GnuradioRuntime)
 find_package(GnuradioIQBalance)
 find_package(UHD)
 find_package(GnuradioUHD)
@@ -43,12 +42,9 @@ find_package(LibHackRF)
 find_package(LibbladeRF)
 #find_package(LibDSD)
 
-if(NOT GRUEL_FOUND)
-    message(FATAL_ERROR "Gruel required to build " ${CMAKE_PROJECT_NAME})
-endif()
 
-if(NOT GNURADIO_CORE_FOUND)
-    message(FATAL_ERROR "GnuRadio Core required to build " ${CMAKE_PROJECT_NAME})
+if(NOT GNURADIO_RUNTIME_FOUND)
+    message(FATAL_ERROR "GnuRadio Runtime required to build " ${CMAKE_PROJECT_NAME})
 endif()
 
 
@@ -109,8 +105,7 @@ SET(GR_PKG_AUDIO_EXAMPLES_DIR .)
 ########################################################################
 include_directories(
     ${Boost_INCLUDE_DIRS}
-    ${GRUEL_INCLUDE_DIRS}
-    ${GNURADIO_CORE_INCLUDE_DIRS}
+    ${GNURADIO_RUNTIME_INCLUDE_DIRS}
     ${LIBOSMOSDR_INCLUDE_DIR}
     ${LIBDSD_INCLUDE_DIR}
     /usr/local/include/dsd/
@@ -119,8 +114,7 @@ include_directories(
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
-    ${GRUEL_LIBRARY_DIRS}
-    ${GNURADIO_CORE_LIBRARY_DIRS}
+    ${GNURADIO_RUNTIME_LIBRARY_DIRS}
     ${LIBOSMOSDR_LIBRARIES}
     ${LIBDSD_LIBRARIES}
 	/usr/local/lib/
@@ -129,8 +123,8 @@ link_directories(
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
-add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_p25.cc logging_receiver_pocsag.cc smartnet_wavfile.cc smartnet_wavsink.cc)
-target_link_libraries(smartnet  gnuradio-core gnuradio-audio gnuradio-blocks gnuradio-osmosdr gnuradio-filter gnuradio-digital gnuradio-analog ${GRUEL_LIBRARIES} ${Boost_LIBRARIES} gr-dsd op25 itpp)
+add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_pocsag.cc)
+target_link_libraries(smartnet  gnuradio-runtime gnuradio-pmt gnuradio-audio gnuradio-blocks gnuradio-osmosdr gnuradio-filter gnuradio-digital gnuradio-analog ${Boost_LIBRARIES} gr-dsd itpp )
 
 #${CMAKE_SOURCE_DIR}/libs/op25_fsk4_demod_ff.o  ${CMAKE_SOURCE_DIR}/libs/op25_decoder_bf.o ${CMAKE_SOURCE_DIR}/libs/data_unit.o ${CMAKE_SOURCE_DIR}/libs/data_unit_handler.o ${CMAKE_SOURCE_DIR}/libs/bch.o/home/luke/sdr/smartnet/libs/abstract_data_unit.o
 

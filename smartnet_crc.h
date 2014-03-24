@@ -23,8 +23,8 @@
 #ifndef smartnet_crc_H
 #define smartnet_crc_H
 
-#include <gr_sync_block.h>
-#include <gr_msg_queue.h>
+#include <gnuradio/sync_block.h>
+#include <gnuradio/msg_queue.h>
 
 class smartnet_crc;
 
@@ -48,7 +48,7 @@ typedef boost::shared_ptr<smartnet_crc> smartnet_crc_sptr;
  * constructor is private.  ais_make_invert is the public
  * interface for creating new instances.
  */
-smartnet_crc_sptr smartnet_make_crc(gr_msg_queue_sptr queue);
+smartnet_crc_sptr smartnet_make_crc(gr::msg_queue::sptr queue);
 
 /*!
  * \brief invert a packed stream of bits.
@@ -57,16 +57,16 @@ smartnet_crc_sptr smartnet_make_crc(gr_msg_queue_sptr queue);
  *
  * This uses the preferred technique: subclassing gr_crc_block.
  */
-class smartnet_crc : public gr_sync_block
+class smartnet_crc : public gr::sync_block
 {
 private:
   // The friend declaration allows smartnet_make_crc to
   // access the private constructor.
 
-  friend smartnet_crc_sptr smartnet_make_crc(gr_msg_queue_sptr queue);
+  friend smartnet_crc_sptr smartnet_make_crc(gr::msg_queue::sptr queue);
 
-  smartnet_crc(gr_msg_queue_sptr queue);   // private constructor
-  gr_msg_queue_sptr d_queue;
+  smartnet_crc(gr::msg_queue::sptr queue);   // private constructor
+  gr::msg_queue::sptr d_queue;
 
  public:
   ~smartnet_crc();  // public destructor

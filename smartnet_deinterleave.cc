@@ -26,8 +26,8 @@
 #endif
 
 #include "smartnet_deinterleave.h"
-#include <gr_io_signature.h>
-#include <gr_tags.h>
+#include <gnuradio/io_signature.h>
+#include <gnuradio/tags.h>
 
 #define VERBOSE 0
 
@@ -58,9 +58,9 @@ static const int MAX_OUT = 1;   // maximum number of output streams
  * The private constructor
  */
 smartnet_deinterleave::smartnet_deinterleave ()
-  : gr_block ("deinterleave",
-                   gr_make_io_signature (MIN_IN, MAX_IN, sizeof (char)),
-                   gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (char)))
+  : gr::block ("deinterleave",
+                   gr::io_signature::make (MIN_IN, MAX_IN, sizeof (char)),
+                   gr::io_signature::make (MIN_OUT, MAX_OUT, sizeof (char)))
 {
   set_relative_rate((double)(76.0/84.0));
   set_output_multiple(76);
@@ -103,17 +103,17 @@ smartnet_deinterleave::general_work (int noutput_items,
     }
 
     uint64_t abs_sample_cnt = nitems_read(0);
-    std::vector<gr_tag_t> preamble_tags;
+    std::vector<gr::tag_t> preamble_tags;
 
     uint64_t outlen = 0; //output sample count
 
-    get_tags_in_range(preamble_tags, 0, abs_sample_cnt, abs_sample_cnt + size, pmt::pmt_string_to_symbol("smartnet_preamble"));
+    get_tags_in_range(preamble_tags, 0, abs_sample_cnt, abs_sample_cnt + size, pmt::string_to_symbol("smartnet_preamble"));
     if(preamble_tags.size() == 0) {
 	consume_each(size);
 	return 0;
     }
 
-    std::vector<gr_tag_t>::iterator tag_iter;
+    std::vector<gr::tag_t>::iterator tag_iter;
     for(tag_iter = preamble_tags.begin(); tag_iter != preamble_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
 
@@ -129,7 +129,7 @@ smartnet_deinterleave::general_work (int noutput_items,
 	//tag with the correct output sample number
 	add_item_tag(0, //stream ID
 		     nitems_written(0) + mark, //sample
-		     pmt::pmt_string_to_symbol("smartnet_frame"), //key
+		     pmt::string_to_symbol("smartnet_frame"), //key
 		     pmt::pmt_t() //data (unused here)
 		    );
 	outlen += 76;

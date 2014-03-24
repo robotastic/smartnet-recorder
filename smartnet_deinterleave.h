@@ -23,7 +23,7 @@
 #ifndef smartnet_deinterleave_H
 #define smartnet_deinterleave_H
 
-#include <gr_block.h>
+#include <gnuradio/block.h>
 
 class smartnet_deinterleave;
 
@@ -56,7 +56,7 @@ smartnet_deinterleave_sptr smartnet_make_deinterleave();
  *
  * This uses the preferred technique: subclassing gr_block.
  */
-class smartnet_deinterleave : public gr_block
+class smartnet_deinterleave : public gr::block
 {
 private:
   // The friend declaration allows smartnet_make_deinterleave to
