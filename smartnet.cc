@@ -130,28 +130,17 @@ double center_freq;
 gr::top_block_sptr tb;
 osmosdr::source::sptr src;
 
-/* static loggers
-vector<log_dsd_sptr> loggers;*/
-
 vector<log_dsd_sptr> active_loggers;
 vector<log_pocsag_sptr> active_pocsags;
 
-//vector<log_p25_sptr> active_loggers;
+
 
 volatile sig_atomic_t exit_flag = 0;
 void exit_interupt(int sig){ // can be called asynchronously
   exit_flag = 1; // set flag
 }
 
-void init_loggers(int num, float center_freq) {
 
-/* static loggers
-	for (int i = 0; i < num; i++) {
-		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
-		loggers.push_back(log);
- 	}
-*/
-}
 
 float getfreq(int cmd) {
 	float freq;
@@ -183,7 +172,7 @@ float parse_message(string s) {
 	bool rxfound = false;
 	std::vector<std::string> x;
 	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
-	//vector<string> x = split(s, ","); 
+	 
 	int address = atoi( x[0].c_str() ) & 0xFFF0;
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
@@ -211,10 +200,6 @@ float parse_message(string s) {
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
-		/*for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {		
-		
-			log_p25_sptr rx = *it;
-		*/	
 						
 			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
@@ -234,11 +219,7 @@ float parse_message(string s) {
 		}
 		for(vector<log_pocsag_sptr>::iterator it = active_pocsags.begin(); it != active_pocsags.end(); ++it) {	
 			log_pocsag_sptr rx = *it;	
-		/*for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {		
-		
-			log_p25_sptr rx = *it;
-		*/	
-						
+								
 			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
 					rx->tune_offset(retfreq);
@@ -257,35 +238,21 @@ float parse_message(string s) {
 		}
 
 		if ((!rxfound)){ 
-			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << "\t  Flag: "<< groupflag << endl;
 
-			/* static loggers			
-			log_dsd_sptr log = loggers.front();
-			active_loggers.push_back(move(log));
-			loggers.erase(loggers.begin());*/
-			//cout << "smartnet.cc: Moved Logger, Loggers " << loggers.size() << " Active Loggers " << active_loggers.size() << endl;
-			
-					
-			
+
+
 			tb->lock();
-			//tb->stop();
-			//tb->wait();
-
-			// Dynamic Logger	
+	
 			if (address != 56016) {		
 				log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
-				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
 							
 				active_loggers.push_back(log);
 
 				tb->connect(src, 0, log, 0);
 
-				/* static loggers
-				log->activate(retfreq, address);
-				*/
+	
 			} else {
 				log_pocsag_sptr log = make_log_pocsag( retfreq, center_freq, address, thread_num++);			
-				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
 							
 				active_pocsags.push_back(log);
 
@@ -295,51 +262,36 @@ float parse_message(string s) {
 
 				tb->unlock();
 			
-			//tb->start();
+			
 
-			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
+			
 		}
-		
-		//cout << "TG: " << address << "\tFreq: " << retfreq << "\tActive Loggers: " << active_loggers.size() << "\tCmd: "<< command << "\t LastCmd: " <<lastcmd   << endl;
+			
 	}
 
 
 	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
 		log_dsd_sptr rx = *it;
-/*	
-	for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
-		log_p25_sptr rx = *it;
-*/
+
 		if (rx->timeout() > 5.0) {
 			//cout << "smartnet.cc: Deleting Logger - TG: " << rx->get_talkgroup() << "\t Freq: " << rx->get_freq() << endl;
 			
 			tb->lock();
-			//tb->stop();
-			//tb->wait();
-
+		
 			tb->disconnect(src, 0, rx, 0);
 			
-			/* !!!!!!!!!!!!! don't forget to un comment this for log_dsd */
+			
 			rx->deactivate();
-			//rx->close();
-
+			
 			tb->unlock();
 			
-			//tb->start();
-			
-						
-			
-			
-
-			
+	
 			//cout << "smartnet.cc: Moved Active Logger, Loggers " << loggers.size() << " Active Loggers " << active_loggers.size() << endl;
 			
 			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
 			system(shell_command);
 
-			/* static loggers
-			loggers.push_back(move(rx));
-			*/
+	
 
 			it = active_loggers.erase(it);
 			
@@ -360,9 +312,6 @@ float parse_message(string s) {
 			rx->deactivate();
 
 			tb->unlock();
-						
-//			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
-//			system(shell_command);
 
 			it = active_pocsags.erase(it);
 			
@@ -442,7 +391,7 @@ std::string device_addr;
 	float gain_mu = 0.01;
 	float mu=0.5;
 	float omega_relative_limit = 0.3;
-	float offset =  center_freq - chan_freq; //chan_freq - center_freq;
+	float offset =  chan_freq - center_freq;
 	float clockrec_oversample = 3;
 	int decim = int(samples_per_second / (syms_per_sec * clockrec_oversample));
 	float sps = samples_per_second/decim/syms_per_sec; 
@@ -489,7 +438,7 @@ std::string device_addr;
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
 						       lpf_taps,
-						       -offset, 
+						       offset, 
 						       samp_rate);
 
 	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
@@ -532,32 +481,6 @@ std::string device_addr;
 	
 
 	tb->start();
-/*
-for (int i=0; i < 8; i++ ){
-			tb->lock();
-
-			// Dynamic Logger			
-			log_dsd_sptr log = make_log_dsd( 856.6, 856.6, 1616, 0);			
-			
-
-			tb->connect(src, 0, log, 0);
-
-			tb->unlock();
-active_loggers.push_back(log);
-usleep(1000);
-}
-
-
-			usleep(1000*1000*30);
-	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
-		log_dsd_sptr rx = *it;
-			tb->lock();
-			tb->disconnect(src, 0, rx, 0);
-			rx->deactivate();
-			tb->unlock();
-			
-it = active_loggers.erase(it);
-}*/
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
