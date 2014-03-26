@@ -33,13 +33,15 @@
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
 //Valve
-#include <gnuradio/blocks/null_sink.h>
-#include <gnuradio/blocks/null_source.h>
+//#include <gnuradio/blocks/null_sink.h>
+//#include <gnuradio/blocks/null_source.h>
 #include <gnuradio/blocks/head.h>
 //#include <gnuradio/kludge_copy.h>
 //#include <smartnet_wavsink.h>
 #include <gnuradio/blocks/wavfile_sink.h>
 //#include <blocks/wavfile_sink.h>
+#include "smartnet.h"
+
 
 class log_dsd;
 
@@ -100,8 +102,8 @@ private:
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	//smartnet_wavsink_sptr wav_sink
 	//gr::blocks::wavfile_sink::sptr wav_sink;
-	gr::blocks::null_sink::sptr null_sink;
-	gr::blocks::null_source::sptr null_source;
+	//gr::blocks::null_sink::sptr null_sink;
+	//gr::blocks::null_source::sptr null_source;
 	gr::blocks::head::sptr head_source;
 	//gr_kludge_copy_sptr copier;
 

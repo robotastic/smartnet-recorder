@@ -95,7 +95,31 @@ namespace po = boost::program_options;
 using namespace std;
 
 
-   
+unsigned GCD(unsigned u, unsigned v) {
+    while ( v != 0) {
+        unsigned r = u % v;
+        u = v;
+        v = r;
+    }
+    return u;
+}
+
+std::vector<float> design_filter(double interpolation, double deci) {
+    float beta = 5.0;
+    float trans_width = 0.5 - 0.4;
+    float mid_transition_band = 0.5 - trans_width/2;
+
+	std::vector<float> result = gr::filter::firdes::low_pass(
+		              interpolation,
+				1,	                     
+	                      mid_transition_band/interpolation, 
+                              trans_width/interpolation,         
+                              gr::filter::firdes::WIN_KAISER,
+                              beta                               
+                              );
+
+	return result;
+}   
 
 
 
@@ -418,38 +442,63 @@ std::string device_addr;
 	float gain_mu = 0.01;
 	float mu=0.5;
 	float omega_relative_limit = 0.3;
-	float offset = center_freq - chan_freq;
+	float offset =  center_freq - chan_freq; //chan_freq - center_freq;
 	float clockrec_oversample = 3;
 	int decim = int(samples_per_second / (syms_per_sec * clockrec_oversample));
 	float sps = samples_per_second/decim/syms_per_sec; 
 	const double pi = boost::math::constants::pi<double>();
 	
-	/*cout << "Control channel offset: " << offset << endl;
+	cout << "Control channel offset: " << offset << endl;
 	cout << "Decim: " << decim << endl;
 	cout << "Samples per symbol: " << sps << endl;
-*/
+	cout << "Control Channel Actual tune: " << chan_freq - error <<endl;
 
-	init_loggers(10, center_freq);
+	
+
+	int samp_per_sym = 10;
+		
+	//double decim = 80;
+	float xlate_bandwidth = 25000.0;
+	float channel_rate = 3600 * samp_per_sym;
+	double pre_channel_rate = samp_rate/decim;
+	
+	std::vector<float> lpf_taps;
+	std::vector<float> resampler_taps;
+	std::vector<float> sym_taps;
+
+	
+    	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 12000);
+
+	cout<< "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
+	unsigned int d = GCD(channel_rate, pre_channel_rate);
+
+    	channel_rate = floor(channel_rate  / d);
+    	pre_channel_rate = floor(pre_channel_rate / d);
+	cout << "Common Divisor: " << d << "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
+	resampler_taps = design_filter(channel_rate, pre_channel_rate);
+
+
 	gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 
 	gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0, 0.0);
-
 	gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();
 	
-	gr::filter::fir_filter_ccf::sptr downsample = gr::filter::fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 5000, gr::filter::firdes::WIN_HANN));
+	
 
-	/*prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
-						       gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000),
+	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
+						       lpf_taps,
 						       offset, 
-						       samp_rate);*/
+						       samp_rate);
 
 	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
+	//gr::filter::rational_resampler_base_ccf::sptr downsample = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
+	gr::filter::fir_filter_ccf::sptr downsample = gr::filter::fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 5000, gr::filter::firdes::WIN_HANN));
 
 	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
 										-2*pi/clockrec_oversample);
 
-	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 1.0);
+	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
 	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
 
@@ -464,9 +513,11 @@ std::string device_addr;
 
 
 
-		tb->connect(offset_sig, 0, mixer, 0);
+	tb->connect(offset_sig, 0, mixer, 0);
 	tb->connect(src, 0, mixer, 1);
 	tb->connect(mixer, 0, downsample, 0);
+	//tb->connect(src, 0, prefilter, 0);	
+	//tb->connect(prefilter, 0, downsample, 0);
 	tb->connect(downsample, 0, carriertrack, 0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);

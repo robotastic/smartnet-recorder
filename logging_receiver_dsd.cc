@@ -7,31 +7,7 @@ log_dsd_sptr make_log_dsd(float freq, float center, long t, int n)
 {
     return gnuradio::get_initial_sptr(new log_dsd(freq, center, t, n));
 }
-unsigned GCD(unsigned u, unsigned v) {
-    while ( v != 0) {
-        unsigned r = u % v;
-        u = v;
-        v = r;
-    }
-    return u;
-}
 
-std::vector<float> design_filter(double interpolation, double deci) {
-    float beta = 5.0;
-    float trans_width = 0.5 - 0.4;
-    float mid_transition_band = 0.5 - trans_width/2;
-
-	std::vector<float> result = gr::filter::firdes::low_pass(
-		              interpolation,
-				1,	                     
-	                      mid_transition_band/interpolation, 
-                              trans_width/interpolation,         
-                              gr::filter::firdes::WIN_KAISER,
-                              beta                               
-                              );
-
-	return result;
-}
 log_dsd::log_dsd(float f, float c, long t, int n)
     : gr::hier_block2 ("log_dsd",
           gr::io_signature::make  (1, 1, sizeof(gr_complex)),
@@ -45,10 +21,10 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	timestamp = time(NULL);
 	starttime = time(NULL);
 
-	float offset = center - (f*1000000);
+	float offset = (f*1000000) - center;
 
 	int samp_per_sym = 10;
-	double samp_rate = 5000000;	
+	double samp_rate = 2000000;	
 	double decim = 80;
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
@@ -100,8 +76,6 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	/*connect(sym_filter,0, quiet,0);
-	connect(quiet,0, dsd,0);*/
 	connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 

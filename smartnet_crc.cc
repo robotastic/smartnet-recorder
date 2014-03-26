@@ -165,7 +165,7 @@ smartnet_crc::work (int noutput_items,
 	bool crc_ok = crc(databits);
 
 	if(crc_ok) {
-	    if(VERBOSE) std::cout << "CRC OK" << std::endl;
+	    std::cout << "CRC OK" << std::endl;
 	    //parse the message into readable chunks
 	    smartnet_packet pkt = parse(databits);
 

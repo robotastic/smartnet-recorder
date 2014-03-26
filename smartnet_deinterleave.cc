@@ -117,7 +117,8 @@ smartnet_deinterleave::general_work (int noutput_items,
     for(tag_iter = preamble_tags.begin(); tag_iter != preamble_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
 
-	if(VERBOSE) std::cout << "found a preamble at " << tag_iter->offset << std::endl;
+	if(VERBOSE)
+	 std::cout << "found a preamble at " << tag_iter->offset << std::endl;
 
 	for(int k=0; k<76/4; k++) {
 	    for(int l=0; l<4; l++) {
