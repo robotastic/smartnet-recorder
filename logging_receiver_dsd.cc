@@ -26,10 +26,11 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	int samp_per_sym = 10;
 	double samp_rate = 2000000;	
 	double decim = 80;
-	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
+	//double decim = samp_rate / channel_rate;
+	float xlate_bandwidth = 14000; //24260.0;
 	double pre_channel_rate = samp_rate/decim;
-	
+	std::cout << "Decim: " << decim << " Pre Channel Rate: " << pre_channel_rate << std::endl;
 
 
 	
@@ -44,7 +45,6 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
 	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
-	//quiet = gr_make_multiply_const_ff(0.75);
 	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
 
 	
@@ -75,11 +75,12 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	connect(self(), 0, prefilter, 0);	
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
+	//connect(prefilter, 0, demod, 0);	
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 
-	//connect(sym_filter, 0, wav_sink, 0);
+	
 	
 
 
@@ -134,7 +135,7 @@ void log_dsd::close() {
 	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 		
-	//std::cout<< "logging_receiver_dsd.cc: finished close()" <<std::endl;
+	
 }
 
 
@@ -159,22 +160,14 @@ void log_dsd::deactivate() {
 	disconnect(self(), 0, prefilter, 0);	
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
+	//disconnect(prefilter, 0, demod, 0);
+		
 	disconnect(demod, 0, sym_filter, 0);
-	/*disconnect(sym_filter,0, quiet,0);
-	disconnect(quiet,0, dsd,0);*/
 	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 
 	
 
-/*	
-	wav_sink.reset();
-	prefilter.reset();
-	downsample_sig.reset();
-	demod.reset();
-	sym_filter.reset();
-	dsd.reset();
-*/
 	//std::cout<< "logging_receiver_dsd.cc: Deactivated Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
 	
 }
