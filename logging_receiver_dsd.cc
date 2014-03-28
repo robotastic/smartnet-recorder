@@ -24,13 +24,13 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	float offset = (f*1000000) - center;
 
 	int samp_per_sym = 10;
-	double samp_rate = 2000000;	
+	double samp_rate = 5000000;	
 	double decim = 80;
 	float channel_rate = 4800 * samp_per_sym;
 	//double decim = samp_rate / channel_rate;
 	float xlate_bandwidth = 14000; //24260.0;
 	double pre_channel_rate = samp_rate/decim;
-	std::cout << "Decim: " << decim << " Pre Channel Rate: " << pre_channel_rate << std::endl;
+	//std::cout << "Decim: " << decim << " Pre Channel Rate: " << pre_channel_rate << std::endl;
 
 
 	

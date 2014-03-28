@@ -196,11 +196,11 @@ float parse_message(string s) {
 	if (command == 0x03c0) {
 		//parse_status(command, address, groupflag);
 	}
-        
+        /*
 	if (retfreq && (abs(center_freq - (retfreq*1000000)) > 1000000)) {
 		//cout << "Skipping: " << retfreq << " Diff: " << abs(center_freq - (retfreq*1000000)) << endl;
 		retfreq = 0;
-	}
+	}*/
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
