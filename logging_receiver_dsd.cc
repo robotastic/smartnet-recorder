@@ -100,7 +100,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	
 
 	connect(self(),0, null_sink,0);
-	connect(null_source,0,prefilter);
+	connect(null_source,0,prefilter,0);
 	//connect(self(), 0, prefilter, 0);	
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
@@ -185,7 +185,7 @@ void log_dsd::deactivate() {
 	discconect(copier,0, prefilter, 0);
 	disconnect(null_source, 0, null_sink, 0);
 	connect(self(),0, null_sink,0);
-	connect(null_source,0,prefilter);
+	connect(null_source,0,prefilter,0);
 
 
 /*
@@ -234,7 +234,7 @@ void log_dsd::activate(float f, int t, int num) {
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
 	lock();
 	disconnect(self(),0, null_sink,0);
-	disconnect(null_source,0,prefilter);
+	disconnect(null_source,0,prefilter,0);
 	connect(self(), 0, copier,0);
 	connect(copier,0, prefilter, 0);
 	connect(null_source, 0, null_sink, 0);
