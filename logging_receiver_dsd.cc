@@ -182,7 +182,7 @@ void log_dsd::deactivate() {
 	wav_sink->close();
 
 	disconnect(self(), 0, copier,0);
-	discconect(copier,0, prefilter, 0);
+	disconnect(copier,0, prefilter, 0);
 	disconnect(null_source, 0, null_sink, 0);
 	connect(self(),0, null_sink,0);
 	connect(null_source,0,prefilter,0);
