@@ -120,7 +120,7 @@ void init_loggers(int num, float center_freq) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
-		//log->lock();
+
  	}
 
 }
@@ -180,7 +180,7 @@ float parse_message(string s) {
 		//parse_status(command, address);
 	}
 
-
+	return retfreq;
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
