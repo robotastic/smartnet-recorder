@@ -120,7 +120,7 @@ void init_loggers(int num, float center_freq) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
-		log.lock();
+		log->lock();
  	}
 
 }
@@ -291,7 +291,7 @@ float parse_message(string s) {
 			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
 			system(shell_command);
 
-			static loggers
+			//static loggers
 			loggers.push_back(move(rx));
 			
 
