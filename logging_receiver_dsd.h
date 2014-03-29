@@ -56,7 +56,7 @@ protected:
 public:
     ~log_dsd();
 	void tune_offset(float f);
-	void activate(float f, int talkgroup);
+	void activate(float f, int talkgroup, int num);
 	void deactivate();
 	float get_freq();
 	long get_talkgroup();

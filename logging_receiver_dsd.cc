@@ -186,8 +186,7 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	/*disconnect(sym_filter,0, quiet,0);
-	disconnect(quiet,0, dsd,0);*/
+
 	disconnect(sym_filter, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 
@@ -205,7 +204,7 @@ void log_dsd::deactivate() {
 	
 }
 
-void log_dsd::activate(float f, int t) {
+void log_dsd::activate(float f, int t, int num) {
 	//std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << f << "] \t talkgroup[ " << t << " ] " <<std::endl;
 	
 	timestamp = time(NULL);
@@ -214,7 +213,19 @@ void log_dsd::activate(float f, int t) {
 	talkgroup = t;
 	freq = f;
 
+	prefilter->set_center_freq(center - (f*1000000));
+	std::cout << "logging_receiver_dsd.cc: Offset set to: " << (center - f*1000000) << "Freq: "  << f << std::endl;
+	
 
+	
+	tm *ltm = localtime(&starttime);
+	
+	std::stringstream path_stream;
+	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
+	
+	boost::filesystem::create_directories(path_stream.str());
+	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
+	wav_sink->open(filename); // = gr_make_wavfile_sink(filename,1,8000,16);
 
 /*
 

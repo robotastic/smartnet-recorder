@@ -45,7 +45,6 @@
 #include <signal.h>
 #include "logging_receiver_dsd.h"
 #include "logging_receiver_pocsag.h"
-//#include "logging_receiver_p25.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
 
@@ -101,13 +100,13 @@ double center_freq;
 gr_top_block_sptr tb;
 osmosdr_source_c_sptr src;
 
-/* static loggers
-vector<log_dsd_sptr> loggers;*/
+//static loggers
+vector<log_dsd_sptr> loggers;
 
 vector<log_dsd_sptr> active_loggers;
 vector<log_pocsag_sptr> active_pocsags;
 
-//vector<log_p25_sptr> active_loggers;
+
 
 volatile sig_atomic_t exit_flag = 0;
 void exit_interupt(int sig){ // can be called asynchronously
@@ -116,12 +115,14 @@ void exit_interupt(int sig){ // can be called asynchronously
 
 void init_loggers(int num, float center_freq) {
 
-/* static loggers
+// static loggers
 	for (int i = 0; i < num; i++) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
 		loggers.push_back(log);
+		tb->connect(src, 0, log, 0);
+		log.lock();
  	}
-*/
+
 }
 
 float getfreq(int cmd) {
@@ -182,10 +183,6 @@ float parse_message(string s) {
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
-		/*for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {		
-		
-			log_p25_sptr rx = *it;
-		*/	
 						
 			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
@@ -205,10 +202,6 @@ float parse_message(string s) {
 		}
 		for(vector<log_pocsag_sptr>::iterator it = active_pocsags.begin(); it != active_pocsags.end(); ++it) {	
 			log_pocsag_sptr rx = *it;	
-		/*for(vector<log_p25_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {		
-		
-			log_p25_sptr rx = *it;
-		*/	
 						
 			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
@@ -230,44 +223,34 @@ float parse_message(string s) {
 		if ((!rxfound)){ 
 			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << endl;
 
-			/* static loggers			
+			// static loggers			
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
-			loggers.erase(loggers.begin());*/
+			loggers.erase(loggers.begin());
 			//cout << "smartnet.cc: Moved Logger, Loggers " << loggers.size() << " Active Loggers " << active_loggers.size() << endl;
 			
 					
 			
-			tb->lock();
-			//tb->stop();
-			//tb->wait();
-
-			// Dynamic Logger	
-			if (address != 56016) {		
+			
+			
+				/*
+				// Dynamic Logger	
+				tb->lock();
+			
 				log_dsd_sptr log = make_log_dsd( retfreq, center_freq, address, thread_num++);			
-				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
 							
 				active_loggers.push_back(log);
 
 				tb->connect(src, 0, log, 0);
-
-				/* static loggers
-				log->activate(retfreq, address);
 				*/
-			} else {
-				log_pocsag_sptr log = make_log_pocsag( retfreq, center_freq, address, thread_num++);			
-				//log_p25_sptr log = make_log_p25( retfreq, center_freq, address);			
-							
-				active_pocsags.push_back(log);
+				// static loggers
+				log->activate(retfreq, address,active_loggers.size());
+				log->unlock();	
+		
 
-				tb->connect(src, 0, log, 0);
-			}
-
-
-				tb->unlock();
+				//tb->unlock();
 			
-			//tb->start();
-
+			
 			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
 		}
 		
@@ -283,18 +266,18 @@ float parse_message(string s) {
 */
 		if (rx->timeout() > 5.0) {
 			//cout << "smartnet.cc: Deleting Logger - TG: " << rx->get_talkgroup() << "\t Freq: " << rx->get_freq() << endl;
-			
+			/*
 			tb->lock();
-			//tb->stop();
-			//tb->wait();
+
 
 			tb->disconnect(src, 0, rx, 0);
-			
+			*/
 			/* !!!!!!!!!!!!! don't forget to un comment this for log_dsd */
 			rx->deactivate();
+			rx->lock();
 			//rx->close();
 
-			tb->unlock();
+			//tb->unlock();
 			
 			//tb->start();
 			
@@ -308,9 +291,9 @@ float parse_message(string s) {
 			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
 			system(shell_command);
 
-			/* static loggers
+			static loggers
 			loggers.push_back(move(rx));
-			*/
+			
 
 			it = active_loggers.erase(it);
 			
