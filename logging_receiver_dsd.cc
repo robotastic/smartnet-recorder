@@ -107,7 +107,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
-	lock();
+	
 
 
 	std::cout << " Recv [ " << num << " ] \t Tg: " << t << "\t Freq: "  << f << std::endl;
