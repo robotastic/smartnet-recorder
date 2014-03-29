@@ -176,7 +176,7 @@ float parse_message(string s) {
 	}
 
 	if (command == 0x03c0) {
-		//parse_status(command, address, groupflag);
+		//parse_status(command, address);
 	}
         
 	if (retfreq) {
@@ -228,7 +228,7 @@ float parse_message(string s) {
 		}
 
 		if ((!rxfound)){ 
-			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << "\t  Flag: "<< groupflag << endl;
+			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << endl;
 
 			/* static loggers			
 			log_dsd_sptr log = loggers.front();
@@ -428,16 +428,16 @@ std::string device_addr;
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
 
-	gr_sig_source_c_sptr offset_sig = gr_make_sig_source_c(samp_rate, GR_SIN_WAVE, offset, 1.0, 0.0);
+	//gr_sig_source_c_sptr offset_sig = gr_make_sig_source_c(samp_rate, GR_SIN_WAVE, offset, 1.0, 0.0);
 
-	gr_multiply_cc_sptr mixer = gr_make_multiply_cc();
+	//gr_multiply_cc_sptr mixer = gr_make_multiply_cc();
 	
-	gr_fir_filter_ccf_sptr downsample = gr_make_fir_filter_ccf(decim, gr_firdes::low_pass(1, samples_per_second, 10000, 5000, gr_firdes::WIN_HANN));
+	//gr_fir_filter_ccf_sptr downsample = gr_make_fir_filter_ccf(decim, gr_firdes::low_pass(1, samples_per_second, 10000, 5000, gr_firdes::WIN_HANN));
 
-	/*prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
-						       gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000),
+	gr_freq_xlating_fir_filter_ccf_sptr prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
+						       gr_firdes::low_pass(1, samp_rate, 10000, 12000),
 						       offset, 
-						       samp_rate);*/
+						       samp_rate);
 
 	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
 
@@ -459,10 +459,12 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 
 
 
-		tb->connect(offset_sig, 0, mixer, 0);
-	tb->connect(src, 0, mixer, 1);
-	tb->connect(mixer, 0, downsample, 0);
-	tb->connect(downsample, 0, carriertrack, 0);
+	//	tb->connect(offset_sig, 0, mixer, 0);
+	//tb->connect(src, 0, mixer, 1);
+	//tb->connect(mixer, 0, downsample, 0);
+	//tb->connect(downsample, 0, carriertrack, 0);
+	tb->connect(src,0,prefilter,0);
+	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);
 	tb->connect(softbits, 0, slicer, 0);
