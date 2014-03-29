@@ -96,14 +96,14 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
 
-	connect(self(),0, null_sink,0);
-	/*connect(self(), 0, prefilter, 0);	
+	//connect(self(),0, null_sink,0);
+	connect(self(), 0, prefilter, 0);	
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, dsd, 0);
-	connect(dsd, 0, wav_sink,0);*/
-
+	connect(dsd, 0, wav_sink,0);
+	lock();
 
 
 	std::cout << " Recv [ " << num << " ] \t Tg: " << t << "\t Freq: "  << f << std::endl;
@@ -170,7 +170,7 @@ void log_dsd::tune_offset(float f) {
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
 	
-
+  lock();
 	if (iam_logging) {
 	logging = false;
 	}
@@ -223,7 +223,7 @@ void log_dsd::activate(float f, int t, int num) {
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
 	wav_sink->open(filename); // = gr_make_wavfile_sink(filename,1,8000,16);
-
+	unlock();
 /*
 
 // The  Commented section below creates all of the blocks and connects them

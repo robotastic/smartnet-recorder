@@ -120,7 +120,7 @@ void init_loggers(int num, float center_freq) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
-		log->lock();
+		//log->lock();
  	}
 
 }
@@ -179,7 +179,8 @@ float parse_message(string s) {
 	if (command == 0x03c0) {
 		//parse_status(command, address);
 	}
-        
+
+
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
@@ -245,13 +246,13 @@ float parse_message(string s) {
 				*/
 				// static loggers
 				log->activate(retfreq, address,active_loggers.size());
-				log->unlock();	
+				//log->unlock();	
 		
 
 				//tb->unlock();
 			
 			
-			//cout << "smartnet.cc: Activated logger & unlocked" << endl;
+			cout << "smartnet.cc: Activated logger & unlocked" << endl;
 		}
 		
 		//cout << "TG: " << address << "\tFreq: " << retfreq << "\tActive Loggers: " << active_loggers.size() << "\tCmd: "<< command << "\t LastCmd: " <<lastcmd   << endl;
@@ -274,7 +275,7 @@ float parse_message(string s) {
 			*/
 			/* !!!!!!!!!!!!! don't forget to un comment this for log_dsd */
 			rx->deactivate();
-			rx->lock();
+			//rx->lock();
 			//rx->close();
 
 			//tb->unlock();
