@@ -141,7 +141,7 @@ char *log_dsd::get_filename() {
 	return filename;
 }
 
-long log_dsd::timeout() {
+long log_dsd::timeleft() {
 	return time(NULL) - timestamp;
 }
 

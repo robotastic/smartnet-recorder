@@ -60,7 +60,7 @@ public:
 	void deactivate();
 	float get_freq();
 	long get_talkgroup();
-	long timeout();
+	long timeleft();
 	long elapsed();
 	void close();
 	void mute();

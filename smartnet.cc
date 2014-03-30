@@ -383,7 +383,7 @@ float parse_message(string s) {
 	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
 		log_dsd_sptr rx = *it;
 
-		if (rx->timeout() > 5.0) {
+		if (rx->timeleft() > 5.0) {
 			
 
 			for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
