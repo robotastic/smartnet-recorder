@@ -544,6 +544,7 @@ std::string device_addr;
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
 			tb->stop();
+			endwin(); 
 			return 0;
 		} 
 
