@@ -386,10 +386,10 @@ float parse_message(string s) {
 		if (rx->timeout() > 5.0) {
 			
 
-			for(std::vector<Talkgroup *>::iterator it = active_tg.begin(); it != active_tg.end(); ++it) {
-				Talkgroup *tg = (Talkgroup *) *it;	
+			for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
+				Talkgroup *tg = (Talkgroup *) *tg_it;	
 				if (tg->number == address) {
-					active_tg.erase(it);
+					active_tg.erase(tg_it);
 					break;
 				}
 			}
