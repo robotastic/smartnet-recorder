@@ -129,7 +129,7 @@ link_directories(
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
-add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_pocsag.cc smartnet_wavfile.cc smartnet_wavsink.cc)
+add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_pocsag.cc talkgroup.c smartnet_wavfile.cc smartnet_wavsink.cc)
 target_link_libraries(smartnet  gnuradio-core gnuradio-audio gnuradio-blocks gnuradio-osmosdr gnuradio-filter gnuradio-digital gnuradio-analog ${GRUEL_LIBRARIES} ${Boost_LIBRARIES} gr-dsd itpp ncurses menu)
 
 
