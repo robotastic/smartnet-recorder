@@ -272,7 +272,7 @@ void parse_file(string filename) {
 
     vector< string > vec;
     string line;
-    int i++;
+    int i=0;
 
     while (getline(in,line))
     {
