@@ -105,7 +105,7 @@ osmosdr_source_c_sptr src;
 
 
 vector<log_dsd_sptr> loggers;
-int max_loggers = 7;
+unsigned int max_loggers = 7;
 
 vector<log_dsd_sptr> active_loggers;
 
@@ -113,7 +113,7 @@ vector<Talkgroup *> talkgroups;
 vector<Talkgroup *> active_tg;
 char **menu_choices;
 ITEM **tg_menu_items;
-Talkgroup *active_tg;
+
 
 WINDOW *active_tg_win;
 WINDOW *tg_menu_win;
@@ -144,7 +144,7 @@ void update_active_tg_win() {
 		mvwprintw(active_tg_win,i*2+1,40,"Tag: %s", tg->tag.c_str());
 		mvwprintw(active_tg_win,i*2+1,60,"Group: %s", tg->group.c_str());
 
-		i++
+		i++;
 	}
 
 	wrefresh(active_tg_win);
@@ -283,7 +283,7 @@ void parse_file(string filename) {
 
         if (vec.size() < 8) continue;
 
-	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),vec[7].c_str() );
+	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
 
 	talkgroups.push_back(tg);
 
@@ -386,8 +386,14 @@ float parse_message(string s) {
 		if (rx->timeout() > 5.0) {
 			
 
-			active_loggers.erase(std::remove_if(active_loggers.begin(), active_loggers.end(), 
-                       [](Talkgroup *tg) { return tg->number == adress ; }), active_loggers.end());
+			for(std::vector<Talkgroup *>::iterator it = active_tg.begin(); it != active_tg.end(); ++it) {
+				Talkgroup *tg = (Talkgroup *) *it;	
+				if (tg->number == address) {
+					active_tg.erase(it);
+					break;
+				}
+			}
+                
 			update_active_tg_win();
 			rx->deactivate();
 
