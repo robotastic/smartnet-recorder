@@ -383,7 +383,7 @@ float parse_message(string s) {
 
 			for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
 				Talkgroup *tg = (Talkgroup *) *tg_it;	
-				if (tg->number == address) {
+				if (tg->number == rx->get_talkgroup()) {
 					active_tg.erase(tg_it);
 					break;
 				}
