@@ -41,18 +41,13 @@
 #include <iostream>
 #include <fstream> 
 #include <string> 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <ncurses.h>
-#include <menu.h>
 #include <algorithm>    // copy
 #include <iterator> 
 
 #include "logging_receiver_dsd.h"
-#include "logging_receiver_pocsag.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
+#include "talkgroup.h"
 
 #include <osmosdr_source_c.h>
 #include <osmosdr_sink_c.h>
@@ -88,7 +83,11 @@
  #include <gr_top_block.h>
 #include <gr_multiply_cc.h>
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <ncurses.h>
+#include <menu.h>
 
 
 
