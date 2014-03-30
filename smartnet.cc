@@ -280,7 +280,7 @@ void parse_file(string filename) {
 	t_tokenizer tok(line, sep);
 	//Tokenizer tok(line);
         vec.assign(tok.begin(),tok.end());
-
+        cout<<line<<" size: "<<vec.size()<<endl;
         if (vec.size() < 8) continue;
 
 	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
@@ -536,13 +536,13 @@ std::string device_addr;
 
 	tb->start();
 
-	initscr();
+	/*initscr();
 	cbreak();
 	noecho();
 	nodelay(active_tg_win,TRUE);
-	
+	*/
 	parse_file("ChanList.csv");
-	create_active_tg_win();
+	//create_active_tg_win();
 	
 
 			std::string sentence;
