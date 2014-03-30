@@ -180,7 +180,7 @@ float parse_message(string s) {
 		//parse_status(command, address);
 	}
 
-	return retfreq;
+
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
 			log_dsd_sptr rx = *it;	
@@ -225,6 +225,7 @@ float parse_message(string s) {
 			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << endl;
 
 			// static loggers			
+		  if (active_loggers.size() < 3){
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
 			loggers.erase(loggers.begin());
@@ -251,7 +252,7 @@ float parse_message(string s) {
 
 				//tb->unlock();
 			
-			
+		  }			
 			cout << "smartnet.cc: Activated logger & unlocked" << endl;
 		}
 		
@@ -408,7 +409,7 @@ std::string device_addr;
 	cout << "Samples per symbol: " << sps << endl;
 */
 
-	init_loggers(10, center_freq);
+	init_loggers(3, center_freq);
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
 
