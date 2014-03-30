@@ -360,17 +360,18 @@ float parse_message(string s) {
 
 
 		if ((!rxfound)){ 
-		
+			
 		  if (active_loggers.size() < max_loggers){
 		  		for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
 					Talkgroup *tg = (Talkgroup *) *it;	
+					cout << "TG: " << tg->number << " address: " << address << endl;
 					if (tg->number == address) {
 						active_tg.push_back(tg);
-						cout << "Found MAtch!" << endl;
+						
 						break;
 					}
 				}
-				update_active_tg_win();
+				//update_active_tg_win();
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
 			loggers.erase(loggers.begin());
