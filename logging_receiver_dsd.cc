@@ -220,7 +220,6 @@ void log_dsd::activate(float f, int t, int num) {
 	freq = f;
 
 	prefilter->set_center_freq(center - (f*1000000));
-	std::cout << "logging_receiver_dsd.cc: Offset set to: " << (center - f*1000000) << "Freq: "  << f << std::endl;
 	
 
 	

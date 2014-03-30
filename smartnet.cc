@@ -169,7 +169,7 @@ void create_status_win() {
 void create_active_tg_win() {
 	int startx, starty, width, height;
 
-	height = 10;
+	height = 20;
 	width = COLS;
 	starty = 0;
 	startx = 0;
@@ -272,7 +272,7 @@ void parse_file(string filename) {
 
     vector< string > vec;
     string line;
-
+    int i++;
 
     while (getline(in,line))
     {
@@ -286,10 +286,10 @@ void parse_file(string filename) {
 	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
 
 	talkgroups.push_back(tg);
-
+	i++;
 	
     }
-	
+	cout << "Number of TGS: " << i << endl;
 }
 
 
@@ -366,6 +366,7 @@ float parse_message(string s) {
 					Talkgroup *tg = (Talkgroup *) *it;	
 					if (tg->number == address) {
 						active_tg.push_back(tg);
+						cout << "Found MAtch!" << endl;
 						break;
 					}
 				}
@@ -397,7 +398,7 @@ float parse_message(string s) {
 			update_active_tg_win();
 			rx->deactivate();
 
-			sprintf(shell_command,"./encode-upload.sh %s &", rx->get_filename());
+			sprintf(shell_command,"./encode-upload.sh %s > /dev/null &", rx->get_filename());
 			system(shell_command);
 
 			//static loggers
