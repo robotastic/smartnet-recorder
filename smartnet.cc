@@ -226,7 +226,7 @@ float parse_message(string s) {
 			//cout << "smartnet.cc: Activating Logger - TG: " << address << "\t Freq: " << retfreq << "\tCmd: " <<command << "\t LastCmd: " <<lastcmd << endl;
 
 			// static loggers			
-		  if (active_loggers.size() < 3){
+		  if (active_loggers.size() < 5){
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
 			loggers.erase(loggers.begin());
@@ -410,7 +410,7 @@ std::string device_addr;
 	cout << "Samples per symbol: " << sps << endl;
 */
 
-	init_loggers(3, center_freq);
+		init_loggers(5, center_freq);
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
 
@@ -442,12 +442,12 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
-/*	gr_null_sink_sptr null_sink = gr_make_null_sink(sizeof(gr_complex));
+	/*	gr_null_sink_sptr null_sink = gr_make_null_sink(sizeof(gr_complex));
 
 
 	tb->connect(src,0,null_sink,0);
-*/
-
+	*/
+	
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
@@ -485,24 +485,21 @@ usleep(1000);
 			
 it = active_loggers.erase(it);
 }*/
+			std::string sentence;
+			gr_message_sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
 			tb->stop();
 			return 0;
 		} 
-		if (!queue->empty_p())
-		{
-			std::string sentence;
-			gr_message_sptr msg;
+
+
 			msg = queue->delete_head();
 			sentence = msg->to_string();
 			parse_message(sentence);	
 			
-		} else {
-			
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1.0/10));
-		}
+
 
 	}
 	
