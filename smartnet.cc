@@ -561,7 +561,7 @@ std::string device_addr;
 
 	}
 	
-  
+  endwin(); 
 
   // Exit normally.
   return 0;
