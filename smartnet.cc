@@ -496,8 +496,6 @@ std::string device_addr;
 
 
 	init_loggers(max_loggers, center_freq);
-	create_active_tg_win();
-
 
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
@@ -535,6 +533,15 @@ std::string device_addr;
 	
 
 	tb->start();
+
+	initscr();
+	cbreak();
+	noecho();
+	nodelay(active_tg_win,TRUE);
+	
+	parse_file("ChanList.csv");
+	create_active_tg_win();
+	
 
 			std::string sentence;
 			gr_message_sptr msg;
