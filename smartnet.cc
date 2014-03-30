@@ -410,7 +410,7 @@ std::string device_addr;
 	cout << "Samples per symbol: " << sps << endl;
 */
 
-	//init_loggers(3, center_freq);
+	init_loggers(3, center_freq);
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
 
@@ -442,12 +442,12 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
-	gr_null_sink_sptr null_sink = gr_make_null_sink(sizeof(gr_complex));
+/*	gr_null_sink_sptr null_sink = gr_make_null_sink(sizeof(gr_complex));
 
 
 	tb->connect(src,0,null_sink,0);
+*/
 
-/*
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
@@ -456,7 +456,6 @@ gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access
 	tb->connect(slicer, 0, start_correlator, 0);
 	tb->connect(start_correlator, 0, deinterleave, 0);
 	tb->connect(deinterleave, 0, crc, 0);
-*/
 	
 
 	tb->start();
