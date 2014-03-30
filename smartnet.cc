@@ -272,7 +272,6 @@ void parse_file(string filename) {
 
     vector< string > vec;
     string line;
-    int i=0;
 
     while (getline(in,line))
     {
@@ -280,16 +279,12 @@ void parse_file(string filename) {
 	t_tokenizer tok(line, sep);
 	//Tokenizer tok(line);
         vec.assign(tok.begin(),tok.end());
-        cout<<line<<" size: "<<vec.size()<<endl;
         if (vec.size() < 8) continue;
 
 	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
 
 	talkgroups.push_back(tg);
-	i++;
-	
     }
-	cout << "Number of TGS: " << i << endl;
 }
 
 
@@ -364,14 +359,12 @@ float parse_message(string s) {
 		  if (active_loggers.size() < max_loggers){
 		  		for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
 					Talkgroup *tg = (Talkgroup *) *it;	
-					cout << "TG: " << tg->number << " address: " << address << endl;
 					if (tg->number == address) {
-						active_tg.push_back(tg);
-						
+						active_tg.push_back(tg);						
 						break;
 					}
 				}
-				//update_active_tg_win();
+				update_active_tg_win();
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
 			loggers.erase(loggers.begin());
@@ -536,13 +529,13 @@ std::string device_addr;
 
 	tb->start();
 
-	/*initscr();
+	initscr();
 	cbreak();
 	noecho();
 	nodelay(active_tg_win,TRUE);
-	*/
+	
 	parse_file("ChanList.csv");
-	//create_active_tg_win();
+	create_active_tg_win();
 	
 
 			std::string sentence;
