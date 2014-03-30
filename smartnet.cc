@@ -138,11 +138,11 @@ void update_active_tg_win() {
 		strcpy(c, s.c_str());			
 		*/
 	
-		mvwprintw(active_tg_win,i*2,2,"TG: %s", tg->alpha_tag.c_str());
-		mvwprintw(active_tg_win,i*2+1,2,"%s ", tg->description.c_str());
-		mvwprintw(active_tg_win,i*2,40,"Num: %5lu", tg->number);
-		mvwprintw(active_tg_win,i*2+1,40,"Tag: %s", tg->tag.c_str());
-		mvwprintw(active_tg_win,i*2+1,60,"Group: %s", tg->group.c_str());
+		mvwprintw(active_tg_win,i*2+1,2,"TG: %s", tg->alpha_tag.c_str());
+		mvwprintw(active_tg_win,i*2+2,2,"%s ", tg->description.c_str());
+		mvwprintw(active_tg_win,i*2+1,40,"Num: %5lu", tg->number);
+		mvwprintw(active_tg_win,i*2+2,40,"Tag: %s", tg->tag.c_str());
+		mvwprintw(active_tg_win,i*2+2,60,"Group: %s", tg->group.c_str());
 
 		i++;
 	}
