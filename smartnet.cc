@@ -140,7 +140,7 @@ void update_active_tg_win() {
 		*/
 	
 		mvwprintw(active_tg_win,i*2+1,2,"TG: %s", tg->alpha_tag.c_str());
-		mvwprintw(active_tg_win,i*2+2,4,"%s ", tg->description.c_str());
+		mvwprintw(active_tg_win,i*2+2,6,"%s ", tg->description.c_str());
 		mvwprintw(active_tg_win,i*2+1,40,"Num: %5lu", tg->number);
 		mvwprintw(active_tg_win,i*2+2,40,"Tag: %s", tg->tag.c_str());
 		mvwprintw(active_tg_win,i*2+2,60,"Group: %s", tg->group.c_str());
@@ -332,7 +332,7 @@ float parse_message(string s) {
 	}
 
 	if (command == 0x03c0) {
-		parse_status(command, address,groupflag);
+		//parse_status(command, address,groupflag);
 	}
 
 
@@ -349,10 +349,10 @@ float parse_message(string s) {
 				rxfound = true;
 			} else {
 				if (rx->get_freq() == retfreq) {
-					
+					sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->get_timeleft());
+					update_status_win(status);
 					//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 					rx->mute();
-					
 				}
 			}
 		}
