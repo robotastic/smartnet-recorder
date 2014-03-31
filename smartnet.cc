@@ -349,7 +349,7 @@ float parse_message(string s) {
 				rxfound = true;
 			} else {
 				if (rx->get_freq() == retfreq) {
-					sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->get_timeleft());
+					sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
 					update_status_win(status);
 					//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 					rx->mute();
@@ -382,7 +382,7 @@ float parse_message(string s) {
 	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
 		log_dsd_sptr rx = *it;
 
-		if (rx->timeleft() > 5.0) {
+		if (rx->lastupdate() > 5.0) {
 			
 
 			for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {

@@ -143,7 +143,7 @@ char *log_dsd::get_filename() {
 	return filename;
 }
 
-long log_dsd::timeleft() {
+long log_dsd::lastupdate() {
 	return time(NULL) - timestamp;
 }
 
