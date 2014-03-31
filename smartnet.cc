@@ -342,6 +342,8 @@ float parse_message(string s) {
 						
 			if (rx->get_talkgroup() == address) {		
 				if (rx->get_freq() != retfreq) {
+					sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
+					update_status_win(status);
 					rx->tune_offset(retfreq);
 				}
 				rx->unmute();
@@ -532,13 +534,13 @@ std::string device_addr;
 	
 
 	tb->start();
-
+	parse_file("ChanList.csv");
 	initscr();
 	cbreak();
 	noecho();
 	nodelay(active_tg_win,TRUE);
 	
-	parse_file("ChanList.csv");
+
 	create_active_tg_win();
 	create_status_win();
 	
