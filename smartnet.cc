@@ -112,6 +112,7 @@ vector<log_dsd_sptr> active_loggers;
 vector<Talkgroup *> talkgroups;
 vector<Talkgroup *> active_tg;
 char **menu_choices;
+char status[150];
 ITEM **tg_menu_items;
 
 
@@ -139,7 +140,7 @@ void update_active_tg_win() {
 		*/
 	
 		mvwprintw(active_tg_win,i*2+1,2,"TG: %s", tg->alpha_tag.c_str());
-		mvwprintw(active_tg_win,i*2+2,2,"%s ", tg->description.c_str());
+		mvwprintw(active_tg_win,i*2+2,4,"%s ", tg->description.c_str());
 		mvwprintw(active_tg_win,i*2+1,40,"Num: %5lu", tg->number);
 		mvwprintw(active_tg_win,i*2+2,40,"Tag: %s", tg->tag.c_str());
 		mvwprintw(active_tg_win,i*2+2,60,"Group: %s", tg->group.c_str());
@@ -299,8 +300,10 @@ void parse_status(int command, int address, int groupflag) {
             int Power = Value & 1;
             Value >>= 1;
             int OpCode = Value;
-            cout << "Status : " << OpCode << "\tPower: " << Power << "\tDispatchTimeout: " << DispatchTimeout << "\tConnectTimeOut: " << ConnecTimeout << "\tGroupTimeOut:" << GroupTimeout <<endl;
+            sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
+            update_status_win(status);
 }
+
 float parse_message(string s) {
 	float retfreq = 0;
 	bool rxfound = false;
@@ -328,7 +331,7 @@ float parse_message(string s) {
 	}
 
 	if (command == 0x03c0) {
-		//parse_status(command, address);
+		parse_status(command, address);
 	}
 
 
@@ -346,7 +349,7 @@ float parse_message(string s) {
 			} else {
 				if (rx->get_freq() == retfreq) {
 					
-					cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
+					//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 					rx->mute();
 					
 				}
@@ -392,7 +395,7 @@ float parse_message(string s) {
 			update_active_tg_win();
 			rx->deactivate();
 
-			sprintf(shell_command,"./encode-upload.sh %s > /dev/null &", rx->get_filename());
+			sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
 			system(shell_command);
 
 			//static loggers
@@ -536,6 +539,7 @@ std::string device_addr;
 	
 	parse_file("ChanList.csv");
 	create_active_tg_win();
+	create_statis_win();
 	
 
 			std::string sentence;
