@@ -311,6 +311,7 @@ float parse_message(string s) {
 	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
 
 	int address = atoi( x[0].c_str() ) & 0xFFF0;
+	int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
 	    
@@ -331,7 +332,7 @@ float parse_message(string s) {
 	}
 
 	if (command == 0x03c0) {
-		parse_status(command, address);
+		parse_status(command, address,groupflag);
 	}
 
 
@@ -539,7 +540,7 @@ std::string device_addr;
 	
 	parse_file("ChanList.csv");
 	create_active_tg_win();
-	create_statis_win();
+	create_status_win();
 	
 
 			std::string sentence;
