@@ -531,7 +531,7 @@ std::string device_addr;
 	tb->connect(slicer, 0, start_correlator, 0);
 	tb->connect(start_correlator, 0, deinterleave, 0);
 	tb->connect(deinterleave, 0, crc, 0);*/
-	ngr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(gr_complex));
+	gr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(gr_complex));
 	tb->connect(src,0,nullsink,0);
 	tb->start();
 	/*parse_file("ChanList.csv");
