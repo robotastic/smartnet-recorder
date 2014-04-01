@@ -24,6 +24,10 @@ std::string Talkgroup::menu_string() {
 	return buffAsStdStr;
 }
 
+int Talkgroup::get_priority() {
+  return priority;
+}
+
 bool Talkgroup::is_active() {
 
 	return active;

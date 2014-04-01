@@ -142,6 +142,7 @@ smartnet_crc::work (int noutput_items,
 {
     const char *in = (const char *) input_items[0];
 
+    
     int size = noutput_items - 76;
     if(size <= 0) {
 	return 0; //better luck next time
@@ -150,16 +151,19 @@ smartnet_crc::work (int noutput_items,
     uint64_t abs_sample_cnt = nitems_read(0);
     std::vector<gr_tag_t> frame_tags;
 
+
     get_tags_in_range(frame_tags, 0, abs_sample_cnt, abs_sample_cnt + size, pmt::pmt_string_to_symbol("smartnet_frame"));
+
     if(frame_tags.size() == 0) {
 	return 0; //sad trombone
     }
 
     std::vector<gr_tag_t>::iterator tag_iter;
+
     for(tag_iter = frame_tags.begin(); tag_iter != frame_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
-	if(VERBOSE) std::cout << "found a frame at " << mark << std::endl;
-
+	if(VERBOSE)  std::cout << "found a frame at " << mark << std::endl;
+	
 	char databits[38];
 	smartnet_ecc(databits, &in[mark]);
 	bool crc_ok = crc(databits);
@@ -175,7 +179,7 @@ smartnet_crc::work (int noutput_items,
 	    payload << pkt.address << "," << pkt.groupflag << "," << pkt.command;
 	    gr_message_sptr msg = gr_make_message_from_string(std::string(payload.str()));
 	    d_queue->handle(msg);
-	} else if (VERBOSE) std::cout << "CRC FAILED" << std::endl;
+	    } else if (VERBOSE) std::cout << "CRC FAILED" << std::endl;
     }
     return size;
 }

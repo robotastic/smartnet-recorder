@@ -43,6 +43,7 @@
 #include <string> 
 #include <algorithm>    // copy
 #include <iterator> 
+#include <cstddef>
 
 #include "logging_receiver_dsd.h"
 #include "smartnet_crc.h"
@@ -361,16 +362,29 @@ float parse_message(string s) {
 
 
 		if ((!rxfound)){ 
-			
-		  if (active_loggers.size() < max_loggers){
+		  Talkgroup *rx_talkgroup = NULL;
+		  bool record_tg = false;
 		  		for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
 					Talkgroup *tg = (Talkgroup *) *it;	
 					if (tg->number == address) {
-						active_tg.push_back(tg);						
-						break;
+					  rx_talkgroup = tg;
+					  break;
 					}
+		
 				}
-				update_active_tg_win();
+				if (rx_talkgroup) {
+				  if (((rx_talkgroup->get_priority() == 1) && (active_loggers.size() < max_loggers)) ||
+				      ((rx_talkgroup->get_priority() == 2) && (active_loggers.size() < 4 )) ||
+				      ((rx_talkgroup->get_priority() == 3) && (active_loggers.size() < 2 ))) {
+				    record_tg = true;
+				    active_tg.push_back(rx_talkgroup);
+				    update_active_tg_win();
+				  }
+				} else {
+				  record_tg = true;
+				}
+
+		  if (record_tg){
 			log_dsd_sptr log = loggers.front();
 			active_loggers.push_back(move(log));
 			loggers.erase(loggers.begin());
@@ -496,7 +510,7 @@ std::string device_addr;
 	cout << "Samples per symbol: " << sps << endl;
 
 
-	//init_loggers(max_loggers, center_freq);
+	init_loggers(max_loggers, center_freq);
 
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
@@ -522,19 +536,25 @@ std::string device_addr;
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
+
+	/*	gr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(u_char));
+	tb->connect(deinterleave,0,nullsink,0);*/	
 	
-	/*tb->connect(src,0,prefilter,0);
+	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);
 	tb->connect(softbits, 0, slicer, 0);
 	tb->connect(slicer, 0, start_correlator, 0);
+	
+	
 	tb->connect(start_correlator, 0, deinterleave, 0);
-	tb->connect(deinterleave, 0, crc, 0);*/
-	gr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(gr_complex));
-	tb->connect(src,0,nullsink,0);
+
+		tb->connect(deinterleave, 0, crc, 0);
+
 	tb->start();
-	/*parse_file("ChanList.csv");
+
+	parse_file("ChanList.csv");
 	initscr();
 	cbreak();
 	noecho();
@@ -542,8 +562,8 @@ std::string device_addr;
 	
 
 	create_active_tg_win();
-	create_status_win();*/
-	
+	create_status_win();
+		
 
 			std::string sentence;
 			gr_message_sptr msg;
