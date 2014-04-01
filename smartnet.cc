@@ -496,7 +496,7 @@ std::string device_addr;
 	cout << "Samples per symbol: " << sps << endl;
 
 
-	init_loggers(max_loggers, center_freq);
+	//init_loggers(max_loggers, center_freq);
 
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
@@ -523,18 +523,18 @@ std::string device_addr;
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 	
-	tb->connect(src,0,prefilter,0);
+	/*tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);
 	tb->connect(softbits, 0, slicer, 0);
 	tb->connect(slicer, 0, start_correlator, 0);
 	tb->connect(start_correlator, 0, deinterleave, 0);
-	tb->connect(deinterleave, 0, crc, 0);
-	
-
+	tb->connect(deinterleave, 0, crc, 0);*/
+	ngr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(gr_complex));
+	tb->connect(src,0,nullsink,0);
 	tb->start();
-	parse_file("ChanList.csv");
+	/*parse_file("ChanList.csv");
 	initscr();
 	cbreak();
 	noecho();
@@ -542,7 +542,7 @@ std::string device_addr;
 	
 
 	create_active_tg_win();
-	create_status_win();
+	create_status_win();*/
 	
 
 			std::string sentence;
