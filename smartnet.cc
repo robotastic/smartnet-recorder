@@ -379,9 +379,9 @@ float parse_message(string s) {
 				    record_tg = true;
 				    active_tg.push_back(rx_talkgroup);
 				    update_active_tg_win();
+				  } else {
+				  record_tg = false;
 				  }
-				} else {
-				  record_tg = true;
 				}
 
 		  if (record_tg){
