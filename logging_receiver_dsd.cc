@@ -198,14 +198,14 @@ void log_dsd::deactivate() {
 
 	unlock();
 
-/*	
+	
 	wav_sink.reset();
-	prefilter.reset();
+	/*prefilter.reset();
 	downsample_sig.reset();
 	demod.reset();
 	sym_filter.reset();
-	dsd.reset();
-*/
+	dsd.reset();*/
+
 	//std::cout<< "logging_receiver_dsd.cc: Deactivated Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
 	
 }
@@ -230,6 +230,8 @@ void log_dsd::activate(float f, int t, int num) {
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
+	//wav_sink->open(filename);
+	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
@@ -239,7 +241,7 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(sym_filter, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 
-	wav_sink->open(filename); // = gr_make_wavfile_sink(filename,1,8000,16);
+	 // = gr_make_wavfile_sink(filename,1,8000,16);
 	unlock();	
 /*
 
