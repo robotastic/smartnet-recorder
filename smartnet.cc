@@ -376,9 +376,9 @@ float parse_message(string s) {
 				  if (((rx_talkgroup->get_priority() == 1) && (active_loggers.size() < max_loggers)) ||
 				      ((rx_talkgroup->get_priority() == 2) && (active_loggers.size() < 4 )) ||
 				      ((rx_talkgroup->get_priority() == 3) && (active_loggers.size() < 2 ))) {
-				    record_tg = true;
-				    active_tg.push_back(rx_talkgroup);
-				    update_active_tg_win();
+				    //record_tg = true;
+				    //active_tg.push_back(rx_talkgroup);
+				    //update_active_tg_win();
 				  } else {
 				  record_tg = false;
 				  }
