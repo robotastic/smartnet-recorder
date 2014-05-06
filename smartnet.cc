@@ -567,8 +567,8 @@ std::string device_addr;
 	create_status_win();
 		
 
-			std::string sentence;
-			gr_message_sptr msg;
+	std::string sentence;
+	gr_message_sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
@@ -581,7 +581,7 @@ std::string device_addr;
 			msg = queue->delete_head();
 			sentence = msg->to_string();
 			parse_message(sentence);	
-			
+			msg->reset();
 
 
 	}
