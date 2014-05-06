@@ -581,7 +581,7 @@ std::string device_addr;
 			msg = queue->delete_head();
 			sentence = msg->to_string();
 			parse_message(sentence);	
-			msg->reset();
+			msg.reset();
 
 
 	}
