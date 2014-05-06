@@ -315,7 +315,9 @@ float parse_message(string s) {
 	int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
-	    
+	
+	x.clear();
+	vector<string>().swap(x);
 
         if (command < 0x2d0) {
 
