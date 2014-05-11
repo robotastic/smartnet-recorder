@@ -166,7 +166,7 @@ void log_dsd::deactivate() {
 	if (iam_logging) {
 	logging = false;
 	}
-	//wav_sink->close();
+	wav_sink->close();
 
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
@@ -178,13 +178,13 @@ void log_dsd::deactivate() {
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, dsd, 0);
-	//disconnect(dsd, 0, wav_sink,0);
-	disconnect(dsd,0 , bismark, 0);
+	disconnect(dsd, 0, wav_sink,0);
+	//disconnect(dsd,0 , bismark, 0);
 
 	unlock();
 
 	
-	//wav_sink.reset();
+	wav_sink.reset();
 	
 }
 
@@ -207,7 +207,7 @@ void log_dsd::activate(float f, int t, int num) {
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
-	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
@@ -215,8 +215,8 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, dsd, 0);
-	//connect(dsd, 0, wav_sink,0);
-	connect(dsd,0,bismark,0);
+	connect(dsd, 0, wav_sink,0);
+	//connect(dsd,0,bismark,0);
 
 	unlock();	
 
