@@ -95,7 +95,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	//sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
-	bismark = gr_make_null_sink(sizeof(char));
+	bismark = gr_make_null_sink(sizeof(float));
 	
 	connect(self(),0, null_sink,0);
 }
