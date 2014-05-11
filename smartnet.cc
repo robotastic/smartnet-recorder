@@ -414,8 +414,8 @@ float parse_message(string s) {
 			update_active_tg_win();
 			rx->deactivate();
 
-			sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-			system(shell_command);
+			//sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+			//system(shell_command);
 
 			//static loggers
 			loggers.push_back(move(rx));
