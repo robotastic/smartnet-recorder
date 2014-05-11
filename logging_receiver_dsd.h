@@ -101,6 +101,7 @@ private:
 	//smartnet_wavsink_sptr wav_sink
 	//gr::blocks::wavfile_sink::sptr wav_sink;
 	gr_null_sink_sptr null_sink;
+	gr_null_sink_sptr bismark;
 	gr_null_source_sptr null_source;
 	gr_head_sptr head_source;
 	gr_kludge_copy_sptr copier;
