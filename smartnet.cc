@@ -557,7 +557,7 @@ std::string device_addr;
 	tb->start();
 
 	parse_file("ChanList.csv");
-	/*initscr();
+	initscr();
 	cbreak();
 	noecho();
 	nodelay(active_tg_win,TRUE);
@@ -565,11 +565,11 @@ std::string device_addr;
 
 	create_active_tg_win();
 	create_status_win();
-	*/	
-int i =0;
+		
+
 	
 	gr_message_sptr msg;
-	while (i<3000) {
+	while (1) {
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
 			tb->stop();
@@ -582,11 +582,11 @@ int i =0;
 			parse_message(msg->to_string());	
 			msg.reset();
 			//delete(sentence);
-			i++;
+
 
 	}
-	tb->stop();
-  //endwin(); 
+	
+  endwin(); 
 
   // Exit normally.
   return 0;
