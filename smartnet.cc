@@ -557,7 +557,7 @@ std::string device_addr;
 	tb->start();
 
 	parse_file("ChanList.csv");
-	initscr();
+	/*initscr();
 	cbreak();
 	noecho();
 	nodelay(active_tg_win,TRUE);
@@ -565,7 +565,7 @@ std::string device_addr;
 
 	create_active_tg_win();
 	create_status_win();
-		
+	*/	
 int i =0;
 	
 	gr_message_sptr msg;
@@ -586,7 +586,7 @@ int i =0;
 
 	}
 	tb->stop();
-  endwin(); 
+  //endwin(); 
 
   // Exit normally.
   return 0;
