@@ -566,10 +566,10 @@ std::string device_addr;
 	create_active_tg_win();
 	create_status_win();
 		
-
+int i =0;
 	
 	gr_message_sptr msg;
-	while (1) {
+	while (i<3000) {
 		if(exit_flag){ // my action when signal set it 1
        			printf("\n Signal caught!\n");
 			tb->stop();
@@ -582,10 +582,10 @@ std::string device_addr;
 			parse_message(msg->to_string());	
 			msg.reset();
 			//delete(sentence);
-
+			i++;
 
 	}
-	
+	tb->stop();
   endwin(); 
 
   // Exit normally.
