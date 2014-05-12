@@ -184,7 +184,7 @@ void log_dsd::deactivate() {
 	unlock();
 
 	
-	wav_sink.reset();
+	//wav_sink.reset();
 	
 }
 
@@ -207,7 +207,8 @@ void log_dsd::activate(float f, int t, int num) {
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
-	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+	wav_sink.open(filename);
+	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
