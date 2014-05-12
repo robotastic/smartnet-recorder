@@ -106,7 +106,7 @@ osmosdr_source_c_sptr src;
 
 
 vector<log_dsd_sptr> loggers;
-unsigned int max_loggers = 7;
+unsigned int max_loggers = 6;
 
 vector<log_dsd_sptr> active_loggers;
 
