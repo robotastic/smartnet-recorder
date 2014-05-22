@@ -41,6 +41,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	center = c;
 	talkgroup = t;
 	num = n;
+	active = false;
 
 	timestamp = time(NULL);
 	starttime = time(NULL);
@@ -116,6 +117,10 @@ void log_dsd::mute() {
 
 }
 
+bool log_dsd::is_active() {
+	return active;
+}
+
 long log_dsd::get_talkgroup() {
 	return talkgroup;
 }
@@ -182,7 +187,7 @@ void log_dsd::deactivate() {
 	//disconnect(dsd,0 , bismark, 0);
 
 	unlock();
-
+	active = false;
 	
 	//wav_sink.reset();
 	
@@ -219,7 +224,8 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(dsd, 0, wav_sink,0);
 	//connect(dsd,0,bismark,0);
 
-	unlock();	
+	unlock();
+	active = true;	
 
 }
 

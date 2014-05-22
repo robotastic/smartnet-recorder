@@ -60,6 +60,7 @@ public:
 	void deactivate();
 	float get_freq();
 	long get_talkgroup();
+	bool is_active();
 	int lastupdate();
 	long elapsed();
 	void close();
@@ -78,19 +79,20 @@ private:
 	int num;
     	
 	bool iam_logging;
+	bool active;
 	std::vector<float> lpf_taps;
 	std::vector<float> resampler_taps;
 	std::vector<float> sym_taps;
 
     /* GR blocks */
-    	gr_fir_filter_ccf_sptr lpf;
+    gr_fir_filter_ccf_sptr lpf;
 	gr_fir_filter_fff_sptr sym_filter;
 	gr_freq_xlating_fir_filter_ccf_sptr prefilter;
 	gr_sig_source_c_sptr offset_sig; 
 
 	gr_multiply_cc_sptr mixer;
 	gr_file_sink_sptr fs;
- gr_multiply_const_ff_sptr quiet;
+ 	gr_multiply_const_ff_sptr quiet;
 
 	gr_rational_resampler_base_ccf_sptr downsample_sig;
 	gr_rational_resampler_base_fff_sptr upsample_audio;

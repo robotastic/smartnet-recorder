@@ -92,54 +92,55 @@
 
 
 
-namespace po = boost::program_options;
+ namespace po = boost::program_options;
 
-using namespace std;
-
-
-int lastcmd = 0;
-int thread_num=0;
-double center_freq;
-
-gr_top_block_sptr tb;
-osmosdr_source_c_sptr src;
+ using namespace std;
 
 
-vector<log_dsd_sptr> loggers;
-unsigned int max_loggers = 6;
+ int lastcmd = 0;
+ int thread_num=0;
+ double center_freq;
 
-vector<log_dsd_sptr> active_loggers;
-
-vector<Talkgroup *> talkgroups;
-vector<Talkgroup *> active_tg;
-char **menu_choices;
-char status[150];
-ITEM **tg_menu_items;
+ gr_top_block_sptr tb;
+ osmosdr_source_c_sptr src;
 
 
-WINDOW *active_tg_win;
-WINDOW *tg_menu_win;
-WINDOW *status_win;
-MENU *tg_menu;
+ vector<log_dsd_sptr> loggers;
+ unsigned int max_loggers = 6;
+ unsigned int num_loggers = 0;
+ vector<log_dsd_sptr> active_loggers;
+
+
+ vector<Talkgroup *> talkgroups;
+ vector<Talkgroup *> active_tg;
+ char **menu_choices;
+ char status[150];
+ ITEM **tg_menu_items;
+
+
+ WINDOW *active_tg_win;
+ WINDOW *tg_menu_win;
+ WINDOW *status_win;
+ MENU *tg_menu;
 
 
 
-volatile sig_atomic_t exit_flag = 0;
+ volatile sig_atomic_t exit_flag = 0;
 
 
-void update_active_tg_win() {
-	werase(active_tg_win); 
-	box(active_tg_win, 0, 0);
-	int i=0;
-	for(std::vector<Talkgroup *>::iterator it = active_tg.begin(); it != active_tg.end(); ++it) {
-		Talkgroup *tg = (Talkgroup *) *it;		
+ void update_active_tg_win() {
+ 	werase(active_tg_win); 
+ 	box(active_tg_win, 0, 0);
+ 	int i=0;
+ 	for(std::vector<Talkgroup *>::iterator it = active_tg.begin(); it != active_tg.end(); ++it) {
+ 		Talkgroup *tg = (Talkgroup *) *it;		
 		/*s = tg->menu_string();
 		c = (char *) malloc((s.size() + 1) * sizeof(char));
 		//strncpy(c, s.c_str(), s.size());
     		//c[s.size()] = '\0';
 		strcpy(c, s.c_str());			
 		*/
-	
+
 		mvwprintw(active_tg_win,i*2+1,2,"TG: %s", tg->alpha_tag.c_str());
 		mvwprintw(active_tg_win,i*2+2,6,"%s ", tg->description.c_str());
 		mvwprintw(active_tg_win,i*2+1,40,"Num: %5lu", tg->number);
@@ -185,7 +186,7 @@ void create_active_tg_win() {
 void create_tg_menu() {
 	std::string s;
 	int n_choices, i;
- 	char *c;
+	char *c;
 
        	//printw("%s\n", s.c_str());
 	menu_choices = new char*[talkgroups.size()];
@@ -205,7 +206,7 @@ void create_tg_menu() {
 
 	n_choices = talkgroups.size(); //ARRAY_SIZE(menu_choices);
 	tg_menu_items = (ITEM **) calloc(n_choices + 1, sizeof(ITEM *));
-		
+
 	
 	for (i=0; i < n_choices; ++i) {
 		tg_menu_items[i] = new_item(menu_choices[i], menu_choices[i]);
@@ -217,7 +218,7 @@ void create_tg_menu() {
 	tg_menu_win = newwin(LINES - 11, COLS, 10, 0);
 	keypad(tg_menu_win, TRUE);
 	
-		 
+
 	set_menu_win(tg_menu, tg_menu_win);
 	set_menu_sub(tg_menu, derwin(tg_menu_win, LINES - 15, COLS - 4, 2, 2));	
 	set_menu_format(tg_menu, LINES - 14 , 1);
@@ -227,7 +228,7 @@ void create_tg_menu() {
 	//menu_opts_off(tg_menu, O_ONEVALUE);
 
 	post_menu(tg_menu);
-		 
+
 }
 
 
@@ -248,61 +249,61 @@ void init_loggers(int num, float center_freq) {
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
 
- 	}
+	}
 
 }
 
 float getfreq(int cmd) {
 	float freq;
-		if (cmd < 0x1b8) {	
-			freq = float(cmd * 0.025 + 851.0125);
-		} else if (cmd < 0x230) {
-			freq = float(cmd * 0.025 + 851.0125 - 10.9875);
-			} else {
-			freq = 0;
-			}
+	if (cmd < 0x1b8) {	
+		freq = float(cmd * 0.025 + 851.0125);
+	} else if (cmd < 0x230) {
+		freq = float(cmd * 0.025 + 851.0125 - 10.9875);
+	} else {
+		freq = 0;
+	}
 	
 	return freq;
 }
 
 void parse_file(string filename) {
-    ifstream in(filename.c_str());
-    if (!in.is_open()) return;
+	ifstream in(filename.c_str());
+	if (!in.is_open()) return;
 
 	boost::char_separator<char> sep(",");
 	typedef boost::tokenizer< boost::char_separator<char> > t_tokenizer;
 
-    vector< string > vec;
-    string line;
+	vector< string > vec;
+	string line;
 
-    while (getline(in,line))
-    {
-	
-	t_tokenizer tok(line, sep);
+	while (getline(in,line))
+	{
+
+		t_tokenizer tok(line, sep);
 	//Tokenizer tok(line);
-        vec.assign(tok.begin(),tok.end());
-        if (vec.size() < 8) continue;
+		vec.assign(tok.begin(),tok.end());
+		if (vec.size() < 8) continue;
 
-	Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
+		Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
 
-	talkgroups.push_back(tg);
-    }
+		talkgroups.push_back(tg);
+	}
 }
 
 
 void parse_status(int command, int address, int groupflag) {
-	    int Value = address << 1 | (groupflag ? (1) : 0);
-            int GroupTimeout = Value & (0x1f);
-            Value >>= 5;
-            int ConnecTimeout = Value & (0x1f);
-            Value >>= 5;
-            int DispatchTimeout = Value & 0xf;
-            Value >>= 4;
-            int Power = Value & 1;
-            Value >>= 1;
-            int OpCode = Value;
-            sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
-            update_status_win(status);
+	int Value = address << 1 | (groupflag ? (1) : 0);
+	int GroupTimeout = Value & (0x1f);
+	Value >>= 5;
+	int ConnecTimeout = Value & (0x1f);
+	Value >>= 5;
+	int DispatchTimeout = Value & 0xf;
+	Value >>= 4;
+	int Power = Value & 1;
+	Value >>= 1;
+	int OpCode = Value;
+	sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
+	update_status_win(status);
 }
 
 float parse_message(string s) {
@@ -319,7 +320,7 @@ float parse_message(string s) {
 	x.clear();
 	vector<string>().swap(x);
 
-        if (command < 0x2d0) {
+	if (command < 0x2d0) {
 
 		if ( lastcmd == 0x308) {
 		        // Channel Grant
@@ -338,69 +339,10 @@ float parse_message(string s) {
 		//parse_status(command, address,groupflag);
 	}
 
-
-	if (retfreq) {
-		for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end(); ++it) {	
-			log_dsd_sptr rx = *it;	
-						
-			if (rx->get_talkgroup() == address) {		
-				if (rx->get_freq() != retfreq) {
-					sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
-					update_status_win(status);
-					rx->tune_offset(retfreq);
-				}
-				rx->unmute();
-				
-				rxfound = true;
-			} else {
-				if (rx->get_freq() == retfreq) {
-					sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
-					update_status_win(status);
-					//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
-					rx->mute();
-				}
-			}
-		}
-
-
-		if ((!rxfound)){ 
-		  Talkgroup *rx_talkgroup = NULL;
-		  bool record_tg = false;
-		  		for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
-					Talkgroup *tg = (Talkgroup *) *it;	
-					if (tg->number == address) {
-					  rx_talkgroup = tg;
-					  break;
-					}
-		
-				}
-				if (rx_talkgroup) {
-				  if (((rx_talkgroup->get_priority() == 1) && (active_loggers.size() < max_loggers)) ||
-				      ((rx_talkgroup->get_priority() == 2) && (active_loggers.size() < 4 )) ||
-				      ((rx_talkgroup->get_priority() == 3) && (active_loggers.size() < 2 ))) {
-				    record_tg = true;
-				    active_tg.push_back(rx_talkgroup);
-				    update_active_tg_win();
-				  } else {
-				  record_tg = false;
-				  }
-				}
-
-		  if (record_tg){
-			log_dsd_sptr log = loggers.front();
-			active_loggers.push_back(move(log));
-			loggers.erase(loggers.begin());
-			log->activate(retfreq, address,active_loggers.size());
-		  }			
-		}
-		
-	}
-
-
-	for(vector<log_dsd_sptr>::iterator it = active_loggers.begin(); it != active_loggers.end();) {
+	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
 		log_dsd_sptr rx = *it;
 
-		if (rx->lastupdate() > 5.0) {
+		if (rx->lastupdate() > 3.0) {
 			
 
 			for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
@@ -410,73 +352,134 @@ float parse_message(string s) {
 					break;
 				}
 			}
-                
+
 			update_active_tg_win();
-			rx->deactivate();
 
 			sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+
+			rx->deactivate();
+			num_loggers--;
+
 			system(shell_command);
-
-			//static loggers
-			loggers.push_back(move(rx));
-			
-
-			it = active_loggers.erase(it);
-			
-
-		} else {
-			++it;
 		}
 	}
 
-	lastcmd = command;
-       
+	if (retfreq) {
+		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {	
+			log_dsd_sptr rx = *it;	
 
-	return retfreq;
+			if (rx->is_active())
+			{
+				if (rx->get_talkgroup() == address) {		
+					if (rx->get_freq() != retfreq) {
+						sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
+						update_status_win(status);
+						rx->tune_offset(retfreq);
+					}
+					rx->unmute();
+					
+					rxfound = true;
+				} else {
+					if (rx->get_freq() == retfreq) {
+						sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
+						update_status_win(status);
+						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
+						rx->mute();
+					}
+				}
+			}
+		}
+
+
+		if ((!rxfound)){ 
+			Talkgroup *rx_talkgroup = NULL;
+			bool record_tg = false;
+			for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
+				Talkgroup *tg = (Talkgroup *) *it;	
+				if (tg->number == address) {
+					rx_talkgroup = tg;
+					break;
+				}
+
+			}
+			if (rx_talkgroup) {
+				if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
+					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
+					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
+					record_tg = true;
+				active_tg.push_back(rx_talkgroup);
+				update_active_tg_win();
+			} else {
+				record_tg = false;
+			}
+		}
+
+		if (record_tg){
+			for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+				log_dsd_sptr rx = *it;
+				if (!rx->is_active())
+				{
+					num_loggers++;
+					rx->activate(retfreq, address,num_loggers);
+				}
+			}
+
+		}			
+	}
+
+}
+
+
+
+
+lastcmd = command;
+
+
+return retfreq;
 }
 
 
 int main(int argc, char **argv)
 {
 
-std::string device_addr;
-    double  samp_rate, chan_freq, error;
+	std::string device_addr;
+	double  samp_rate, chan_freq, error;
 	int if_gain, bb_gain, rf_gain;
     //setup the program options
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("help", "help message")
-        ("arg", po::value<std::string>(&device_addr)->default_value(""), "the device arguments in string format")
-        ("rate", po::value<double>(&samp_rate)->default_value(1e6), "the sample rate in samples per second")
-        ("center", po::value<double>(&center_freq)->default_value(10e6), "the center frequency in Hz")
+	po::options_description desc("Allowed options");
+	desc.add_options()
+	("help", "help message")
+	("arg", po::value<std::string>(&device_addr)->default_value(""), "the device arguments in string format")
+	("rate", po::value<double>(&samp_rate)->default_value(1e6), "the sample rate in samples per second")
+	("center", po::value<double>(&center_freq)->default_value(10e6), "the center frequency in Hz")
 	("error", po::value<double>(&error)->default_value(0), "the Error in frequency in Hz")
 	("freq", po::value<double>(&chan_freq)->default_value(10e6), "the frequency in Hz of the trunking channel")
-        ("rfgain", po::value<int>(&rf_gain)->default_value(14), "RF Gain")
+	("rfgain", po::value<int>(&rf_gain)->default_value(14), "RF Gain")
 	("bbgain", po::value<int>(&bb_gain)->default_value(25), "BB Gain")
 	("ifgain", po::value<int>(&if_gain)->default_value(25), "IF Gain")
-    ;
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
+	;
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
 
     //print the help message
-    if (vm.count("help")){
-        std::cout
-            << boost::format("SmartNet Trunking Reciever %s") % desc << std::endl
-            << "The tags sink demo block will print USRP source time stamps." << std::endl
-            << "The tags source demo block will send bursts to the USRP sink." << std::endl
-            << "Look at the USRP output on a scope to see the timed bursts." << std::endl
-            << std::endl;
-        return ~0;
-    }
+	if (vm.count("help")){
+		std::cout
+		<< boost::format("SmartNet Trunking Reciever %s") % desc << std::endl
+		<< "The tags sink demo block will print USRP source time stamps." << std::endl
+		<< "The tags source demo block will send bursts to the USRP sink." << std::endl
+		<< "Look at the USRP output on a scope to see the timed bursts." << std::endl
+		<< std::endl;
+		return ~0;
+	}
 
 
 
 
- 	signal(SIGINT, exit_interupt);
+	signal(SIGINT, exit_interupt);
 	parse_file("ChanList.csv");
 
- 	tb = gr_make_top_block("smartnet");
+	tb = gr_make_top_block("smartnet");
 
 	
 	src = osmosdr_make_source_c();
@@ -518,13 +521,13 @@ std::string device_addr;
 
 
 	gr_freq_xlating_fir_filter_ccf_sptr prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
-						       gr_firdes::low_pass(1, samp_rate, 10000, 12000),
-						       offset, 
-						       samp_rate);
+		gr_firdes::low_pass(1, samp_rate, 10000, 12000),
+		offset, 
+		samp_rate);
 
 
 	gr_pll_freqdet_cf_sptr pll_demod = gr_make_pll_freqdet_cf(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
-										-2*pi/clockrec_oversample);
+		-2*pi/clockrec_oversample);
 
 	digital_fll_band_edge_cc_sptr carriertrack = digital_make_fll_band_edge_cc(sps, 0.6, 64, 0.35);
 
@@ -552,7 +555,7 @@ std::string device_addr;
 	
 	tb->connect(start_correlator, 0, deinterleave, 0);
 
-		tb->connect(deinterleave, 0, crc, 0);
+	tb->connect(deinterleave, 0, crc, 0);
 
 	tb->start();
 
@@ -565,29 +568,29 @@ std::string device_addr;
 
 	create_active_tg_win();
 	create_status_win();
-		
+
 
 	
 	gr_message_sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
-       			printf("\n Signal caught!\n");
+			printf("\n Signal caught!\n");
 			tb->stop();
 			endwin(); 
 			return 0;
 		} 
 
 
-			msg = queue->delete_head();
-			parse_message(msg->to_string());	
-			msg.reset();
+		msg = queue->delete_head();
+		parse_message(msg->to_string());	
+		msg.reset();
 			//delete(sentence);
 
 
 	}
 	
-  endwin(); 
+	endwin(); 
 
   // Exit normally.
-  return 0;
+	return 0;
 }
