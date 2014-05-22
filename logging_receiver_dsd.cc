@@ -45,11 +45,10 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	timestamp = time(NULL);
 	starttime = time(NULL);
 
-	float offset = center - (f*1000000);
+	
 
 	int samp_per_sym = 10;
-	double samp_rate = 5000000;	
-	double decim = 80;
+
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
 	double pre_channel_rate = samp_rate/decim;
@@ -57,43 +56,17 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 
 	
-    	lpf_taps =  gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
-	prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
-						      lpf_taps,
-						       offset, 
-						       samp_rate);
+    lpf_taps =  gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
+	
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
-	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
-	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
-
-	
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
-	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
-	if (!logging) {
-	iam_logging = true;
-	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	
-	} else {
-	iam_logging = false;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	}
 
-
-	tm *ltm = localtime(&starttime);
-	
-	std::stringstream path_stream;
-	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
-	
-	boost::filesystem::create_directories(path_stream.str());
-	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
 	bismark = gr_make_null_sink(sizeof(float));
 	
@@ -182,7 +155,12 @@ void log_dsd::deactivate() {
 	//disconnect(dsd,0 , bismark, 0);
 
 	unlock();
-
+	prefilter.reset();
+	downsample_sig.reset();
+	demod.reset();
+	sym_filter.reset();
+	dsd.reset();
+	wav_sink.reset();
 	
 	//wav_sink.reset();
 	
@@ -195,20 +173,38 @@ void log_dsd::activate(float f, int t, int num) {
 
 	talkgroup = t;
 	freq = f;
+	double samp_rate = 5000000;	
+	double decim = 80;
+	float offset = center - (f*1000000);
+	int samp_per_sym = 10;
 
-	prefilter->set_center_freq(center - (f*1000000));
-	
+	float xlate_bandwidth = 14000; //24260.0;
+	float channel_rate = 4800 * samp_per_sym;
+	double pre_channel_rate = samp_rate/decim;
 
-	
+
+	prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
+					      lpf_taps,
+					       offset, 
+					       samp_rate);
+	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
+	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
+	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+
 	tm *ltm = localtime(&starttime);
 	
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
 	
 	boost::filesystem::create_directories(path_stream.str());
-	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
-	wav_sink->open(filename);
-	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
+	
+	
+	tm *ltm = localtime(&starttime);
+	
+	
 	lock();
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
