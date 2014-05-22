@@ -46,7 +46,8 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	starttime = time(NULL);
 
 	
-
+	double samp_rate = 5000000;	
+	double decim = 80;
 	int samp_per_sym = 10;
 
 	float xlate_bandwidth = 14000; //24260.0;
@@ -192,7 +193,7 @@ void log_dsd::activate(float f, int t, int num) {
 	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
-	tm *ltm = localtime(&starttime);
+
 	
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
