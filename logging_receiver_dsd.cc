@@ -194,7 +194,7 @@ void log_dsd::activate(float f, int t, int num) {
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
 
-	
+	tm *ltm = localtime(&starttime);	
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
 	
@@ -203,7 +203,7 @@ void log_dsd::activate(float f, int t, int num) {
 	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	
 	
-	tm *ltm = localtime(&starttime);
+
 	
 	
 	lock();
