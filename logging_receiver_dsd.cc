@@ -76,15 +76,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
-	if (!logging) {
-	iam_logging = true;
-	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	
-	} else {
-	iam_logging = false;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	}
+
 
 
 	tm *ltm = localtime(&starttime);
@@ -188,6 +180,7 @@ void log_dsd::deactivate() {
 
 	unlock();
 	active = false;
+	dsd.reset();
 	
 	//wav_sink.reset();
 	
@@ -204,7 +197,15 @@ void log_dsd::activate(float f, int t, int num) {
 	prefilter->set_center_freq(center - (f*1000000));
 	
 
+	if (!logging) {
+	iam_logging = true;
+	logging = true;
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	
+	} else {
+	iam_logging = false;
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+	}
 	tm *ltm = localtime(&starttime);
 	
 	std::stringstream path_stream;
