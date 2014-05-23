@@ -96,9 +96,17 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
+	null_source = gr_make_null_source(sizeof(gr_complex));
 	bismark = gr_make_null_sink(sizeof(float));
 	
 	connect(self(),0, null_sink,0);
+
+	connect(null_source, 0, prefilter, 0);
+	connect(prefilter, 0, downsample_sig, 0);
+	connect(downsample_sig, 0, demod, 0);
+	connect(demod, 0, sym_filter, 0);
+	connect(sym_filter, 0, dsd, 0);
+	connect(dsd, 0, wav_sink,0);
 }
 
 log_dsd::~log_dsd() {
@@ -174,16 +182,19 @@ void log_dsd::deactivate() {
 	wav_sink->close();
 
 	disconnect(self(), 0, prefilter, 0);
+	disconnect( null_source, 0, null_sink, 0);
+
 	connect(self(),0, null_sink,0);
 	
+	connect(null_source, 0, prefilter,0);
 
-
-
+/*
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, dsd, 0);
-	disconnect(dsd, 0, wav_sink,0);
+	disconnect(dsd, 0, wav_sink,0);*/
+
 	//disconnect(dsd,0 , bismark, 0);
 
 	unlock();
@@ -216,12 +227,16 @@ void log_dsd::activate(float f, int t, int num) {
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
 	disconnect(self(),0, null_sink, 0);
+	disconnect(null_source, 0, prefilter,0);
 	connect(self(),0, prefilter,0);
-	connect(prefilter, 0, downsample_sig, 0);
-	connect(downsample_sig, 0, demod, 0);
-	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, dsd, 0);
-	connect(dsd, 0, wav_sink,0);
+	connect( null_source, 0, null_sink, 0);
+
+	
+	
+
+
+
+
 	//connect(dsd,0,bismark,0);
 
 	unlock();
