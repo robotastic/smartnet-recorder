@@ -407,7 +407,7 @@ float parse_message(string s) {
 		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
 			log_dsd_sptr rx = *it;
 
-			if (rx->lastupdate() > 3.0) {
+			if (rx->is_active && (rx->lastupdate() > 3.0)) {
 				
 
 				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
