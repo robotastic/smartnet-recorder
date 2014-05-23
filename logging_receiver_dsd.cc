@@ -41,6 +41,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	center = c;
 	talkgroup = t;
 	num = n;
+	active = false;
 
 	timestamp = time(NULL);
 	starttime = time(NULL);
@@ -125,7 +126,9 @@ void log_dsd::close() {
 	//std::cout<< "logging_receiver_dsd.cc: finished close()" <<std::endl;
 }
 */
-
+bool log_dsd::is_active() {
+	return active;
+}
 
 void log_dsd::tune_offset(float f) {
 	freq = f;
@@ -163,6 +166,7 @@ void log_dsd::deactivate() {
 	dsd.reset();
 	wav_sink.reset();
 	
+	active = false;
 	//wav_sink.reset();
 	
 }
@@ -174,6 +178,8 @@ void log_dsd::activate(float f, int t, int num) {
 
 	talkgroup = t;
 	freq = f;
+
+
 	double samp_rate = 5000000;	
 	double decim = 80;
 	float offset = center - (f*1000000);
@@ -216,7 +222,9 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(dsd, 0, wav_sink,0);
 	//connect(dsd,0,bismark,0);
 
-	unlock();	
+	unlock();
+
+	active = true;	
 
 }
 
