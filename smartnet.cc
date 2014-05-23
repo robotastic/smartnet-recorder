@@ -421,6 +421,7 @@ float parse_message(string s) {
 				{
 					num_loggers++;
 					rx->activate(retfreq, address,num_loggers);
+					break;
 				}
 			}
 
