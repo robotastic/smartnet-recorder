@@ -302,8 +302,11 @@ void parse_status(int command, int address, int groupflag) {
 	int Power = Value & 1;
 	Value >>= 1;
 	int OpCode = Value;
-	sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
-	update_status_win(status);
+
+	if (console) {
+		sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
+		update_status_win(status);
+	}
 }
 
 float parse_message(string s) {
@@ -339,12 +342,12 @@ float parse_message(string s) {
 		//parse_status(command, address,groupflag);
 	}
 
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-			log_dsd_sptr rx = *it;
+	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+		log_dsd_sptr rx = *it;
 
-			if (rx->is_active() && (rx->lastupdate() > 3.0)) {
-				
-
+		if (rx->is_active() && (rx->lastupdate() > 3.0)) {
+			
+			if (console) {
 				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
 					Talkgroup *tg = (Talkgroup *) *tg_it;	
 					if (tg->number == rx->get_talkgroup()) {
@@ -354,15 +357,15 @@ float parse_message(string s) {
 				}
 
 				update_active_tg_win();
-
-				sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-
-				rx->deactivate();
-				num_loggers--;
-
-				system(shell_command);
 			}
-		}	
+			sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+
+			rx->deactivate();
+			num_loggers--;
+
+			system(shell_command);
+		}
+	}	
 
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {	
@@ -372,8 +375,10 @@ float parse_message(string s) {
 			{
 				if (rx->get_talkgroup() == address) {		
 					if (rx->get_freq() != retfreq) {
-						sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
-						update_status_win(status);
+						if (console) {
+							sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
+							update_status_win(status);
+						}
 						rx->tune_offset(retfreq);
 					}
 					rx->unmute();
@@ -381,8 +386,10 @@ float parse_message(string s) {
 					rxfound = true;
 				} else {
 					if (rx->get_freq() == retfreq) {
-						sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
-						update_status_win(status);
+						if (console) {
+							sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
+							update_status_win(status);
+						}
 						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 						rx->mute();
 					}
@@ -407,8 +414,10 @@ float parse_message(string s) {
 					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
 					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
 					record_tg = true;
-				active_tg.push_back(rx_talkgroup);
-				update_active_tg_win();
+				if (console) {
+					active_tg.push_back(rx_talkgroup);
+					update_active_tg_win();
+				}
 			} else {
 				record_tg = false;
 			}
@@ -563,15 +572,16 @@ int main(int argc, char **argv)
 	tb->start();
 
 	parse_file("ChanList.csv");
-	initscr();
-	cbreak();
-	noecho();
-	nodelay(active_tg_win,TRUE);
-	
+	if (console) {
+		initscr();
+		cbreak();
+		noecho();
+		nodelay(active_tg_win,TRUE);
+		
 
-	create_active_tg_win();
-	create_status_win();
-
+		create_active_tg_win();
+		create_status_win();
+	}
 
 	
 	gr_message_sptr msg;
