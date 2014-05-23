@@ -339,7 +339,30 @@ float parse_message(string s) {
 		//parse_status(command, address,groupflag);
 	}
 
+		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+			log_dsd_sptr rx = *it;
 
+			if (rx->is_active() && (rx->lastupdate() > 3.0)) {
+				
+
+				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
+					Talkgroup *tg = (Talkgroup *) *tg_it;	
+					if (tg->number == rx->get_talkgroup()) {
+						active_tg.erase(tg_it);
+						break;
+					}
+				}
+
+				update_active_tg_win();
+
+				sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+
+				rx->deactivate();
+				num_loggers--;
+
+				system(shell_command);
+			}
+		}	
 
 	if (retfreq) {
 		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {	
@@ -404,30 +427,7 @@ float parse_message(string s) {
 
 		}
 
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-			log_dsd_sptr rx = *it;
-
-			if (rx->is_active() && (rx->lastupdate() > 3.0)) {
-				
-
-				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
-					Talkgroup *tg = (Talkgroup *) *tg_it;	
-					if (tg->number == rx->get_talkgroup()) {
-						active_tg.erase(tg_it);
-						break;
-					}
-				}
-
-				update_active_tg_win();
-
-				sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-
-				rx->deactivate();
-				num_loggers--;
-
-				system(shell_command);
-			}
-		}			
+		
 	}
 
 }
