@@ -100,6 +100,8 @@
  int lastcmd = 0;
  int thread_num=0;
  double center_freq;
+bool console  = false;
+
 
  gr_top_block_sptr tb;
  osmosdr_source_c_sptr src;
@@ -346,7 +348,7 @@ float parse_message(string s) {
 		log_dsd_sptr rx = *it;
 
 		if (rx->is_active() && (rx->lastupdate() > 3.0)) {
-			
+
 			if (console) {
 				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
 					Talkgroup *tg = (Talkgroup *) *tg_it;	
@@ -577,7 +579,7 @@ int main(int argc, char **argv)
 		cbreak();
 		noecho();
 		nodelay(active_tg_win,TRUE);
-		
+
 
 		create_active_tg_win();
 		create_status_win();
