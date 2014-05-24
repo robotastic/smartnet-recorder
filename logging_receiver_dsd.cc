@@ -174,13 +174,13 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, dsd, 0);
-	disconnect(dsd, 0, wav_sink,0);
-	//disconnect(dsd,0 , bismark, 0);
-
+	/*disconnect(sym_filter, 0, dsd, 0);
+	disconnect(dsd, 0, wav_sink,0);*/
+	disconnect(sym_filter, 0, wav_sink,0);
+	
 	unlock();
 	active = false;
-	dsd.reset();
+	//dsd.reset();
 	
 	//wav_sink.reset();
 	
@@ -197,7 +197,7 @@ void log_dsd::activate(float f, int t, int num) {
 	prefilter->set_center_freq(center - (f*1000000));
 	
 
-	if (!logging) {
+	/*if (!logging) {
 	iam_logging = true;
 	logging = true;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
@@ -205,7 +205,7 @@ void log_dsd::activate(float f, int t, int num) {
 	} else {
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	}
+	}*/
 	tm *ltm = localtime(&starttime);
 	
 	std::stringstream path_stream;
@@ -221,10 +221,10 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, dsd, 0);
-	connect(dsd, 0, wav_sink,0);
-	//connect(dsd,0,bismark,0);
-
+	/*connect(sym_filter, 0, dsd, 0);
+	connect(dsd, 0, wav_sink,0);*/
+	connect(sym_filter, 0, wav_sink,0);
+	
 	unlock();
 	active = true;	
 
