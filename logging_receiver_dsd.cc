@@ -79,7 +79,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
 
-/*
+
 	tm *ltm = localtime(&starttime);
 	
 	std::stringstream path_stream;
@@ -87,7 +87,7 @@ dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);*/
+	wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
 	bismark = gr_make_null_sink(sizeof(float));
 	
@@ -164,7 +164,7 @@ void log_dsd::deactivate() {
 	if (iam_logging) {
 	logging = false;
 	}
-	//wav_sink->close();
+	wav_sink->close();
 
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
@@ -176,8 +176,8 @@ void log_dsd::deactivate() {
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, dsd, 0);
-	//disconnect(dsd, 0, wav_sink,0);
-	disconnect(dsd, 0, bismark,0);
+	disconnect(dsd, 0, wav_sink,0);
+	//disconnect(dsd, 0, bismark,0);
 
 	
 	unlock();
@@ -208,14 +208,14 @@ void log_dsd::activate(float f, int t, int num) {
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	}*/
-	/*tm *ltm = localtime(&starttime);
+	tm *ltm = localtime(&starttime);
 	
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
 	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
-	wav_sink->open(filename);*/
+	wav_sink->open(filename);
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
 	disconnect(self(),0, null_sink, 0);
@@ -224,8 +224,8 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, dsd, 0);
-	//connect(dsd, 0, wav_sink,0);
-	connect(dsd, 0, bismark,0);
+	connect(dsd, 0, wav_sink,0);
+	//connect(dsd, 0, bismark,0);
 	
 	unlock();
 	active = true;	
