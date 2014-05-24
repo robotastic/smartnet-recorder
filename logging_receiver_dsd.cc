@@ -76,6 +76,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
+dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
 
 /*
@@ -174,9 +175,9 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	/*disconnect(sym_filter, 0, dsd, 0);
-	disconnect(dsd, 0, wav_sink,0);*/
-	disconnect(sym_filter, 0, bismark,0);
+	disconnect(sym_filter, 0, dsd, 0);
+	//disconnect(dsd, 0, wav_sink,0);
+	disconnect(dsd, 0, bismark,0);
 
 	
 	unlock();
@@ -222,9 +223,9 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	/*connect(sym_filter, 0, dsd, 0);
-	connect(dsd, 0, wav_sink,0);*/
-	connect(sym_filter, 0, bismark,0);
+	connect(sym_filter, 0, dsd, 0);
+	//connect(dsd, 0, wav_sink,0);
+	connect(dsd, 0, bismark,0);
 	
 	unlock();
 	active = true;	
