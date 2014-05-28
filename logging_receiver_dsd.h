@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -66,7 +68,7 @@ public:
 	long elapsed();
 	void close();
 	void mute();
-	void unmute();	
+	void unmute();
 	char *get_filename();
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
 	static bool logging;
@@ -77,8 +79,9 @@ private:
 	time_t timestamp;
 	time_t starttime;
 	char filename[160];
+  char status_filename[160];
 	int num;
-    	
+
 	bool iam_logging;
 	bool active;
 	std::vector<float> lpf_taps;
@@ -89,7 +92,7 @@ private:
     gr_fir_filter_ccf_sptr lpf;
 	gr_fir_filter_fff_sptr sym_filter;
 	gr_freq_xlating_fir_filter_ccf_sptr prefilter;
-	gr_sig_source_c_sptr offset_sig; 
+	gr_sig_source_c_sptr offset_sig;
 
 	gr_multiply_cc_sptr mixer;
 	gr_file_sink_sptr fs;
@@ -113,4 +116,3 @@ private:
 
 
 #endif
-

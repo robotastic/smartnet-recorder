@@ -258,10 +258,10 @@ private:
    */
   dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int uvquality, bool errorbars, int verbosity, bool empty, int num); // private constructor
 bool empty_frames;
-  
+
  public:
   ~dsd_block_ff ();	// public destructor
-
+  no_carrier();
   // Where all the action really happens
 
   int close();

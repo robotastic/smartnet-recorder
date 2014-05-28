@@ -39,10 +39,10 @@
 // Include header files for each block used in flowgraph
 
 #include <iostream>
-#include <fstream> 
-#include <string> 
+#include <fstream>
+#include <string>
 #include <algorithm>    // copy
-#include <iterator> 
+#include <iterator>
 #include <cstddef>
 
 #include "logging_receiver_dsd.h"
@@ -131,16 +131,16 @@ bool console  = false;
 
 
  void update_active_tg_win() {
- 	werase(active_tg_win); 
+ 	werase(active_tg_win);
  	box(active_tg_win, 0, 0);
  	int i=0;
  	for(std::vector<Talkgroup *>::iterator it = active_tg.begin(); it != active_tg.end(); ++it) {
- 		Talkgroup *tg = (Talkgroup *) *it;		
+ 		Talkgroup *tg = (Talkgroup *) *it;
 		/*s = tg->menu_string();
 		c = (char *) malloc((s.size() + 1) * sizeof(char));
 		//strncpy(c, s.c_str(), s.size());
     		//c[s.size()] = '\0';
-		strcpy(c, s.c_str());			
+		strcpy(c, s.c_str());
 		*/
 
 		mvwprintw(active_tg_win,i*2+1,2,"TG: %s", tg->alpha_tag.c_str());
@@ -156,7 +156,7 @@ bool console  = false;
 
 }
 void update_status_win(char *c) {
-	wclear(status_win);	
+	wclear(status_win);
 	//wattron(status_win,A_REVERSE);
 	mvwprintw(status_win,0,2,"%s",c);
 	wrefresh(status_win);
@@ -193,15 +193,15 @@ void create_tg_menu() {
        	//printw("%s\n", s.c_str());
 	menu_choices = new char*[talkgroups.size()];
 	//menu_choices = malloc(talkgroups.size(), sizeof(char *));
-	i=0;	
+	i=0;
 	for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {
-		
-		Talkgroup *tg = (Talkgroup *) *it;		
+
+		Talkgroup *tg = (Talkgroup *) *it;
 		s = tg->menu_string();
 		c = (char *) malloc((s.size() + 1) * sizeof(char));
 		//strncpy(c, s.c_str(), s.size());
     		//c[s.size()] = '\0';
-		strcpy(c, s.c_str());			
+		strcpy(c, s.c_str());
 		menu_choices[i] = c;
 		i++;
 	}
@@ -209,7 +209,7 @@ void create_tg_menu() {
 	n_choices = talkgroups.size(); //ARRAY_SIZE(menu_choices);
 	tg_menu_items = (ITEM **) calloc(n_choices + 1, sizeof(ITEM *));
 
-	
+
 	for (i=0; i < n_choices; ++i) {
 		tg_menu_items[i] = new_item(menu_choices[i], menu_choices[i]);
 		set_item_userptr(tg_menu_items[i], (void *) talkgroups[i]);
@@ -219,13 +219,13 @@ void create_tg_menu() {
 
 	tg_menu_win = newwin(LINES - 11, COLS, 10, 0);
 	keypad(tg_menu_win, TRUE);
-	
+
 
 	set_menu_win(tg_menu, tg_menu_win);
-	set_menu_sub(tg_menu, derwin(tg_menu_win, LINES - 15, COLS - 4, 2, 2));	
+	set_menu_sub(tg_menu, derwin(tg_menu_win, LINES - 15, COLS - 4, 2, 2));
 	set_menu_format(tg_menu, LINES - 14 , 1);
 	//set_menu_mark(tg_menu, " * ");
-	box(tg_menu_win,0,0);	
+	box(tg_menu_win,0,0);
 	menu_opts_off(tg_menu, O_SHOWDESC | O_ONEVALUE);
 	//menu_opts_off(tg_menu, O_ONEVALUE);
 
@@ -247,7 +247,7 @@ void init_loggers(int num, float center_freq) {
 
 // static loggers
 	for (int i = 0; i < num; i++) {
-		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);			
+		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
 
@@ -257,14 +257,14 @@ void init_loggers(int num, float center_freq) {
 
 float getfreq(int cmd) {
 	float freq;
-	if (cmd < 0x1b8) {	
+	if (cmd < 0x1b8) {
 		freq = float(cmd * 0.025 + 851.0125);
 	} else if (cmd < 0x230) {
 		freq = float(cmd * 0.025 + 851.0125 - 10.9875);
 	} else {
 		freq = 0;
 	}
-	
+
 	return freq;
 }
 
@@ -321,7 +321,7 @@ float parse_message(string s) {
 	int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
-	
+
 	x.clear();
 	vector<string>().swap(x);
 
@@ -334,7 +334,7 @@ float parse_message(string s) {
 			}
 		} else {
 			// Call continuation
-			if  ( (address != 56016) && (address != 8176))  { 
+			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
 			}
 		}
@@ -344,38 +344,15 @@ float parse_message(string s) {
 		//parse_status(command, address,groupflag);
 	}
 
-	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-		log_dsd_sptr rx = *it;
 
-		if (rx->is_active() && (rx->lastupdate() > 3.0)) {
-
-			if (console) {
-				for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
-					Talkgroup *tg = (Talkgroup *) *tg_it;	
-					if (tg->number == rx->get_talkgroup()) {
-						active_tg.erase(tg_it);
-						break;
-					}
-				}
-
-				update_active_tg_win();
-			}
-			sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-
-			rx->deactivate();
-			num_loggers--;
-
-			system(shell_command);
-		}
-	}	
 
 	if (retfreq) {
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {	
-			log_dsd_sptr rx = *it;	
+		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
+			log_dsd_sptr rx = *it;
 
 			if (rx->is_active())
 			{
-				if (rx->get_talkgroup() == address) {		
+				if (rx->get_talkgroup() == address) {
 					if (rx->get_freq() != retfreq) {
 						if (console) {
 							sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
@@ -384,7 +361,7 @@ float parse_message(string s) {
 						rx->tune_offset(retfreq);
 					}
 					rx->unmute();
-					
+
 					rxfound = true;
 				} else {
 					if (rx->get_freq() == retfreq) {
@@ -400,11 +377,11 @@ float parse_message(string s) {
 		}
 
 
-		if ((!rxfound)){ 
+		if ((!rxfound)){
 			Talkgroup *rx_talkgroup = NULL;
 			bool record_tg = false;
-			for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {					
-				Talkgroup *tg = (Talkgroup *) *it;	
+			for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {
+				Talkgroup *tg = (Talkgroup *) *it;
 				if (tg->number == address) {
 					rx_talkgroup = tg;
 					break;
@@ -437,8 +414,31 @@ float parse_message(string s) {
 			}
 
 		}
+    for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+      log_dsd_sptr rx = *it;
 
-		
+      if (rx->is_active() && (rx->lastupdate() > 3.0)) {
+
+        if (console) {
+          for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
+            Talkgroup *tg = (Talkgroup *) *tg_it;
+            if (tg->number == rx->get_talkgroup()) {
+              active_tg.erase(tg_it);
+              break;
+            }
+          }
+
+          update_active_tg_win();
+        }
+        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+
+        rx->deactivate();
+        num_loggers--;
+
+        system(shell_command);
+      }
+    }
+
 	}
 
 }
@@ -495,7 +495,7 @@ int main(int argc, char **argv)
 
 	tb = gr_make_top_block("smartnet");
 
-	
+
 	src = osmosdr_make_source_c();
 	cout << "Setting sample rate to: " << samp_rate << endl;
 	src->set_sample_rate(samp_rate);
@@ -521,9 +521,9 @@ int main(int argc, char **argv)
 	float offset = center_freq - chan_freq;
 	float clockrec_oversample = 3;
 	int decim = int(samples_per_second / (syms_per_sec * clockrec_oversample));
-	float sps = samples_per_second/decim/syms_per_sec; 
+	float sps = samples_per_second/decim/syms_per_sec;
 	const double pi = boost::math::constants::pi<double>();
-	
+
 	cout << "Control channel offset: " << offset << endl;
 	cout << "Decim: " << decim << endl;
 	cout << "Samples per symbol: " << sps << endl;
@@ -534,18 +534,18 @@ int main(int argc, char **argv)
 	gr_msg_queue_sptr queue = gr_make_msg_queue();
 
 
-	gr_freq_xlating_fir_filter_ccf_sptr prefilter = gr_make_freq_xlating_fir_filter_ccf(decim, 
+	gr_freq_xlating_fir_filter_ccf_sptr prefilter = gr_make_freq_xlating_fir_filter_ccf(decim,
 		gr_firdes::low_pass(1, samp_rate, 10000, 12000),
-		offset, 
+		offset,
 		samp_rate);
 
 
-	gr_pll_freqdet_cf_sptr pll_demod = gr_make_pll_freqdet_cf(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
+	gr_pll_freqdet_cf_sptr pll_demod = gr_make_pll_freqdet_cf(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample,
 		-2*pi/clockrec_oversample);
 
 	digital_fll_band_edge_cc_sptr carriertrack = digital_make_fll_band_edge_cc(sps, 0.6, 64, 0.35);
 
-	digital_clock_recovery_mm_ff_sptr softbits = digital_make_clock_recovery_mm_ff(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
+	digital_clock_recovery_mm_ff_sptr softbits = digital_make_clock_recovery_mm_ff(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
 
 
 	digital_binary_slicer_fb_sptr slicer =  digital_make_binary_slicer_fb();
@@ -557,16 +557,16 @@ int main(int argc, char **argv)
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 
 	/*	gr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(u_char));
-	tb->connect(deinterleave,0,nullsink,0);*/	
-	
+	tb->connect(deinterleave,0,nullsink,0);*/
+
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);
 	tb->connect(softbits, 0, slicer, 0);
 	tb->connect(slicer, 0, start_correlator, 0);
-	
-	
+
+
 	tb->connect(start_correlator, 0, deinterleave, 0);
 
 	tb->connect(deinterleave, 0, crc, 0);
@@ -585,26 +585,26 @@ int main(int argc, char **argv)
 		create_status_win();
 	}
 
-	
+
 	gr_message_sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
 			printf("\n Signal caught!\n");
 			tb->stop();
-			endwin(); 
+			endwin();
 			return 0;
-		} 
+		}
 
 
 		msg = queue->delete_head();
-		parse_message(msg->to_string());	
+		parse_message(msg->to_string());
 		msg.reset();
 			//delete(sentence);
 
 
 	}
-	
-	endwin(); 
+
+	endwin();
 
   // Exit normally.
 	return 0;
