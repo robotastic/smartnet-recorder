@@ -76,8 +76,15 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr_make_fir_filter_fff(1, sym_taps); 
-dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
+	if (!logging) {
+	iam_logging = true;
+	logging = true;
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
+	} else {
+	iam_logging = false;
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+	}
 
 
 	tm *ltm = localtime(&starttime);
