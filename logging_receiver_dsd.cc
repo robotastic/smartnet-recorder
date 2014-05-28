@@ -222,7 +222,7 @@ void log_dsd::activate(float f, int t, int num) {
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
 	
 	boost::filesystem::create_directories(path_stream.str());
-	sprintf(filename, "%s/%ld-%ld_%d.wav", path_stream.str().c_str(),talkgroup,timestamp,num);
+	sprintf(filename, "%s/%ld-%ld_%f.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
 	wav_sink->open(filename);
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
