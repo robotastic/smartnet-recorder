@@ -70,7 +70,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
 	demod = gr_make_quadrature_demod_cf(1.4); //1.6); //1.4);
-
+	levels = gr_make_multiply_const_ff(0.30);
 	
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
@@ -182,7 +182,8 @@ void log_dsd::deactivate() {
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, dsd, 0);
+	disconnect(sym_filter, 0, levels, 0);
+	disconnect(levels, 0, dsd, 0);
 	disconnect(dsd, 0, wav_sink,0);
 	//disconnect(dsd, 0, bismark,0);
 
@@ -230,7 +231,8 @@ void log_dsd::activate(float f, int t, int num) {
 	connect(prefilter, 0, downsample_sig, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, dsd, 0);
+	connect(sym_filter, 0, levels, 0);
+	connect(levels, 0, dsd, 0);
 	connect(dsd, 0, wav_sink,0);
 	//connect(dsd, 0, bismark,0);
 	

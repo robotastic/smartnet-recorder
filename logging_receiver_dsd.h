@@ -93,7 +93,7 @@ private:
 
 	gr_multiply_cc_sptr mixer;
 	gr_file_sink_sptr fs;
- 	gr_multiply_const_ff_sptr quiet;
+ 	gr_multiply_const_ff_sptr levels;
 
 	gr_rational_resampler_base_ccf_sptr downsample_sig;
 	gr_rational_resampler_base_fff_sptr upsample_audio;
