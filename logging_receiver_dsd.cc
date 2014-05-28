@@ -70,7 +70,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
 	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
-	levels = gr_make_multiply_const_ff(0.40);
+	levels = gr_make_multiply_const_ff(0.33);
 	
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
@@ -80,10 +80,10 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_QPSK,3,1,1, false, num);
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_QPSK,3,0,0, false, num);
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	}
 
 
