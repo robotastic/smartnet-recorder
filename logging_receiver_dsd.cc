@@ -69,7 +69,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
 	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps); 
-	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
+	demod = gr_make_quadrature_demod_cf(1.4); //1.6); //1.4);
 
 	
 	for (int i=0; i < samp_per_sym; i++) {
