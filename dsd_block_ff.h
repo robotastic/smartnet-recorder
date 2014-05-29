@@ -32,7 +32,7 @@ extern "C"
 }
 */
 
-#define NZEROS 60
+
 
 struct mbe_parameters
 {
@@ -51,6 +51,9 @@ struct mbe_parameters
 
 typedef struct mbe_parameters mbe_parms;
 
+#define NZEROS 60 // because filter is static
+#define NXZEROS 134
+
 typedef struct
 {
   int onesymbol;
@@ -67,8 +70,14 @@ typedef struct
   int scoperate;
   char audio_in_dev[1024];
   int audio_in_fd;
+  SNDFILE *audio_in_file;
+  SF_INFO *audio_in_file_info;
+  int audio_in_type; // 0 for device, 1 for file
   char audio_out_dev[1024];
   int audio_out_fd;
+  SNDFILE *audio_out_file;
+  SF_INFO *audio_out_file_info;
+  int audio_out_type; // 0 for device, 1 for file
   int split;
   int playoffset;
   char mbe_out_dir[1024];
@@ -77,8 +86,8 @@ typedef struct
   float audio_gain;
   int audio_out;
   char wav_out_file[1024];
-  FILE *wav_out_f;
-  int wav_out_fd;
+  SNDFILE *wav_out_f;
+  //int wav_out_fd;
   int serial_baud;
   char serial_dev[1024];
   int serial_fd;
@@ -101,6 +110,8 @@ typedef struct
   int msize;
   int playfiles;
   int delay;
+  int use_cosine_filter;
+  int unmute_encrypted_p25;
 } dsd_opts;
 
 typedef struct
@@ -116,7 +127,7 @@ typedef struct
   float *audio_out_temp_buf_p;
   int audio_out_idx;
   int audio_out_idx2;
-  int wav_out_bytes;
+  //int wav_out_bytes;
   int center;
   int jitter;
   int synctype;
@@ -168,12 +179,38 @@ typedef struct
   mbe_parms *prev_mp;
   mbe_parms *prev_mp_enhanced;
   int p25kid;
+
+  unsigned int debug_audio_errors;
+  unsigned int debug_header_errors;
+  unsigned int debug_header_critical_errors;
+
+  // Last dibit read
+  int last_dibit;
+
+  // Heuristics state data for +P5 signals
+  P25Heuristics p25_heuristics;
+
+  // Heuristics state data for -P5 signals
+  P25Heuristics inv_p25_heuristics;
+
+#ifdef TRACE_DSD
+  char debug_prefix;
+  char debug_prefix_2;
+  unsigned int debug_sample_index;
+  unsigned int debug_sample_left_edge;
+  unsigned int debug_sample_right_edge;
+  FILE* debug_label_file;
+  FILE* debug_label_dibit_file;
+  FILE* debug_label_imbe_file;
+#endif
+
   pthread_mutex_t input_mutex;
   pthread_cond_t input_ready;
   const float *input_samples;
   int input_length;
   int input_offset;
-
+  pthread_mutex_t quit_mutex;
+  pthread_cond_t quit_now;
   pthread_mutex_t output_mutex;
   pthread_cond_t output_ready;
   short *output_buffer;
@@ -182,8 +219,11 @@ typedef struct
   int output_num_samples;
   int output_length;
   int output_finished;
-float xv[NZEROS+1];
+  int exitflag;
+  float xv[NZEROS+1];
+  float nxv[NXZEROS+1];
 } dsd_state;
+
 
 
 
@@ -262,6 +302,7 @@ bool empty_frames;
  public:
   ~dsd_block_ff ();	// public destructor
   void no_carrier();
+  dsd_state *get_state();
   // Where all the action really happens
 
   int close();
