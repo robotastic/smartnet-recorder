@@ -210,7 +210,7 @@ int index=0;
     myfile << "\"audioErrors\": " << state->debug_audio_errors << ",\n";
     myfile << "\"symbCount\": " << state->symbolcnt << ",\n";
     myfile << "\"srcList\": [ ";
-    	while(state->src_list[index]){
+    	while(state->src_list[index]!=0){
     		if (index !=0) {
     			 myfile << ", " << state->src_list[index];
     		} else {
