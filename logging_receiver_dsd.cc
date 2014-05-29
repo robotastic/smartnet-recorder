@@ -167,7 +167,7 @@ void log_dsd::tune_offset(float f) {
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
-
+int index=0;
   lock();
 
 	wav_sink->close();
@@ -208,7 +208,17 @@ void log_dsd::deactivate() {
     myfile << "\"headerCriticalErrors\": " << state->debug_header_critical_errors << ",\n";
     myfile << "\"headerErrors\": " << state->debug_header_errors << ",\n";
     myfile << "\"audioErrors\": " << state->debug_audio_errors << ",\n";
-    myfile << "\"symbCount\": " << state->symbolcnt << "\n";
+    myfile << "\"symbCount\": " << state->symbolcnt << ",\n";
+    myfile << "\"srcList\": [ ";
+    	while(state->src_list[index]){
+    		if (index !=0) {
+    			 myfile << ", " << state->src_list[index];
+    		} else {
+    			myfile << state->src_list[index];
+    		}
+    		index++;
+    	}
+    myfile << " ]\n";	
     myfile << "}\n";
     myfile.close();
   }
