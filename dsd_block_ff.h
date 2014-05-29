@@ -179,6 +179,7 @@ typedef struct
   int tgcount;
   int lasttg;
   int lastsrc;
+  int src_list[50];
   int nac;
   int errs;
   int errs2;
