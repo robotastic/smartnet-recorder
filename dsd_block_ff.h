@@ -261,7 +261,7 @@ bool empty_frames;
 
  public:
   ~dsd_block_ff ();	// public destructor
-  no_carrier();
+  void no_carrier();
   // Where all the action really happens
 
   int close();
