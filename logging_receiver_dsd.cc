@@ -170,9 +170,6 @@ void log_dsd::deactivate() {
 
   lock();
 
-	if (iam_logging) {
-	logging = false;
-	}
 	wav_sink->close();
 
 	disconnect(self(), 0, prefilter, 0);
@@ -234,16 +231,10 @@ void log_dsd::activate(float f, int t, int n) {
 
 	prefilter->set_center_freq(center - (f*1000000));
 
+	if (iam_logging) {
+		printf("Recording Freq: %f \n", f);
+	}
 
-	/*if (!logging) {
-	iam_logging = true;
-	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-
-	} else {
-	iam_logging = false;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	}*/
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -251,7 +242,7 @@ void log_dsd::activate(float f, int t, int n) {
 
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%f.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
-  sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
+    sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink->open(filename);
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
 	lock();
