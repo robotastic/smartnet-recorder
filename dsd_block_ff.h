@@ -324,7 +324,7 @@ bool empty_frames;
 
  public:
   ~dsd_block_ff ();	// public destructor
-  void no_carrier();
+  void reset_state();
   dsd_state *get_state();
   // Where all the action really happens
 
