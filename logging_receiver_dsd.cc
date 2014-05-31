@@ -167,7 +167,7 @@ void log_dsd::tune_offset(float f) {
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
-int index=0;
+
   lock();
 
 	wav_sink->close();
@@ -193,6 +193,8 @@ int index=0;
   ofstream myfile (status_filename);
   if (myfile.is_open())
   {
+    int level = (int) state->max / 164;
+    int index=0;
     myfile << "{\n";
     myfile << "\"freq\": " << freq << ",\n";
     myfile << "\"num\": " << num << ",\n";
@@ -201,7 +203,7 @@ int index=0;
     myfile << "\"umid\": " << state->umid << ",\n";
     myfile << "\"lmid\": " << state->lmid << ",\n";
     myfile << "\"max\": " << state->max << ",\n";
-    myfile << "\"inlvl\": " << state->max / 164 << ",\n";
+    myfile << "\"inlvl\": " << level << ",\n";
     myfile << "\"nac\": " << state->nac << ",\n";
     myfile << "\"src\": " << state->lastsrc << ",\n";
     myfile << "\"dsdtg\": " << state->lasttg << ",\n";
@@ -218,12 +220,12 @@ int index=0;
     		}
     		index++;
     	}
-    myfile << " ]\n";	
+    myfile << " ]\n";
     myfile << "}\n";
     myfile.close();
   }
   else cout << "Unable to open file";
-  dsd->no_carrier();
+  dsd->reset_state();
 	//dsd.reset();
 
 	//wav_sink.reset();
