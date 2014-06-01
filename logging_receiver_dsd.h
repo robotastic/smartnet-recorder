@@ -105,6 +105,7 @@ private:
 	gr_quadrature_demod_cf_sptr demod;
 	dsd_block_ff_sptr dsd;
 	gr_wavfile_sink_sptr wav_sink;
+	gr_wavfile_sink_sptr raw_sink;
 	//smartnet_wavsink_sptr wav_sink
 	//gr::blocks::wavfile_sink::sptr wav_sink;
 	gr_null_sink_sptr null_sink;
