@@ -80,6 +80,7 @@ private:
 	time_t starttime;
 	char filename[160];
   char status_filename[160];
+  char raw_filename[160];
 	int num;
 
 	bool iam_logging;
