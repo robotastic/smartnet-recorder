@@ -108,7 +108,7 @@ bool console  = false;
 
 
  vector<log_dsd_sptr> loggers;
- unsigned int max_loggers = 6;
+ unsigned int max_loggers = 7;
  unsigned int num_loggers = 0;
  vector<log_dsd_sptr> active_loggers;
 
@@ -414,8 +414,8 @@ float parse_message(string s) {
 			}
 			if (rx_talkgroup) {
 				if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
-					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
-					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
+					((rx_talkgroup->get_priority() == 2) && (num_loggers < 5 )) ||
+					((rx_talkgroup->get_priority() == 3) && (num_loggers < 3 ))) {
 					record_tg = true;
 				if (console) {
 					active_tg.push_back(rx_talkgroup);
