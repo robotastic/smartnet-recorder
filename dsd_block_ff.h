@@ -178,8 +178,8 @@ typedef struct
   char tg[25][16];
   int tgcount;
   int lasttg;
-  int lastsrc;
-  int src_list[50];
+  long lastsrc;
+  long src_list[50];
   int nac;
   int errs;
   int errs2;
