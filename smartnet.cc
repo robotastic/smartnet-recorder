@@ -98,6 +98,7 @@
 
 
  int lastcmd = 0;
+ long lastaddress = 0;
  int thread_num=0;
  double center_freq;
 bool console  = false;
@@ -317,7 +318,7 @@ float parse_message(string s) {
 	std::vector<std::string> x;
 	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
 
-	int address = atoi( x[0].c_str() ) & 0xFFF0;
+	long address = atoi( x[0].c_str() ) & 0xFFF0;
 	int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
@@ -331,6 +332,7 @@ float parse_message(string s) {
 		        // Channel Grant
 			if (  (address != 56016) && (address != 8176)) {
 				retfreq = getfreq(command);
+				printf("Channel Grant: %l\n", lastaddress );
 			}
 		} else {
 			// Call continuation
@@ -446,7 +448,7 @@ float parse_message(string s) {
 
 
 
-
+lastaddress = address;
 lastcmd = command;
 
 
