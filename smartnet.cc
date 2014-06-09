@@ -339,7 +339,7 @@ float parse_message(string s) {
 			// Call continuation
 			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
-				std::cout << "Call Continue: " << lastaddress << "Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
+				std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 				
 			}
 		}
