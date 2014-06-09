@@ -332,7 +332,8 @@ float parse_message(string s) {
 		        // Channel Grant
 			if (  (address != 56016) && (address != 8176)) {
 				retfreq = getfreq(command);
-				printf("Channel Grant: %l\n", lastaddress );
+				std::cout << "Channel Grant: " << lastaddress << std::endl;
+				//printf("Channel Grantl\n", lastaddress );
 			}
 		} else {
 			// Call continuation
