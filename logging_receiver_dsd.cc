@@ -50,7 +50,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	float offset = center - (f*1000000);
 
 	int samp_per_sym = 10;
-	double samp_rate = 4000000;
+	double samp_rate = 5000000;
 	double decim = 80;
 	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
