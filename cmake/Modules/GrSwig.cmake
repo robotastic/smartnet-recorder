@@ -33,7 +33,8 @@ include(GrPython)
 #   - GR_SWIG_DOCS_TARGET_DEPS
 ########################################################################
 function(GR_SWIG_MAKE_DOCS output_file)
-    if(ENABLE_DOXYGEN)
+    find_package(Doxygen)
+    if(DOXYGEN_FOUND)
 
         #setup the input files variable list, quote formated
         set(input_files)
@@ -75,18 +76,17 @@ function(GR_SWIG_MAKE_DOCS output_file)
         #call the swig_doc script on the xml files
         add_custom_command(
             OUTPUT ${output_file}
-            DEPENDS ${input_files} ${stamp-file} ${OUTPUT_DIRECTORY}/xml/index.xml
+            DEPENDS ${input_files} ${OUTPUT_DIRECTORY}/xml/index.xml
             COMMAND ${PYTHON_EXECUTABLE} ${PYTHON_DASH_B}
                 ${CMAKE_SOURCE_DIR}/docs/doxygen/swig_doc.py
                 ${OUTPUT_DIRECTORY}/xml
                 ${output_file}
-            COMMENT "Generating python docstrings for ${name}"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/docs/doxygen
         )
 
-    else(ENABLE_DOXYGEN)
+    else(DOXYGEN_FOUND)
         file(WRITE ${output_file} "\n") #no doxygen -> empty file
-    endif(ENABLE_DOXYGEN)
+    endif(DOXYGEN_FOUND)
 endfunction(GR_SWIG_MAKE_DOCS)
 
 ########################################################################
@@ -108,10 +108,9 @@ macro(GR_SWIG_MAKE name)
     #do swig doc generation if specified
     if (GR_SWIG_DOC_FILE)
         set(GR_SWIG_DOCS_SOURCE_DEPS ${GR_SWIG_SOURCE_DEPS})
-        set(GR_SWIG_DOCS_TARGET_DEPS ${GR_SWIG_TARGET_DEPS})
+        set(GR_SWIG_DOCS_TAREGT_DEPS ${GR_SWIG_TARGET_DEPS})
         GR_SWIG_MAKE_DOCS(${GR_SWIG_DOC_FILE} ${GR_SWIG_DOC_DIRS})
-        add_custom_target(${name}_swig_doc DEPENDS ${GR_SWIG_DOC_FILE})
-        list(APPEND GR_SWIG_TARGET_DEPS ${name}_swig_doc)
+        list(APPEND GR_SWIG_SOURCE_DEPS ${GR_SWIG_DOC_FILE})
     endif()
 
     #append additional include directories
@@ -205,25 +204,21 @@ file(WRITE ${CMAKE_BINARY_DIR}/get_swig_deps.py "
 
 import os, sys, re
 
-i_include_matcher = re.compile('%(include|import)\\s*[<|\"](.*)[>|\"]')
-h_include_matcher = re.compile('#(include)\\s*[<|\"](.*)[>|\"]')
+include_matcher = re.compile('[#|%]include\\s*[<|\"](.*)[>|\"]')
 include_dirs = sys.argv[2].split(';')
 
 def get_swig_incs(file_path):
-    if file_path.endswith('.i'): matcher = i_include_matcher
-    else: matcher = h_include_matcher
     file_contents = open(file_path, 'r').read()
-    return matcher.findall(file_contents, re.MULTILINE)
+    return include_matcher.findall(file_contents, re.MULTILINE)
 
 def get_swig_deps(file_path, level):
     deps = [file_path]
     if level == 0: return deps
-    for keyword, inc_file in get_swig_incs(file_path):
+    for inc_file in get_swig_incs(file_path):
         for inc_dir in include_dirs:
             inc_path = os.path.join(inc_dir, inc_file)
             if not os.path.exists(inc_path): continue
             deps.extend(get_swig_deps(inc_path, level-1))
-            break #found, we dont search in lower prio inc dirs
     return deps
 
 if __name__ == '__main__':

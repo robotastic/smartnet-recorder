@@ -34,9 +34,9 @@ std::vector<float> design_filter(double interpolation, double deci) {
 	return result;
 }
 log_dsd::log_dsd(float f, float c, long t, int n)
-    : gr_hier_block2 ("log_dsd",
-          gr_make_io_signature  (1, 1, sizeof(gr_complex)),
-          gr_make_io_signature  (0, 0, sizeof(float)))
+    : gr::hier_block2 ("log_dsd",
+          gr::io_signature::make  (1, 1, sizeof(gr_complex)),
+          gr::io_signature::make  (0, 0, sizeof(float)))
 {
 	freq = f;
 	center = c;
@@ -57,32 +57,27 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	double pre_channel_rate = samp_rate/decim;
 
 
-
-
-    	lpf_taps =  gr_firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
-	prefilter = gr_make_freq_xlating_fir_filter_ccf(decim,
+	
+    	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
+	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
 						      lpf_taps,
-						       offset,
+						       offset, 
 						       samp_rate);
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
-	downsample_sig = gr_make_rational_resampler_base_ccf(channel_rate, pre_channel_rate, resampler_taps);
-	demod = gr_make_quadrature_demod_cf(1.6); //1.4);
-	levels = gr_make_multiply_const_ff(0.33);
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
+	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
 
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
-	sym_filter = gr_make_fir_filter_fff(1, sym_taps);
-
+	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps); 
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
-	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
@@ -91,10 +86,10 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 
 	tm *ltm = localtime(&starttime);
-
+	
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
-
+	
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);

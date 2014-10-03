@@ -1,13 +1,14 @@
 if(NOT LIBOSMOSDR_FOUND)
   pkg_check_modules (LIBOSMOSDR_PKG libosmosdr)
-  find_path(LIBOSMOSDR_INCLUDE_DIR NAMES osmosdr.h
+  find_path(LIBOSMOSDR_INCLUDE_DIR NAMES osmosdr_api.h
     PATHS
     ${LIBOSMOSDR_PKG_INCLUDE_DIRS}
     /usr/include
     /usr/local/include
+    /usr/local/include/osmosdr
   )
 
-  find_library(LIBOSMOSDR_LIBRARIES NAMES osmosdr
+  find_library(LIBOSMOSDR_LIBRARIES NAMES gnuradio-osmosdr
     PATHS
     ${LIBOSMOSDR_PKG_LIBRARY_DIRS}
     /usr/lib

@@ -4,8 +4,6 @@
 #include <cstdio>
 #include <stdio.h>
 #include <iostream>
-#include <fstream>
-
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -15,33 +13,35 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <gr_io_signature.h>
-#include <gr_hier_block2.h>
-#include <gr_multiply_const_ff.h>
-#include <gr_firdes.h>
-#include <gr_fir_filter_ccf.h>
-#include <gr_fir_filter_fff.h>
-#include <gr_freq_xlating_fir_filter_ccf.h>
-#include <filter/firdes.h>
-#include <filter/rational_resampler_base_ccc.h>
-#include <gr_quadrature_demod_cf.h>
-#include <analog/quadrature_demod_cf.h>
+#include <gnuradio/io_signature.h>
+#include <gnuradio/hier_block2.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
+#include <gnuradio/filter/fir_filter_fff.h>
+#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/rational_resampler_base_ccc.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
 #include "dsd_block_ff.h"
-#include <gr_sig_source_f.h>
-#include <gr_sig_source_c.h>
-#include <gr_multiply_cc.h>
-#include <gr_file_sink.h>
-#include <gr_rational_resampler_base_ccf.h>
-#include <gr_rational_resampler_base_fff.h>
-#include <gr_block.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/sig_source_c.h>
+#include <gnuradio/blocks/multiply_cc.h>
+#include <gnuradio/blocks/file_sink.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/block.h>
 //Valve
-#include <gr_null_sink.h>
-#include <gr_null_source.h>
-#include <gr_head.h>
-#include <gr_kludge_copy.h>
+//#include <gnuradio/blocks/null_sink.h>
+//#include <gnuradio/blocks/null_source.h>
+#include <gnuradio/blocks/head.h>
+//#include <gnuradio/kludge_copy.h>
 //#include <smartnet_wavsink.h>
-#include <gr_wavfile_sink.h>
+#include <gnuradio/blocks/wavfile_sink.h>
 //#include <blocks/wavfile_sink.h>
+#include "smartnet.h"
+
 
 class log_dsd;
 
@@ -49,7 +49,7 @@ typedef boost::shared_ptr<log_dsd> log_dsd_sptr;
 
 log_dsd_sptr make_log_dsd(float f, float c, long t, int n);
 
-class log_dsd : public gr_hier_block2
+class log_dsd : public gr::hier_block2
 {
   friend log_dsd_sptr make_log_dsd(float f, float c, long t, int n);
 protected:
@@ -90,29 +90,27 @@ private:
 	std::vector<float> sym_taps;
 
     /* GR blocks */
-    gr_fir_filter_ccf_sptr lpf;
-	gr_fir_filter_fff_sptr sym_filter;
-	gr_freq_xlating_fir_filter_ccf_sptr prefilter;
-	gr_sig_source_c_sptr offset_sig;
+    	gr::filter::fir_filter_ccf::sptr lpf;
+	gr::filter::fir_filter_fff::sptr sym_filter;
+	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter;
+	gr::analog::sig_source_c::sptr offset_sig; 
 
-	gr_multiply_cc_sptr mixer;
-	gr_file_sink_sptr fs;
- 	gr_multiply_const_ff_sptr levels;
+	gr::blocks::multiply_cc::sptr mixer;
+	gr::blocks::file_sink::sptr fs;
+ 	gr::blocks::multiply_const_ff::sptr quiet;
 
-	gr_rational_resampler_base_ccf_sptr downsample_sig;
-	gr_rational_resampler_base_fff_sptr upsample_audio;
+	gr::filter::rational_resampler_base_ccf::sptr downsample_sig;
+	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
-	gr_quadrature_demod_cf_sptr demod;
+	gr::analog::quadrature_demod_cf::sptr demod;
 	dsd_block_ff_sptr dsd;
-	gr_wavfile_sink_sptr wav_sink;
-	gr_wavfile_sink_sptr raw_sink;
+	gr::blocks::wavfile_sink::sptr wav_sink;
 	//smartnet_wavsink_sptr wav_sink
 	//gr::blocks::wavfile_sink::sptr wav_sink;
-	gr_null_sink_sptr null_sink;
-	gr_null_sink_sptr bismark;
-	gr_null_source_sptr null_source;
-	gr_head_sptr head_source;
-	gr_kludge_copy_sptr copier;
+	//gr::blocks::null_sink::sptr null_sink;
+	//gr::blocks::null_source::sptr null_source;
+	gr::blocks::head::sptr head_source;
+	//gr_kludge_copy_sptr copier;
 
 };
 

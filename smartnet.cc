@@ -39,19 +39,19 @@
 // Include header files for each block used in flowgraph
 
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <algorithm>    // copy
-#include <iterator>
-#include <cstddef>
-
+#include <string> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
 #include "logging_receiver_dsd.h"
+#include "logging_receiver_pocsag.h"
+//#include "logging_receiver_p25.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
 #include "talkgroup.h"
 
-#include <osmosdr_source_c.h>
-#include <osmosdr_sink_c.h>
+#include <osmosdr/source.h>
+#include <osmosdr/sink.h>
 
 #include <boost/program_options.hpp>
 #include <boost/math/constants/constants.hpp>
@@ -60,37 +60,30 @@
 #include <boost/tokenizer.hpp>
 
 
-#include <filter/freq_xlating_fir_filter_ccf.h>
-#include <filter/firdes.h>
+#include <gnuradio/msg_queue.h>
+#include <gnuradio/message.h>
+#include <gnuradio/blocks/file_sink.h>
+#include <gnuradio/gr_complex.h>
 
-#include <digital_fll_band_edge_cc.h>
-#include <digital_clock_recovery_mm_ff.h>
-#include <digital_binary_slicer_fb.h>
+#include <gnuradio/top_block.h>
+#include <gnuradio/blocks/multiply_cc.h>
 
-#include <gr_firdes.h>
-#include <gr_fir_filter_ccf.h>
+#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
 
-#include <gr_pll_freqdet_cf.h>
-#include <gr_sig_source_f.h>
-#include <gr_sig_source_c.h>
-#include <gr_audio_sink.h>
-#include <gr_correlate_access_code_tag_bb.h>
-#include <gr_msg_queue.h>
-#include <gr_message.h>
-#include <gr_file_sink.h>
- #include <gr_null_sink.h>
-#include <gr_complex.h>
-#include <gr_fir_filter_ccf.h>
- #include <gr_top_block.h>
-#include <gr_multiply_cc.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <ncurses.h>
-#include <menu.h>
+#include <gnuradio/digital/fll_band_edge_cc.h>
+#include <gnuradio/digital/clock_recovery_mm_ff.h>
+#include <gnuradio/digital/binary_slicer_fb.h>
+#include <gnuradio/digital/correlate_access_code_tag_bb.h>
 
 
+
+#include <gnuradio/analog/pll_freqdet_cf.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/sig_source_c.h>
 
  namespace po = boost::program_options;
 
@@ -113,6 +106,8 @@ bool console  = false;
  unsigned int num_loggers = 0;
  vector<log_dsd_sptr> active_loggers;
 
+gr::top_block_sptr tb;
+osmosdr::source::sptr src;
 
  vector<Talkgroup *> talkgroups;
  vector<Talkgroup *> active_tg;
@@ -533,28 +528,59 @@ int main(int argc, char **argv)
 	cout << "Decim: " << decim << endl;
 	cout << "Samples per symbol: " << sps << endl;
 
+	
 
-	init_loggers(max_loggers, center_freq);
+	int samp_per_sym = 10;
+		
+	//double decim = 80;
+	float xlate_bandwidth = 14000;//25000.0;
+	float channel_rate = 3600 * samp_per_sym;
+	double pre_channel_rate = samp_rate/decim;
+	
+	std::vector<float> lpf_taps;
+	std::vector<float> resampler_taps;
+	std::vector<float> sym_taps;
 
-	gr_msg_queue_sptr queue = gr_make_msg_queue();
+	
+    	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 12000);
+	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000, gr::filter::firdes::WIN_HANN);
+
+	cout<< "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
+	unsigned int d = GCD(channel_rate, pre_channel_rate);
+
+    	channel_rate = floor(channel_rate  / d);
+    	pre_channel_rate = floor(pre_channel_rate / d);
+	cout << "Common Divisor: " << d << "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
+	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
 
-	gr_freq_xlating_fir_filter_ccf_sptr prefilter = gr_make_freq_xlating_fir_filter_ccf(decim,
-		gr_firdes::low_pass(1, samp_rate, 10000, 12000),
-		offset,
-		samp_rate);
+	gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 
-	gr_pll_freqdet_cf_sptr pll_demod = gr_make_pll_freqdet_cf(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample,
-		-2*pi/clockrec_oversample);
+	//gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0, 0.0);
+	//gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();
+	
+	
 
-	digital_fll_band_edge_cc_sptr carriertrack = digital_make_fll_band_edge_cc(sps, 0.6, 64, 0.35);
+	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
+						       lpf_taps,
+						       offset, 
+						       samp_rate);
 
-	digital_clock_recovery_mm_ff_sptr softbits = digital_make_clock_recovery_mm_ff(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
+	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
+	gr::filter::rational_resampler_base_ccf::sptr downsample = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
+	//gr::filter::fir_filter_ccf::sptr downsample = gr::filter::fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 5000, gr::filter::firdes::WIN_HANN));
+
+	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
+										-2*pi/clockrec_oversample);
+
+	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 32, 0.35);
+
+	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
 
 
-	digital_binary_slicer_fb_sptr slicer =  digital_make_binary_slicer_fb();
-	gr_correlate_access_code_tag_bb_sptr start_correlator = gr_make_correlate_access_code_tag_bb("10101100",0,"smartnet_preamble");
+	gr::digital::binary_slicer_fb::sptr slicer =  gr::digital::binary_slicer_fb::make();
+	gr::digital::correlate_access_code_tag_bb::sptr start_correlator = gr::digital::correlate_access_code_tag_bb::make("10101100",0,"smartnet_preamble");
 
 
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
@@ -570,10 +596,7 @@ int main(int argc, char **argv)
 	tb->connect(pll_demod, 0, softbits, 0);
 	tb->connect(softbits, 0, slicer, 0);
 	tb->connect(slicer, 0, start_correlator, 0);
-
-
 	tb->connect(start_correlator, 0, deinterleave, 0);
-
 	tb->connect(deinterleave, 0, crc, 0);
 
 	tb->start();
