@@ -8,7 +8,7 @@ if(NOT LIBOSMOSDR_FOUND)
     /usr/local/include/osmosdr
   )
 
-  find_library(LIBOSMOSDR_LIBRARIES NAMES gnuradio-osmosdr
+  find_library(LIBOSMOSDR_LIBRARIES NAMES osmosdr
     PATHS
     ${LIBOSMOSDR_PKG_LIBRARY_DIRS}
     /usr/lib
