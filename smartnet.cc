@@ -39,6 +39,7 @@
 // Include header files for each block used in flowgraph
 
 #include <iostream>
+#include <fstream>
 #include <string> 
 #include <stdio.h>
 #include <stdlib.h>
