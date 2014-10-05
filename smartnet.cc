@@ -526,8 +526,6 @@ int main(int argc, char **argv)
     tb = gr::make_top_block("Smartnet");
     src = osmosdr::source::make();
 
-
-	src = osmosdr_make_source_c();
 	cout << "Setting sample rate to: " << samp_rate << endl;
 	src->set_sample_rate(samp_rate);
 	cout << "Tunning to " << center_freq - error << "hz" << endl;
