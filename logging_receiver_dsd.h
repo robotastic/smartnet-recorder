@@ -32,7 +32,7 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
-#include <gnuradio/null_sink.h>
+#include <gnuradio/blocks/null_sink.h>
 //Valve
 //#include <gnuradio/blocks/null_sink.h>
 //#include <gnuradio/blocks/null_source.h>
