@@ -43,6 +43,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+ #include <ncurses.h>
+#include <menu.h>
 #include "logging_receiver_dsd.h"
 //#include "logging_receiver_pocsag.h"
 //#include "logging_receiver_p25.h"
@@ -84,6 +86,10 @@
 #include <gnuradio/analog/pll_freqdet_cf.h>
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/sig_source_c.h>
+
+
+
+
 
  namespace po = boost::program_options;
 
