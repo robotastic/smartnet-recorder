@@ -97,8 +97,7 @@
 bool console  = false;
 
 
- gr_top_block_sptr tb;
- osmosdr_source_c_sptr src;
+
 
 
  vector<log_dsd_sptr> loggers;
@@ -640,7 +639,7 @@ int main(int argc, char **argv)
 	}
 
 
-	gr_message_sptr msg;
+	gr::message::sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
 			printf("\n Signal caught!\n");

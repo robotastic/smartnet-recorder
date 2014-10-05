@@ -3,12 +3,13 @@ if(NOT LIBOSMOSDR_FOUND)
   find_path(LIBOSMOSDR_INCLUDE_DIR NAMES api.h
     PATHS
     ${LIBOSMOSDR_PKG_INCLUDE_DIRS}
+    {CMAKE_INSTALL_PREFIX}/usr/include
     /usr/include
     /usr/local/include
     /usr/local/include/osmosdr
   )
 
-  find_library(LIBOSMOSDR_LIBRARIES NAMES osmosdr
+  find_library(LIBOSMOSDR_LIBRARIES NAMES gnuradio-osmosdr
     PATHS
     ${LIBOSMOSDR_PKG_LIBRARY_DIRS}
     /usr/lib
