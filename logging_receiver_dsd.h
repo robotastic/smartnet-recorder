@@ -8,6 +8,8 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <fstream>
+
 
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem/operations.hpp>
