@@ -126,31 +126,6 @@ osmosdr::source::sptr src;
  WINDOW *tg_menu_win;
  WINDOW *status_win;
  MENU *tg_menu;
-unsigned GCD(unsigned u, unsigned v) {
-    while ( v != 0) {
-        unsigned r = u % v;
-        u = v;
-        v = r;
-    }
-    return u;
-}
-
-std::vector<float> design_filter(double interpolation, double deci) {
-    float beta = 5.0;
-    float trans_width = 0.5 - 0.4;
-    float mid_transition_band = 0.5 - trans_width/2;
-    
-    std::vector<float> result = gr::filter::firdes::low_pass(
-                                                             interpolation,
-                                                             1,
-                                                             mid_transition_band/interpolation,
-                                                             trans_width/interpolation,
-                                                             gr::filter::firdes::WIN_KAISER,
-                                                             beta                               
-                                                             );
-    
-    return result;
-}
 
 
  volatile sig_atomic_t exit_flag = 0;
@@ -581,14 +556,10 @@ int main(int argc, char **argv)
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 	cout << "Common Divisor: " << d << "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
-	resampler_taps = design_filter(channel_rate, pre_channel_rate);
+
 
 
 	gr::msg_queue::sptr queue = gr::msg_queue::make();
-
-
-	//gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0, 0.0);
-	//gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();
 	
 	
 
@@ -597,10 +568,7 @@ int main(int argc, char **argv)
 						       offset, 
 						       samp_rate);
 
-	//gr::filter::freq_xlating_fir_filter_ccf::sptr downsample = gr::filter::freq_xlating_fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 1000, gr::filter::firdes::WIN_HANN), 0,samples_per_second);
-	gr::filter::rational_resampler_base_ccf::sptr downsample = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
-	//gr::filter::fir_filter_ccf::sptr downsample = gr::filter::fir_filter_ccf::make(decim, gr::filter::firdes::low_pass(1, samples_per_second, 10000, 5000, gr::filter::firdes::WIN_HANN));
-
+	
 	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
 										-2*pi/clockrec_oversample);
 
@@ -617,8 +585,6 @@ int main(int argc, char **argv)
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 
-	/*	gr_null_sink_sptr nullsink = gr_make_null_sink(sizeof(u_char));
-	tb->connect(deinterleave,0,nullsink,0);*/
 
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);

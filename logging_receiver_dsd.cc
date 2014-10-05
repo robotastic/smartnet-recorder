@@ -21,18 +21,19 @@ std::vector<float> design_filter(double interpolation, double deci) {
     float beta = 5.0;
     float trans_width = 0.5 - 0.4;
     float mid_transition_band = 0.5 - trans_width/2;
-
-	std::vector<float> result = gr_firdes::low_pass(
-		              interpolation,
-				1,
-	                      mid_transition_band/interpolation,
-                              trans_width/interpolation,
-                              gr_firdes::WIN_KAISER,
-                              beta
-                              );
-
-	return result;
+    
+    std::vector<float> result = gr::filter::firdes::low_pass(
+                                                             interpolation,
+                                                             1,
+                                                             mid_transition_band/interpolation,
+                                                             trans_width/interpolation,
+                                                             gr::filter::firdes::WIN_KAISER,
+                                                             beta                               
+                                                             );
+    
+    return result;
 }
+
 log_dsd::log_dsd(float f, float c, long t, int n)
     : gr::hier_block2 ("log_dsd",
           gr::io_signature::make  (1, 1, sizeof(gr_complex)),
