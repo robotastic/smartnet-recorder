@@ -98,6 +98,8 @@ private:
 	gr::blocks::multiply_cc::sptr mixer;
 	gr::blocks::file_sink::sptr fs;
  	gr::blocks::multiply_const_ff::sptr quiet;
+ 	gr::blocks::multiply_const_ff::sptr levels;
+
 
 	gr::filter::rational_resampler_base_ccf::sptr downsample_sig;
 	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
@@ -105,10 +107,8 @@ private:
 	gr::analog::quadrature_demod_cf::sptr demod;
 	dsd_block_ff_sptr dsd;
 	gr::blocks::wavfile_sink::sptr wav_sink;
-	//smartnet_wavsink_sptr wav_sink
-	//gr::blocks::wavfile_sink::sptr wav_sink;
-	//gr::blocks::null_sink::sptr null_sink;
-	//gr::blocks::null_source::sptr null_source;
+	gr::blocks::null_sink::sptr null_sink;
+	gr::blocks::null_source::sptr null_source;
 	gr::blocks::head::sptr head_source;
 	//gr_kludge_copy_sptr copier;
 
