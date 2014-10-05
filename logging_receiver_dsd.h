@@ -32,6 +32,7 @@
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
+#include <gnuradio/null_sink.h>
 //Valve
 //#include <gnuradio/blocks/null_sink.h>
 //#include <gnuradio/blocks/null_source.h>
@@ -108,7 +109,6 @@ private:
 	dsd_block_ff_sptr dsd;
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	gr::blocks::null_sink::sptr null_sink;
-	gr::blocks::null_source::sptr null_source;
 	gr::blocks::head::sptr head_source;
 	//gr_kludge_copy_sptr copier;
 
