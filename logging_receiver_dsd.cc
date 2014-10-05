@@ -95,7 +95,7 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
   sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	wav_sink = gr::blocks::wavfile_sink::make
+	wav_sink = gr::blocks::wavfile_sink::make;
 	//raw_sink = gr_make_wavfile_sink(raw_filename,1,48000,16);
 	null_sink = gr_make_null_sink(sizeof(gr_complex));
 
