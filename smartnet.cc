@@ -551,7 +551,7 @@ int main(int argc, char **argv)
 						       samp_rate);
 
 	
-	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, -2*pi/clockrec_oversample);
+	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
