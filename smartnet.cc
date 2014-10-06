@@ -534,33 +534,15 @@ int main(int argc, char **argv)
 
 	
 
-	int samp_per_sym = 10;
-		
-	//double decim = 80;
-	float xlate_bandwidth = 14000;//25000.0;
-	float channel_rate = 3600 * samp_per_sym;
-	double pre_channel_rate = samp_rate/decim;
+
 	
 	std::vector<float> lpf_taps;
-	std::vector<float> resampler_taps;
-	std::vector<float> sym_taps;
+
 
     init_loggers(max_loggers, center_freq);
-
-    	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 12000);
-	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000, gr::filter::firdes::WIN_HANN);
-
-	cout<< "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
-	unsigned int d = GCD(channel_rate, pre_channel_rate);
-
-    	channel_rate = floor(channel_rate  / d);
-    	pre_channel_rate = floor(pre_channel_rate / d);
-	cout << "Common Divisor: " << d << "Channel rate: " << channel_rate << " Pre Channel Rate: " << pre_channel_rate;
-
-
-
 	gr::msg_queue::sptr queue = gr::msg_queue::make();
-	
+    
+	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
 	
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
@@ -569,22 +551,19 @@ int main(int argc, char **argv)
 						       samp_rate);
 
 	
-	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 										 2*pi/clockrec_oversample, 
-										-2*pi/clockrec_oversample);
+	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
 	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
 
-
 	gr::digital::binary_slicer_fb::sptr slicer =  gr::digital::binary_slicer_fb::make();
-	gr::digital::correlate_access_code_tag_bb::sptr start_correlator = gr::digital::correlate_access_code_tag_bb::make("10101100",0,"smartnet_preamble");
 
+	gr::digital::correlate_access_code_tag_bb::sptr start_correlator = gr::digital::correlate_access_code_tag_bb::make("10101100",0,"smartnet_preamble");
 
 	smartnet_deinterleave_sptr deinterleave = smartnet_make_deinterleave();
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
-
 
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
