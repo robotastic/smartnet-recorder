@@ -67,6 +67,7 @@ find_package(LibOsmoSDR)
 #find_package(LibRTLSDR)
 #find_package(LibMiriSDR)
 find_package(LibHackRF)
+find_package(LibDSD)
 #find_package(LibbladeRF)
 
 
