@@ -4,9 +4,9 @@ using namespace std;
 
 bool log_dsd::logging = false;
 
-log_dsd_sptr make_log_dsd(float freq, float center, long t, int n)
+log_dsd_sptr make_log_dsd(float freq, float center, long s, long t, int n)
 {
-    return gnuradio::get_initial_sptr(new log_dsd(freq, center, t, n));
+    return gnuradio::get_initial_sptr(new log_dsd(freq, center, s, t, n));
 }
 unsigned GCD(unsigned u, unsigned v) {
     while ( v != 0) {
@@ -21,26 +21,27 @@ std::vector<float> design_filter(double interpolation, double deci) {
     float beta = 5.0;
     float trans_width = 0.5 - 0.4;
     float mid_transition_band = 0.5 - trans_width/2;
-    
+
     std::vector<float> result = gr::filter::firdes::low_pass(
                                                              interpolation,
                                                              1,
                                                              mid_transition_band/interpolation,
                                                              trans_width/interpolation,
                                                              gr::filter::firdes::WIN_KAISER,
-                                                             beta                               
+                                                             beta
                                                              );
-    
+
     return result;
 }
 
-log_dsd::log_dsd(float f, float c, long t, int n)
+log_dsd::log_dsd(float f, float c, long s, long t, int n)
     : gr::hier_block2 ("log_dsd",
           gr::io_signature::make  (1, 1, sizeof(gr_complex)),
           gr::io_signature::make  (0, 0, sizeof(float)))
 {
 	freq = f;
 	center = c;
+  samp_rate = s;
 	talkgroup = t;
 	num = n;
 	active = false;
@@ -51,32 +52,31 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 	float offset = center - (f*1000000);
 
 	int samp_per_sym = 10;
-	double samp_rate = 5000000;
 	double decim = 80;
-	float xlate_bandwidth = 14000; //24260.0;
+	float xlate_bandwidth = 12500; //14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
 	double pre_channel_rate = samp_rate/decim;
 
 
-	
+
     	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, xlate_bandwidth/2, 6000);
-	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
+	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						      lpf_taps,
-						       offset, 
+						       offset,
 						       samp_rate);
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
     	channel_rate = floor(channel_rate  / d);
     	pre_channel_rate = floor(pre_channel_rate / d);
 	resampler_taps = design_filter(channel_rate, pre_channel_rate);
 
-	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps);
 	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
-	levels = gr::blocks::multiply_const_ff::make(0.33);
+	levels = gr::blocks::multiply_const_ff::make(0.7); //33);
 
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
-	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps); 
+	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps);
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
@@ -88,16 +88,16 @@ log_dsd::log_dsd(float f, float c, long t, int n)
 
 
 	tm *ltm = localtime(&starttime);
-	
+
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
-	
+
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
   sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
-	
+
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
 
 

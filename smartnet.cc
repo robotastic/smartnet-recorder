@@ -40,7 +40,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <string> 
+#include <string>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -244,11 +244,11 @@ void exit_interupt(int sig){ // can be called asynchronously
   exit_flag = 1; // set flag
 }
 
-void init_loggers(int num, float center_freq) {
+void init_loggers(int num, float center_freq, long samp_rate) {
 
 // static loggers
 	for (int i = 0; i < num; i++) {
-		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, 0, i);
+		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, samp_rate, 0, i);
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
 
@@ -339,7 +339,7 @@ float parse_message(string s) {
 			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
 				//std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
-				
+
 			}
 		}
 	}
@@ -532,30 +532,30 @@ int main(int argc, char **argv)
 	cout << "Decim: " << decim << endl;
 	cout << "Samples per symbol: " << sps << endl;
 
-	
 
 
-	
+
+
 	std::vector<float> lpf_taps;
 
 
-    init_loggers(max_loggers, center_freq);
+    init_loggers(max_loggers, center_freq, sampe_rate);
 	gr::msg_queue::sptr queue = gr::msg_queue::make();
-    
-	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
-	
 
-	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim, 
+	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
+
+
+	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						       lpf_taps,
-						       offset, 
+						       offset,
 						       samp_rate);
 
-	
+
 	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
-	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit); 
+	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
 
 	gr::digital::binary_slicer_fb::sptr slicer =  gr::digital::binary_slicer_fb::make();
 

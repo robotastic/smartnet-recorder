@@ -50,11 +50,11 @@ class log_dsd;
 
 typedef boost::shared_ptr<log_dsd> log_dsd_sptr;
 
-log_dsd_sptr make_log_dsd(float f, float c, long t, int n);
+log_dsd_sptr make_log_dsd(float f, float c, long s, long t, int n);
 
 class log_dsd : public gr::hier_block2
 {
-  friend log_dsd_sptr make_log_dsd(float f, float c, long t, int n);
+  friend log_dsd_sptr make_log_dsd(float f, float c, long s, long t, int n);
 protected:
     log_dsd(float f, float c, long t, int n);
 
@@ -79,6 +79,7 @@ private:
 	float center, freq;
 	bool muted;
 	long talkgroup;
+  long samp_rate;
 	time_t timestamp;
 	time_t starttime;
 	char filename[160];
@@ -96,7 +97,7 @@ private:
     	gr::filter::fir_filter_ccf::sptr lpf;
 	gr::filter::fir_filter_fff::sptr sym_filter;
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter;
-	gr::analog::sig_source_c::sptr offset_sig; 
+	gr::analog::sig_source_c::sptr offset_sig;
 
 	gr::blocks::multiply_cc::sptr mixer;
 	gr::blocks::file_sink::sptr fs;
