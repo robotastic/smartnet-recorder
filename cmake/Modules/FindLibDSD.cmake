@@ -5,12 +5,16 @@ if(NOT LIBDSD_FOUND)
     NAMES dsd/dsd_api.h
     PATHS
     ${LIBDSD_PKG_INCLUDE_DIRS}
+    /usr/include
+    /usr/local/include
   )
 
   find_library(LIBDSD_LIBRARIES
     NAMES gr-dsd
     PATHS
     ${LIBDSD_PKG_LIBRARY_DIRS}
+    /usr/lib
+    /usr/local/lib
   )
 message(STATUS "Pkg: ${LIBDSD_PKG}, ${LIBDSD_PKG_INCLUDE_DIRS}, ${LIBDSD_PKG_LIBRARY_DIRS}")
 message(STATUS "Vars: ${LIBDSD_INCLUDE_DIR}, ${LIBDSD_LIBRARIES}")
