@@ -1,6 +1,7 @@
 if(NOT LIBDSD_FOUND)
   pkg_check_modules (LIBDSD_PKG libdsd)
-  find_path(LIBDSD_INCLUDE_DIR NAMES dsd_api.h
+  find_path(LIBDSD_INCLUDE_DIR
+    NAMES dsd/dsd_api.h
     PATHS
     ${LIBDSD_PKG_INCLUDE_DIRS}
     #/usr/include
