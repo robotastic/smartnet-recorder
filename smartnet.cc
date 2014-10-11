@@ -539,7 +539,7 @@ int main(int argc, char **argv)
 	std::vector<float> lpf_taps;
 
 
-    init_loggers(max_loggers, center_freq, sampe_rate);
+    init_loggers(max_loggers, center_freq, samp_rate);
 	gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
