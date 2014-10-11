@@ -22,7 +22,7 @@
 #ifndef INCLUDED_DSD_BLOCK_FF_H
 #define INCLUDED_DSD_BLOCK_FF_H
 
-#include <dsd_api.h>
+#include <dsd/dsd_api.h>
 #include <gnuradio/sync_decimator.h>
 
 /*
