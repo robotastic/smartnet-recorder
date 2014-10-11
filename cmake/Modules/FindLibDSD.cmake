@@ -3,18 +3,16 @@ if(NOT LIBDSD_FOUND)
   pkg_check_modules (LIBDSD_PKG libdsd)
   find_path(LIBDSD_INCLUDE_DIR
     NAMES dsd/dsd_api.h
-    PATHS
-    ${LIBDSD_PKG_INCLUDE_DIRS}
-    /usr/include
-    /usr/local/include
+    HINTS ${LIBDSD_PKG_INCLUDE_DIRS}
+    PATHS /usr/include
+          /usr/local/include
   )
 
   find_library(LIBDSD_LIBRARIES
     NAMES gr-dsd
-    PATHS
-    ${LIBDSD_PKG_LIBRARY_DIRS}
-    /usr/lib
-    /usr/local/lib
+    HINTS ${LIBDSD_PKG_LIBRARY_DIRS}
+    PATHS /usr/lib
+          /usr/local/lib
   )
 message(STATUS "Pkg: ${LIBDSD_PKG}, ${LIBDSD_PKG_INCLUDE_DIRS}, ${LIBDSD_PKG_LIBRARY_DIRS}")
 message(STATUS "Vars: ${LIBDSD_INCLUDE_DIR}, ${LIBDSD_LIBRARIES}")
