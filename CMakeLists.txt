@@ -140,7 +140,7 @@ link_directories(
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_pocsag.cc talkgroup.cc)
-target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES}  ${LIBOSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} itpp ncurses menu)
+target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_FILTER_LIBRARIES} ${GNURADIO_DIGITAL_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES} ${LIBOSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} itpp ncurses menu)
 
 #${CMAKE_SOURCE_DIR}/libs/op25_fsk4_demod_ff.o  ${CMAKE_SOURCE_DIR}/libs/op25_decoder_bf.o ${CMAKE_SOURCE_DIR}/libs/data_unit.o ${CMAKE_SOURCE_DIR}/libs/data_unit_handler.o ${CMAKE_SOURCE_DIR}/libs/bch.o/home/luke/sdr/smartnet/libs/abstract_data_unit.o
 
