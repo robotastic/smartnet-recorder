@@ -522,7 +522,7 @@ int main(int argc, char **argv)
 	float gain_mu = 0.01;
 	float mu=0.5;
 	float omega_relative_limit = 0.3;
-	float offset = center_freq - chan_freq;
+	float offset = chan_freq - center_freq;  // have to reverse it for 3.7 because it swapped in the switch.
 	float clockrec_oversample = 3;
 	int decim = int(samples_per_second / (syms_per_sec * clockrec_oversample));
 	float sps = samples_per_second/decim/syms_per_sec;
