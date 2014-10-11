@@ -325,6 +325,7 @@ float parse_message(string s) {
 
 	x.clear();
 	vector<string>().swap(x);
+ std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 
 	if (command < 0x2d0) {
 
