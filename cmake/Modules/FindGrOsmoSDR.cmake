@@ -17,12 +17,12 @@
 # GROSMOSDR_LIBRARIES The gr-osmosdr libraries (gnuradio-osmosdr)
 # GROSMOSDR_INCLUDE_DIR The location of gr-osmosdr headers
 
-
+pkg_check_modules (GROSMOSDR_PKG gnuradio-osmosdr)
 
 FIND_PATH(GROSMOSDR_INCLUDE_DIR
      NAMES osmosdr/source_c.h
            osmosdr/api.h
-     HINTS ${GrOsmoSDR_ROOT_DIR}/include
+     HINTS ${GROSMOSDR_PKG_INCLUDE_DIRS}
      PATHS /usr/local/include
            /usr/include
 )
@@ -30,7 +30,7 @@ FIND_PATH(GROSMOSDR_INCLUDE_DIR
 
 find_library(GROSMOSDR_LIBRARIES
   NAMES gnuradio-osmosdr
-  HINTS ${GrOsmoSDR_ROOT_DIR}/lib
+  HINTS ${GROSMOSDR_PKG_LIBRARY_DIRS}
   PATHS /usr/local/lib
         /usr/lib
   )
@@ -46,7 +46,6 @@ find_package_handle_standard_args(
 
 
 mark_as_advanced(
-  GrOsmoSDR_ROOT_DIR
   GROSMOSDR_LIBRARIES
   GROSMOSDR_INCLUDE_DIR
 )
