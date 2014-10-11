@@ -56,7 +56,7 @@ class log_dsd : public gr::hier_block2
 {
   friend log_dsd_sptr make_log_dsd(float f, float c, long s, long t, int n);
 protected:
-    log_dsd(float f, float c, long t, int n);
+    log_dsd(float f, float c, long s, long t, int n);
 
 public:
     ~log_dsd();
