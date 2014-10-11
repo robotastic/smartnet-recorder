@@ -64,10 +64,10 @@ find_package(Gnuradio "3.7.2" REQUIRED)
 
 
 find_package(LibOsmoSDR)
-find_package(LibRTLSDR)
-find_package(LibMiriSDR)
+#find_package(LibRTLSDR)
+#find_package(LibMiriSDR)
 find_package(LibHackRF)
-find_package(LibbladeRF)
+#find_package(LibbladeRF)
 
 
 if(NOT GNURADIO_RUNTIME_FOUND)
