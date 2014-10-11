@@ -26,26 +26,56 @@ set(CMAKE_BUILD_TYPE Debug)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
+
+########################################################################
+# Install directories
+########################################################################
+include(GrPlatform) #define LIB_SUFFIX
+set(GR_RUNTIME_DIR      bin)
+set(GR_LIBRARY_DIR      lib${LIB_SUFFIX})
+set(GR_INCLUDE_DIR      include/howto)
+set(GR_DATA_DIR         share)
+set(GR_PKG_DATA_DIR     ${GR_DATA_DIR}/${CMAKE_PROJECT_NAME})
+set(GR_DOC_DIR          ${GR_DATA_DIR}/doc)
+set(GR_PKG_DOC_DIR      ${GR_DOC_DIR}/${CMAKE_PROJECT_NAME})
+set(GR_CONF_DIR         etc)
+set(GR_PKG_CONF_DIR     ${GR_CONF_DIR}/${CMAKE_PROJECT_NAME}/conf.d)
+set(GR_LIBEXEC_DIR      libexec)
+set(GR_PKG_LIBEXEC_DIR  ${GR_LIBEXEC_DIR}/${CMAKE_PROJECT_NAME})
+set(GRC_BLOCKS_DIR      ${GR_PKG_DATA_DIR}/grc/blocks)
+
+########################################################################
+# Find gnuradio build dependencies
+########################################################################
+
+# Search for GNU Radio and its components and versions. Add any
+# components required to the list of GR_REQUIRED_COMPONENTS (in all
+# caps such as FILTER or FFT) and change the version to the minimum
+# API compatible version required.
+set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG)
+find_package(Gnuradio "3.7.2" REQUIRED)
+
+if(NOT CPPUNIT_FOUND)
+    message(FATAL_ERROR "CppUnit required to compile howto")
+endif()
+
+
 ########################################################################
 # Find build dependencies
 ########################################################################
-find_package(GnuradioRuntime)
-find_package(GnuradioIQBalance)
-find_package(UHD)
-find_package(GnuradioUHD)
-find_package(GnuradioFCD)
-find_package(GnuradioFCDPP)
+
+
 find_package(LibOsmoSDR)
 find_package(LibRTLSDR)
 find_package(LibMiriSDR)
 find_package(LibHackRF)
 find_package(LibbladeRF)
-#find_package(LibDSD)
 
 
 if(NOT GNURADIO_RUNTIME_FOUND)
     message(FATAL_ERROR "GnuRadio Runtime required to build " ${CMAKE_PROJECT_NAME})
 endif()
+
 
 
 ########################################################################
@@ -84,19 +114,6 @@ endif()
 ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
 
 
-########################################################################
-# Register component
-########################################################################
-#include(GrComponent)
-#GR_REGISTER_COMPONENT("gr-audio" ENABLE_GR_AUDIO
-#    Boost_FOUND
-#    ENABLE_GR_CORE
-#)
-
-
-
-
-SET(GR_PKG_AUDIO_EXAMPLES_DIR .)
 
 
 
@@ -124,7 +141,7 @@ link_directories(
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_pocsag.cc talkgroup.cc)
-target_link_libraries(smartnet  gnuradio-runtime gnuradio-pmt gnuradio-audio gnuradio-blocks gnuradio-osmosdr gnuradio-filter gnuradio-digital gnuradio-analog ${Boost_LIBRARIES} gr-dsd itpp ncurses menu)
+target_link_libraries(smartnet  ${GNURADIO_RUNTIMES_LIBRARIES}  gnuradio-osmosdr ${Boost_LIBRARIES} gr-dsd itpp ncurses menu)
 
 #${CMAKE_SOURCE_DIR}/libs/op25_fsk4_demod_ff.o  ${CMAKE_SOURCE_DIR}/libs/op25_decoder_bf.o ${CMAKE_SOURCE_DIR}/libs/data_unit.o ${CMAKE_SOURCE_DIR}/libs/data_unit_handler.o ${CMAKE_SOURCE_DIR}/libs/bch.o/home/luke/sdr/smartnet/libs/abstract_data_unit.o
 
