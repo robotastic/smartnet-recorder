@@ -143,8 +143,8 @@ target_link_libraries(smartnet  ${GNURADIO_RUNTIMES_LIBRARIES}  gnuradio-osmosdr
 
 #${CMAKE_SOURCE_DIR}/libs/op25_fsk4_demod_ff.o  ${CMAKE_SOURCE_DIR}/libs/op25_decoder_bf.o ${CMAKE_SOURCE_DIR}/libs/data_unit.o ${CMAKE_SOURCE_DIR}/libs/data_unit_handler.o ${CMAKE_SOURCE_DIR}/libs/bch.o/home/luke/sdr/smartnet/libs/abstract_data_unit.o
 
-INSTALL(TARGETS
-    smartnet
-    DESTINATION ${GR_PKG_AUDIO_EXAMPLES_DIR}
-    COMPONENT "audio_examples"
-)
+#INSTALL(TARGETS
+#    smartnet
+#    DESTINATION ${GR_PKG_AUDIO_EXAMPLES_DIR}
+#    COMPONENT "audio_examples"
+#)
