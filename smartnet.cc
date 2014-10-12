@@ -540,6 +540,7 @@ int main(int argc, char **argv)
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 	std::vector<float> lpf_taps;
+std::vector<float> resampler_taps;
 
 /*
 	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
@@ -549,6 +550,7 @@ int main(int argc, char **argv)
 						       offset,
 						       samp_rate);
 */
+int samp_per_sym = 10;
 float channel_rate = 3600 * samp_per_sym;
   double pre_channel_rate = samp_rate/decim;
 	unsigned int d = GCD(channel_rate, pre_channel_rate);
@@ -556,6 +558,7 @@ float channel_rate = 3600 * samp_per_sym;
     channel_rate = floor(channel_rate  / d);
    	pre_channel_rate = floor(pre_channel_rate / d);
 resampler_taps = design_filter(channel_rate, pre_channel_rate);
+gr::filter::rational_resampler_base_ccf::sptr downsample = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps); 
 gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0, 0.0);
 gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();
 
