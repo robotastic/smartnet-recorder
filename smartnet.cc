@@ -536,15 +536,12 @@ int main(int argc, char **argv)
 
 
 
+  init_loggers(max_loggers, center_freq, samp_rate);
+  gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 	std::vector<float> lpf_taps;
 
-
-    init_loggers(max_loggers, center_freq, samp_rate);
-	gr::msg_queue::sptr queue = gr::msg_queue::make();
-
 	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
-
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						       lpf_taps,
