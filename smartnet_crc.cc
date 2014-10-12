@@ -2,19 +2,19 @@
 /* -*- c++ -*- */
 /*
  * Copyright 2012 Nick Foster
- * 
+ *
  * This file is part of gr_smartnet
- * 
+ *
  * gr_smartnet is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * gr_smartnet is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with GNU Radio; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street,
@@ -114,14 +114,14 @@ static bool crc(const char *in) {
 
 static smartnet_packet parse(const char *in) {
     smartnet_packet pkt;
-    
+
     pkt.address = 0;
     pkt.groupflag = false;
     pkt.command = 0;
     pkt.crc = 0;
 
     int i=0;
-    
+
     for(int k = 15; k >=0 ; k--) pkt.address += (!bool(in[i++] & 0x01)) << k; //first 16 bits are ID, MSB first
     pkt.groupflag = !bool(in[i++]);
     for(int k = 9; k >=0 ; k--) pkt.command += (!bool(in[i++] & 0x01)) << k; //next 10 bits are command, MSB first
@@ -131,11 +131,11 @@ static smartnet_packet parse(const char *in) {
     //now correct things according to the mottrunk.txt description
     pkt.address ^= 0x33C7;
     pkt.command ^= 0x032A;
-    
+
     return pkt;
 }
 
-int 
+int
 smartnet_crc::work (int noutput_items,
 		    gr_vector_const_void_star &input_items,
 		    gr_vector_void_star &output_items)
@@ -158,14 +158,15 @@ smartnet_crc::work (int noutput_items,
     std::vector<gr::tag_t>::iterator tag_iter;
     for(tag_iter = frame_tags.begin(); tag_iter != frame_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
-	if(VERBOSE) std::cout << "found a frame at " << mark << std::endl;
+	if(1)//VERBOSE)
+    std::cout << "found a frame at " << mark << std::endl;
 
 	char databits[38];
 	smartnet_ecc(databits, &in[mark]);
 	bool crc_ok = crc(databits);
 
 	if(crc_ok) {
-	    if(VERBOSE)
+	    if(1)//VERBOSE)
 	    std::cout << "CRC OK" << std::endl;
 	    //parse the message into readable chunks
 	    smartnet_packet pkt = parse(databits);
