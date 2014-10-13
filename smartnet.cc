@@ -533,14 +533,11 @@ int main(int argc, char **argv)
 	cout << "Decim: " << decim << endl;
 	cout << "Samples per symbol: " << sps << endl;
 
-
+  std::vector<float> lpf_taps;
 
   init_loggers(max_loggers, center_freq, samp_rate);
+  
   gr::msg_queue::sptr queue = gr::msg_queue::make();
-
-	std::vector<float> lpf_taps;
-std::vector<float> resampler_taps;
-
 
 	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
 
@@ -549,10 +546,9 @@ std::vector<float> resampler_taps;
 						       offset,
 						       samp_rate);
 
-
-	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
-
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
+
+  gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
 
