@@ -535,7 +535,6 @@ int main(int argc, char **argv)
 
 
 
-
   init_loggers(max_loggers, center_freq, samp_rate);
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
@@ -550,18 +549,6 @@ std::vector<float> resampler_taps;
 						       offset,
 						       samp_rate);
 
-/*
-int samp_per_sym = 10;
-float channel_rate = 3600 * samp_per_sym;
-  double pre_channel_rate = samp_rate/decim;
-	unsigned int d = GCD(channel_rate, pre_channel_rate);
-
-    channel_rate = floor(channel_rate  / d);
-   	pre_channel_rate = floor(pre_channel_rate / d);
-resampler_taps = design_filter(channel_rate, pre_channel_rate);
-gr::filter::rational_resampler_base_ccf::sptr downsample = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps);
-gr::analog::sig_source_c::sptr offset_sig = gr::analog::sig_source_c::make(samp_rate, gr::analog::GR_SIN_WAVE, offset, 1.0);
-gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();*/
 
 	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
@@ -577,11 +564,6 @@ gr::blocks::multiply_cc::sptr mixer = gr::blocks::multiply_cc::make();*/
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 
-/*
-  tb->connect(offset_sig, 0, mixer, 0);
-  tb->connect(src, 0, mixer, 1);
-  tb->connect(mixer, 0, downsample, 0);
-  tb->connect(downsample, 0, carriertrack, 0);*/
 	tb->connect(src,0,prefilter,0);
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
