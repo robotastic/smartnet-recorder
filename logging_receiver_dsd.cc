@@ -163,7 +163,7 @@ void log_dsd::close() {
 
 void log_dsd::tune_offset(float f) {
 	freq = f;
-	prefilter->set_center_freq(center - (f*1000000));
+	prefilter->set_center_freq((f*1000000) - center); // have to flip this for 3.7
 	//std::cout << "Offset set to: " << (center - f*1000000) << "Freq: "  << f << std::endl;
 }
 void log_dsd::deactivate() {
