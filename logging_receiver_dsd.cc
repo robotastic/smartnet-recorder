@@ -49,11 +49,11 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	timestamp = time(NULL);
 	starttime = time(NULL);
 
-	float offset = center - (f*1000000);
+	float offset = (f*1000000) - center; //have to flip for 3.7
 
 	int samp_per_sym = 10;
 	double decim = 80;
-	float xlate_bandwidth = 12500; //14000; //24260.0;
+	float xlate_bandwidth = 14000; //24260.0;
 	float channel_rate = 4800 * samp_per_sym;
 	double pre_channel_rate = samp_rate/decim;
 
@@ -105,7 +105,6 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 }
 
 log_dsd::~log_dsd() {
-//std::cout<< "logging_receiver_dsd.cc: destructor" <<std::endl;
 
 }
 // from: /gnuradio/grc/grc_gnuradio/blks2/selector.py
@@ -143,22 +142,6 @@ int log_dsd::lastupdate() {
 long log_dsd::elapsed() {
 	return time(NULL) - starttime;
 }
-/*
-void log_dsd::close() {
-
-	std::cout<< "logging_receiver_dsd.cc: close()" <<std::endl;
-	wav_sink->close();
-
-	disconnect(self(), 0, prefilter, 0);
-	disconnect(prefilter, 0, downsample_sig, 0);
-	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, dsd, 0);
-	disconnect(dsd, 0, wav_sink,0);
-
-	//std::cout<< "logging_receiver_dsd.cc: finished close()" <<std::endl;
-}
-*/
 
 
 void log_dsd::tune_offset(float f) {
@@ -172,8 +155,7 @@ void log_dsd::deactivate() {
   lock();
 
 	wav_sink->close();
-	//raw_sink->close();
-
+	
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
 
@@ -185,10 +167,8 @@ void log_dsd::deactivate() {
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, levels, 0);
 	disconnect(levels, 0, dsd, 0);
-	//disconnect(levels, 0, raw_sink, 0);
 	disconnect(dsd, 0, wav_sink,0);
-	//disconnect(dsd, 0, bismark,0);
-
+	
 
 	unlock();
 	active = false;
