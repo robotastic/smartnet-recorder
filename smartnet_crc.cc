@@ -158,7 +158,7 @@ smartnet_crc::work (int noutput_items,
     std::vector<gr::tag_t>::iterator tag_iter;
     for(tag_iter = frame_tags.begin(); tag_iter != frame_tags.end(); tag_iter++) {
 	uint64_t mark = tag_iter->offset - abs_sample_cnt;
-	if(1)//VERBOSE)
+	if(VERBOSE)
     std::cout << "found a frame at " << mark << std::endl;
 
 	char databits[38];
@@ -166,7 +166,7 @@ smartnet_crc::work (int noutput_items,
 	bool crc_ok = crc(databits);
 
 	if(crc_ok) {
-	    if(1)//VERBOSE)
+	    if(VERBOSE)
 	    std::cout << "CRC OK" << std::endl;
 	    //parse the message into readable chunks
 	    smartnet_packet pkt = parse(databits);
