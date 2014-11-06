@@ -47,8 +47,6 @@
  #include <ncurses.h>
 #include <menu.h>
 #include "logging_receiver_dsd.h"
-//#include "logging_receiver_pocsag.h"
-//#include "logging_receiver_p25.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
 #include "talkgroup.h"
@@ -89,9 +87,6 @@
 #include <gnuradio/analog/sig_source_c.h>
 
 
-
-
-
  namespace po = boost::program_options;
 
  using namespace std;
@@ -101,7 +96,7 @@
  long lastaddress = 0;
  int thread_num=0;
  double center_freq;
-bool console  = false;
+bool console  = true;
 
 
 
@@ -603,7 +598,7 @@ int main(int argc, char **argv)
 
 
 	}
-
+	
 	endwin();
 
   // Exit normally.
