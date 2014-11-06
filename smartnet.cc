@@ -314,7 +314,7 @@ float parse_message(string s) {
 	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
 
 	long address = atoi( x[0].c_str() ) & 0xFFF0;
-	int groupflag = atoi( x[1].c_str() );
+	//int groupflag = atoi( x[1].c_str() );
 	int command = atoi( x[2].c_str() );
 	char shell_command[200];
 
@@ -379,7 +379,7 @@ float parse_message(string s) {
 				if (rx->get_talkgroup() == address) {
 					if (rx->get_freq() != retfreq) {
 						if (console) {
-							sprintf(status, "Retuning TG: %Ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
+							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
 							update_status_win(status);
 						}
 						rx->tune_offset(retfreq);
@@ -390,7 +390,7 @@ float parse_message(string s) {
 				} else {
 					if (rx->get_freq() == retfreq) {
 						if (console) {
-							sprintf(status, "%g \t- Freq overlap: Existing TG %d \tNew TG %d \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
+							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
 							update_status_win(status);
 						}
 						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
@@ -598,7 +598,7 @@ int main(int argc, char **argv)
 
 
 	}
-	
+
 	endwin();
 
   // Exit normally.

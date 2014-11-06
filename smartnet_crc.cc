@@ -69,7 +69,7 @@ static void smartnet_ecc(char *out, const char *in) {
     //since the bitstream is still interleaved with the P bits, we can do this while running
     expected[0] = in[0] & 0x01; //info bit
     expected[1] = in[0] & 0x01; //this is a parity bit, prev bits were 0 so we call x ^ 0 = x
-    for(int k = 2; k < 76*2; k+=2) {
+    for(int k = 2; k < 76; k+=2) {
 	expected[k] = in[k] & 0x01; //info bit
 	expected[k+1] = (in[k] & 0x01) ^ (in[k-2] & 0x01); //parity bit
     }
