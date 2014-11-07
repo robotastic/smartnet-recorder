@@ -364,10 +364,11 @@ float parse_message(string s) {
 	          update_active_tg_win();
 	        }
 	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+			std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  std::endl;
 
 	        rx->deactivate();
 	        num_loggers--;
-
+			
 	        system(shell_command);
 	      }
 	    }
