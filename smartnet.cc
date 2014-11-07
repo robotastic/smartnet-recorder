@@ -328,13 +328,13 @@ float parse_message(string s) {
 		        // Channel Grant
 			if (  (address != 56016) && (address != 8176)) {
 				retfreq = getfreq(command);
-				//std::cout << "Channel Grant: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd << std::endl;
+				std::cout << "Channel Grant: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd << std::endl;
 			}
 		} else {
 			// Call continuation
 			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
-				//std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
+				std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 
 			}
 		}
@@ -534,8 +534,8 @@ int main(int argc, char **argv)
   
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
-	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 4500, 2000);
-	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
+	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 4500, 2000);
+	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						       lpf_taps,
@@ -544,8 +544,8 @@ int main(int argc, char **argv)
 
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
-	//gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 1*pi/clockrec_oversample, -1*pi/clockrec_oversample);
-	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
+	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 1*pi/clockrec_oversample, -1*pi/clockrec_oversample);
+	//gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
 
