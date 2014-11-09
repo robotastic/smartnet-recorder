@@ -73,7 +73,7 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 
 	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps);
 	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
-	levels = gr::blocks::multiply_const_ff::make(0.6); //33);
+	levels = gr::blocks::multiply_const_ff::make(1.0); //33);
 
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
