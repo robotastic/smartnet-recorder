@@ -169,7 +169,7 @@ void log_dsd::deactivate() {
 
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(demod,0, raw_sink,0);
+	disconnect(levels,0, raw_sink,0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, levels, 0);
 	disconnect(levels, 0, dsd, 0);
@@ -249,7 +249,7 @@ void log_dsd::activate(float f, int t, int n) {
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
 	connect(prefilter, 0, downsample_sig, 0);
-	connect(demod,0, raw_sink,0);
+	connect(levels,0, raw_sink,0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, levels, 0);
