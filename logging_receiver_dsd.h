@@ -42,6 +42,7 @@
 //#include <gnuradio/kludge_copy.h>
 //#include <smartnet_wavsink.h>
 #include <gnuradio/blocks/wavfile_sink.h>
+#include <gnuradio/blocks/file_sink.h>
 //#include <blocks/wavfile_sink.h>
 #include "smartnet.h"
 
@@ -111,6 +112,7 @@ private:
 	gr::analog::quadrature_demod_cf::sptr demod;
 	dsd_block_ff_sptr dsd;
 	gr::blocks::wavfile_sink::sptr wav_sink;
+	gr::blocks::file_sink::sptr file_sink;
 	gr::blocks::null_sink::sptr null_sink;
 	gr::blocks::head::sptr head_source;
 	//gr_kludge_copy_sptr copier;

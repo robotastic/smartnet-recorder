@@ -98,10 +98,10 @@ dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-  sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+  	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
-
+	file_sink = gr::blocks:file_sink::make(sizeof(), raw_filename);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
 
 
@@ -159,6 +159,7 @@ void log_dsd::deactivate() {
   lock();
 
 	wav_sink->close();
+	raw_sink->close();
 	
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
@@ -168,6 +169,7 @@ void log_dsd::deactivate() {
 
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
+	disconnect(downsample_sig,0, raw_sink,0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, levels, 0);
 	disconnect(levels, 0, dsd, 0);
@@ -242,7 +244,9 @@ void log_dsd::activate(float f, int t, int n) {
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
 	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
     sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
+    raw_sink->open(raw_filename);
 	wav_sink->open(filename);
 	//raw_sink->open(raw_filename);
 	//wav_sink = gr_make_wavfile_sink(filename,1,8000,16);
@@ -250,6 +254,7 @@ void log_dsd::activate(float f, int t, int n) {
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
 	connect(prefilter, 0, downsample_sig, 0);
+	connect(downsample_sig,0, raw_sink,0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, levels, 0);
