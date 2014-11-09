@@ -160,8 +160,8 @@ void log_dsd::deactivate() {
 
 	wav_sink->close();
 	
-		raw_sink->close();
-		disconnect(prefilter,0, raw_sink,0);
+	//	raw_sink->close();
+	//	disconnect(prefilter,0, raw_sink,0);
 
 	
 	disconnect(self(), 0, prefilter, 0);
@@ -246,8 +246,8 @@ void log_dsd::activate(float f, int t, int n) {
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
     raw_sink->open(raw_filename);
 	
-		sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
-		wav_sink->open(filename);
+	//	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	//	wav_sink->open(filename);
 
 	
 	lock();
@@ -255,7 +255,7 @@ void log_dsd::activate(float f, int t, int n) {
 	connect(self(),0, prefilter,0);
 	connect(prefilter, 0, downsample_sig, 0);
 
-		connect(prefilter,0, raw_sink,0);
+//		connect(prefilter,0, raw_sink,0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, levels, 0);
