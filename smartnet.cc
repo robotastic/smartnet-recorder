@@ -365,7 +365,7 @@ float parse_message(string s) {
 	          update_active_tg_win();
 	        }
 	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-			std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+			//std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 	        rx->deactivate();
 	        num_loggers--;
@@ -384,7 +384,7 @@ float parse_message(string s) {
 							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
 							update_status_win(status);
 						}
-						std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+						//std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 						rx->tune_offset(retfreq);
 					}
@@ -397,7 +397,7 @@ float parse_message(string s) {
 							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
 							update_status_win(status);
 						}
-						std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+						//std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 						rx->mute();
@@ -440,7 +440,7 @@ float parse_message(string s) {
 					num_loggers++;
 
 					rx->activate(retfreq, address,num_loggers);
-					std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
+					//std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
 
 					break;
 				}

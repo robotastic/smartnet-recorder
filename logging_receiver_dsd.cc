@@ -241,7 +241,7 @@ void log_dsd::activate(float f, int t, int n) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
 
 	if (iam_logging) {
-		printf("Recording Freq: %f \n", f);
+		//printf("Recording Freq: %f \n", f);
 	}
 
 
