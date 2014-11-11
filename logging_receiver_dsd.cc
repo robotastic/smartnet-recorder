@@ -83,6 +83,7 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
+	std::cout << "I am the one true only!" << std::endl;
 	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
