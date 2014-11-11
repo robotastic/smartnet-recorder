@@ -79,16 +79,16 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps);
-	/*
+	
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
+	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
-	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	}
-	*/
+	
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 
@@ -158,6 +158,7 @@ void log_dsd::tune_offset(float f) {
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
+	if (logging) {
 
   lock();
 
@@ -221,7 +222,7 @@ void log_dsd::deactivate() {
   }
   else cout << "Unable to open file";
   dsd->reset_state();
-
+}
 }
 
 void log_dsd::activate(float f, int t, int n) {
@@ -232,14 +233,15 @@ void log_dsd::activate(float f, int t, int n) {
 	talkgroup = t;
 	freq = f;
   num = n;
-
+  	tm *ltm = localtime(&starttime);
+  	if (logging) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
 
 	if (iam_logging) {
 		printf("Recording Freq: %f \n", f);
 	}
 
-	tm *ltm = localtime(&starttime);
+
 
 	std::stringstream path_stream;
 	path_stream << boost::filesystem::current_path().string() <<  "/" << 1900 + ltm->tm_year << "/" << 1 + ltm->tm_mon << "/" << ltm->tm_mday;
@@ -270,6 +272,7 @@ void log_dsd::activate(float f, int t, int n) {
 	connect(dsd, 0, wav_sink,0);
 	
 	unlock();
+	}
 	active = true;
 
 }
