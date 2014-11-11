@@ -383,9 +383,9 @@ float parse_message(string s) {
 							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
 							update_status_win(status);
 						}
-						std::cout << "Skipping Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << std::endl;
+						std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << std::endl;
 
-						//rx->tune_offset(retfreq);
+						rx->tune_offset(retfreq);
 					}
 					rx->unmute();
 
