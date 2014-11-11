@@ -91,7 +91,7 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	*/
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	
+
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -153,7 +153,7 @@ long log_dsd::elapsed() {
 void log_dsd::tune_offset(float f) {
 	freq = f;
 	prefilter->set_center_freq((f*1000000) - center); // have to flip this for 3.7
-	//std::cout << "Offset set to: " << (center - f*1000000) << "Freq: "  << f << std::endl;
+	std::cout << "Offset set to: " << ((f*1000000) -center) << "Freq: "  << f << std::endl;
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
