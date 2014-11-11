@@ -158,6 +158,9 @@ void log_dsd::tune_offset(float f) {
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
+
+	active = false;
+
 	if (logging) {
 
   lock();
@@ -184,7 +187,7 @@ void log_dsd::deactivate() {
 	
 
 	unlock();
-	active = false;
+
   dsd_state *state = dsd->get_state();
   ofstream myfile (status_filename);
   if (myfile.is_open())
