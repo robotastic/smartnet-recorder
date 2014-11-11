@@ -244,9 +244,10 @@ void init_loggers(int num, float center_freq, long samp_rate) {
 // static loggers
 	for (int i = 0; i < num; i++) {
 		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, samp_rate, 0, i);
+
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
-
+		std::cout << "Created and connect logger: " << i << " address: " << log << std::endl;
 	}
 
 }
@@ -364,7 +365,7 @@ float parse_message(string s) {
 	          update_active_tg_win();
 	        }
 	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-			std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << std::endl;
+			std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 	        rx->deactivate();
 	        num_loggers--;
@@ -383,7 +384,7 @@ float parse_message(string s) {
 							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
 							update_status_win(status);
 						}
-						std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << std::endl;
+						std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 						rx->tune_offset(retfreq);
 					}
@@ -396,7 +397,7 @@ float parse_message(string s) {
 							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
 							update_status_win(status);
 						}
-						std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << std::endl;
+						std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
 						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
 						rx->mute();
@@ -439,7 +440,7 @@ float parse_message(string s) {
 					num_loggers++;
 
 					rx->activate(retfreq, address,num_loggers);
-					std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << std::endl;
+					std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
 
 					break;
 				}
