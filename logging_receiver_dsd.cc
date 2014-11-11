@@ -152,8 +152,9 @@ long log_dsd::elapsed() {
 
 void log_dsd::tune_offset(float f) {
 	freq = f;
-	prefilter->set_center_freq((f*1000000) - center); // have to flip this for 3.7
-	std::cout << "Offset set to: " << ((f*1000000) -center) << " Freq: "  << freq << std::endl;
+	int offset_amount = ((f*1000000) - center);
+	prefilter->set_center_freq(offset_amount); // have to flip this for 3.7
+	std::cout << "Offset set to: " << offset_amount << " Freq: "  << freq << std::endl;
 }
 void log_dsd::deactivate() {
 	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
