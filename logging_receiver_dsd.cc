@@ -79,7 +79,7 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps);
-	
+	/*
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
@@ -88,8 +88,10 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	}
+	*/
+	iam_logging = false;
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	
-
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
