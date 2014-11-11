@@ -84,15 +84,15 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	iam_logging = true;
 	logging = true;
 	std::cout << "I am the one true only!" << std::endl;
-	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,1,1, false, num);
 	} else {
 	iam_logging = false;
-	//dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
+	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
 	}
-	
+	/*
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-
+*/
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -162,7 +162,7 @@ void log_dsd::deactivate() {
 
 	active = false;
 
-	if (logging) {
+	//if (logging) {
 
   lock();
 
@@ -226,7 +226,7 @@ void log_dsd::deactivate() {
   }
   else cout << "Unable to open file";
   dsd->reset_state();
-}
+//}
 }
 
 void log_dsd::activate(float f, int t, int n) {
@@ -238,7 +238,7 @@ void log_dsd::activate(float f, int t, int n) {
 	freq = f;
   num = n;
   	tm *ltm = localtime(&starttime);
-  	if (logging) {
+  	//if (logging) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
 
 	if (iam_logging) {
@@ -276,7 +276,7 @@ void log_dsd::activate(float f, int t, int n) {
 	connect(dsd, 0, wav_sink,0);
 	
 	unlock();
-	}
+	//}
 	active = true;
 
 }
