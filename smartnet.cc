@@ -103,7 +103,7 @@ bool console  = false;
 
 
  vector<log_dsd_sptr> loggers;
- unsigned int max_loggers = 1;
+ unsigned int max_loggers = 6;
  unsigned int num_loggers = 0;
  vector<log_dsd_sptr> active_loggers;
 
