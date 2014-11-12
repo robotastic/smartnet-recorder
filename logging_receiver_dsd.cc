@@ -158,7 +158,7 @@ void log_dsd::tune_offset(float f) {
 	//std::cout << "Offset set to: " << offset_amount << " Freq: "  << freq << std::endl;
 }
 void log_dsd::deactivate() {
-	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] \t wav_sink [ " << *wav_sink << " ] \t DSD [ " << *dsd << " ] "  <<std::endl;
+	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] \t wav_sink [ " << *wav_sink.get() << " ] \t DSD [ " << *dsd.get() << " ] "  <<std::endl;
 
 	active = false;
 
