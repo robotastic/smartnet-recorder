@@ -238,7 +238,7 @@ void log_dsd::activate(float f, int t, int n) {
 	freq = f;
   num = n;
   	tm *ltm = localtime(&starttime);
-  	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] "  <<std::endl; // \t wav_sink [ " << wav_sink.get() << " ] \t DSD [ " << dsd.get() << " ] "  <<std::endl;
+  	std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ]  \t wav_sink [ " << wav_sink.use_count() << " ] \t DSD [ " << dsd.use_count() << " ] "  <<std::endl;
 
   	//if (logging) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
