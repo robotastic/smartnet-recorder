@@ -79,7 +79,7 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 		sym_taps.push_back(1.0 / samp_per_sym);
 	}
 	sym_filter = gr::filter::fir_filter_fff::make(1, sym_taps);
-	
+	/*
 	if (!logging) {
 	iam_logging = true;
 	logging = true;
@@ -88,11 +88,11 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	} else {
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-	}
-	/*
+	}*/
+	
 	iam_logging = false;
 	dsd = dsd_make_block_ff(dsd_FRAME_P25_PHASE_1,dsd_MOD_C4FM,3,0,0, false, num);
-*/
+
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -158,7 +158,7 @@ void log_dsd::tune_offset(float f) {
 	//std::cout << "Offset set to: " << offset_amount << " Freq: "  << freq << std::endl;
 }
 void log_dsd::deactivate() {
-	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " <<std::endl;
+	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] \t wav_sink [ " << wav_sink " ] \t DSD [ " << dsd << " ] "  <<std::endl;
 
 	active = false;
 
@@ -238,6 +238,8 @@ void log_dsd::activate(float f, int t, int n) {
 	freq = f;
   num = n;
   	tm *ltm = localtime(&starttime);
+  	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] \t wav_sink [ " << wav_sink " ] \t DSD [ " << dsd << " ] "  <<std::endl;
+
   	//if (logging) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
 
