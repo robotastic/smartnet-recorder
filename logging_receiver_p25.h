@@ -15,39 +15,39 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <gr_io_signature.h>
-#include <gr_hier_block2.h>
-#include <gr_firdes.h>
-#include <gr_fir_filter_ccf.h>
-#include <gr_fir_filter_fff.h>
-#include <gr_freq_xlating_fir_filter_ccf.h>
-#include <filter/firdes.h>
-#include <filter/rational_resampler_base_ccc.h>
-#include <gr_quadrature_demod_cf.h>
-#include <analog/quadrature_demod_cf.h>
-#include <gr_sig_source_f.h>
-#include <gr_sig_source_c.h>
-#include <gr_multiply_cc.h>
-#include <gr_file_sink.h>
-#include <gr_rational_resampler_base_ccf.h>
-#include <gr_rational_resampler_base_fff.h>
-#include <gr_block.h>
-#include <gr_pwr_squelch_cc.h>
+#include <gnuradio/io_signature.h>
+#include <gnuradio/hier_block2.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/fir_filter_ccf.h>
+#include <gnuradio/filter/fir_filter_fff.h>
+#include <gnuradio/filter/freq_xlating_fir_filter_ccf.h>
+#include <gnuradio/filter/firdes.h>
+#include <gnuradio/filter/rational_resampler_base_ccc.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+#include <gnuradio/analog/quadrature_demod_cf.h>
+#include <gnuradio/analog/sig_source_f.h>
+#include <gnuradio/analog/sig_source_c.h>
+#include <gnuradio/blocks/multiply_cc.h>
+#include <gnuradio/blocks/file_sink.h>
+#include <gnuradio/filter/rational_resampler_base_ccf.h>
+#include <gnuradio/filter/rational_resampler_base_fff.h>
+#include <gnuradio/block.h>
+#include <gnuradio/blocks/null_sink.h>
 
 #include <op25_decoder_bf.h>
 #include <op25_fsk4_demod_ff.h>
 #include <op25_fsk4_slicer_fb.h>
-#include <gr_msg_queue.h>
-#include <gr_message.h>
+#include <gnuradio/msg_queue.h>
+#include <gnuradio/message.h>
 
-//Valve
-#include <gr_null_sink.h>
-#include <gr_null_source.h>
-#include <gr_head.h>
-#include <gr_kludge_copy.h>
-//#include <smartnet_wavsink.h>
-#include <gr_wavfile_sink.h>
-//#include <blocks/wavfile_sink.h>
+#include <gnuradio/blocks/head.h>
+
+#include <gnuradio/blocks/wavfile_sink.h>
+#include <gnuradio/blocks/file_sink.h>
+
+#include "smartnet.h"
+
 
 class log_p25;
 
