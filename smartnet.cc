@@ -46,7 +46,7 @@
 #include <signal.h>
  #include <ncurses.h>
 #include <menu.h>
-#include "logging_receiver_dsd.h"
+#include "logging_receiver_p25.h"
 #include "smartnet_crc.h"
 #include "smartnet_deinterleave.h"
 #include "talkgroup.h"
@@ -102,10 +102,10 @@ bool console  = false;
 
 
 
- vector<log_dsd_sptr> loggers;
+ vector<log_p25_sptr> loggers;
  unsigned int max_loggers = 6;
  unsigned int num_loggers = 0;
- vector<log_dsd_sptr> active_loggers;
+ vector<log_p25_sptr> active_loggers;
 
 gr::top_block_sptr tb;
 osmosdr::source::sptr src;
@@ -243,7 +243,7 @@ void init_loggers(int num, float center_freq, long samp_rate) {
 
 // static loggers
 	for (int i = 0; i < num; i++) {
-		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, samp_rate, 0, i);
+		log_p25_sptr log = make_log_p25( center_freq, center_freq, samp_rate, 0, i);
 
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
@@ -348,8 +348,8 @@ float parse_message(string s) {
 
 
 	if (retfreq) {
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-	      log_dsd_sptr rx = *it;
+		for(vector<log_p25_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+	      log_p25_sptr rx = *it;
 
 	      if (rx->is_active() && (rx->lastupdate() > 4.0)) {
 
@@ -373,8 +373,8 @@ float parse_message(string s) {
 	        system(shell_command);
 	      }
 	    }
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
-			log_dsd_sptr rx = *it;
+		for(vector<log_p25_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
+			log_p25_sptr rx = *it;
 
 			if (rx->is_active())
 			{
@@ -433,8 +433,8 @@ float parse_message(string s) {
 		}
 
 		if (record_tg){
-			for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-				log_dsd_sptr rx = *it;
+			for(vector<log_p25_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+				log_p25_sptr rx = *it;
 				if (!rx->is_active())
 				{
 					num_loggers++;
