@@ -55,7 +55,7 @@ set(GRC_BLOCKS_DIR      ${GR_PKG_DATA_DIR}/grc/blocks)
 set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG OP25)
 find_package(Gnuradio "3.7.2" REQUIRED)
 
-
+find_package(GnuradioOp25)
 
 
 ########################################################################
