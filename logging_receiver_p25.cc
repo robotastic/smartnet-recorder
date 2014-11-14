@@ -35,6 +35,7 @@ std::vector<float> log_p25::design_filter(double interpolation, double deci) {
 }
 
 
+
 log_p25::log_p25(float f, float c, long s, long t, int n)
     : gr::hier_block2 ("log_p25",
           gr::io_signature::make  (1, 1, sizeof(gr_complex)),
@@ -120,6 +121,10 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 
 }
 
+
+log_p25::~log_p25() {
+
+}
 void log_p25::unmute() {
 	// this function gets called everytime their is a TG continuation command. This keeps the timestamp updated.
 	timestamp = time(NULL);
