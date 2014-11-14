@@ -2,9 +2,9 @@
 #include "logging_receiver_p25.h"
 
 
-log_p25_sptr make_log_p25(float freq, float center, long t)
+log_p25_sptr make_log_p25(float freq, float center, long s, long t, int n)
 {
-    return gnuradio::get_initial_sptr(new log_p25(freq, center, t));
+    return gnuradio::get_initial_sptr(new log_p25(freq, center, s, t, n));
 }
 
 

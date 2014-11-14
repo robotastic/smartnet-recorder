@@ -86,6 +86,11 @@ private:
     	time_t starttime;
 
 char filename[160];
+  char raw_filename[160];
+	int num;
+
+	bool iam_logging;
+	bool active;
 
 
 	std::vector<float> lpf_taps;
@@ -116,7 +121,7 @@ char filename[160];
 
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
 	gr::op25::decoder_bf::sptr op25_decoder;
-	gr::op25::fsk4_slicer::fb_sptr op25_slicer;
+	gr::op25::fsk4_slicer_fb::sptr op25_slicer;
 	gr::msg_queue::sptr tune_queue;
 	gr::msg_queue::sptr traffic_queue;
 	unsigned GCD(unsigned u, unsigned v);
