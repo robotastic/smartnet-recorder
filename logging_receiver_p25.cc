@@ -86,9 +86,9 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 	traffic_queue = gr::msg_queue::make();
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
 	std::vector<float> levels( l,l + sizeof( l ) / sizeof( l[0] ) );
-	op25_demod = op25_make_fsk4_demod_ff(tune_queue, channel_rate, symbol_rate);
-	op25_decoder = op25_make_decoder_bf();
-	op25_slicer = op25_make_fsk4_slicer_fb(levels);
+	op25_demod = gr::op25::fsk4_demod_ff::make(tune_queue, channel_rate, symbol_rate);
+	op25_decoder = gr::op25::decoder_bf::make();
+	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
 	op25_decoder->set_msgq(traffic_queue);
 
 	tm *ltm = localtime(&starttime);
@@ -98,7 +98,6 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
 
