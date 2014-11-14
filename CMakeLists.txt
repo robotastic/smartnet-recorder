@@ -52,10 +52,10 @@ set(GRC_BLOCKS_DIR      ${GR_PKG_DATA_DIR}/grc/blocks)
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
 # caps such as FILTER or FFT) and change the version to the minimum
 # API compatible version required.
-set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG OP25)
+set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG)
 find_package(Gnuradio "3.7.2" REQUIRED)
 
-find_package(GnuradioOp25)
+
 
 
 ########################################################################
@@ -69,6 +69,7 @@ find_package(GnuradioOp25)
 find_package(GrOsmoSDR)
 find_package(LibHackRF)
 find_package(LibDSD)
+find_package(LibOP25)
 #find_package(LibbladeRF)
 
 
@@ -141,4 +142,4 @@ link_directories(
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc logging_receiver_p25.cc talkgroup.cc)
-target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_PMT_LIBRARIES} ${GNURADIO_FILTER_LIBRARIES} ${GNURADIO_DIGITAL_LIBRARIES} ${GNURADIO_ANALOG_LIBRARIES} ${GNURADIO_AUDIO_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES} ${GROSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} ${GNURADIO_OP25_LIBRARIES} itpp ncurses menu)
+target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_PMT_LIBRARIES} ${GNURADIO_FILTER_LIBRARIES} ${GNURADIO_DIGITAL_LIBRARIES} ${GNURADIO_ANALOG_LIBRARIES} ${GNURADIO_AUDIO_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES} ${GROSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} ${LIBOP25_LIBRARIES} itpp ncurses menu)
