@@ -111,13 +111,7 @@ std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans
 	
 	connect(self(),0, null_sink,0);
 
-	connect(self(), 0, prefilter, 0);
-	connect(prefilter, 0, demod, 0);
-	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, op25_demod, 0);
-	connect(op25_demod,0, op25_slicer, 0);
-	connect(op25_slicer,0, op25_decoder,0);
-	connect(op25_decoder, 0, wav_sink,0);
+	
 
 }
 
