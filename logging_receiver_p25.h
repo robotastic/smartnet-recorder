@@ -35,9 +35,9 @@
 #include <gnuradio/block.h>
 #include <gnuradio/blocks/null_sink.h>
 
-#include <op25_decoder_bf.h>
-#include <op25_fsk4_demod_ff.h>
-#include <op25_fsk4_slicer_fb.h>
+#include <op25/decoder_bf.h>
+#include <op25/fsk4_demod_ff.h>
+#include <op25/fsk4_slicer_fb.h>
 #include <gnuradio/msg_queue.h>
 #include <gnuradio/message.h>
 
