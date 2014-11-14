@@ -9,7 +9,7 @@ if(NOT LIBOP25_FOUND)
   )
 
   find_library(LIBOP25_LIBRARIES
-    NAMES gr-op25
+    NAMES gnuradio-op25
     HINTS ${LIBOP25_PKG_LIBRARY_DIRS}
     PATHS /usr/lib
           /usr/local/lib
