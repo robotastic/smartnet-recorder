@@ -108,16 +108,15 @@ char filename[160];
 	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
 	gr::analog::quadrature_demod_cf::sptr demod;
-	dsd_block_ff_sptr dsd;
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	gr::blocks::file_sink::sptr raw_sink;
 	gr::blocks::null_sink::sptr null_sink;
 	gr::blocks::head::sptr head_source;
 
 
-	gr::op25::fsk4_demod_ff_sptr op25_demod;
-	gr::op25::decoder_bf_sptr op25_decoder;
-	gr::op25::fsk4_slicer_fb_sptr op25_slicer;
+	gr::op25::fsk4_demod_ff::sptr op25_demod;
+	gr::op25::decoder_bf::sptr op25_decoder;
+	gr::op25::fsk4_slicer::fb_sptr op25_slicer;
 	gr::msg_queue::sptr tune_queue;
 	gr::msg_queue::sptr traffic_queue;
 	unsigned GCD(unsigned u, unsigned v);
