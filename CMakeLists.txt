@@ -52,7 +52,7 @@ set(GRC_BLOCKS_DIR      ${GR_PKG_DATA_DIR}/grc/blocks)
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
 # caps such as FILTER or FFT) and change the version to the minimum
 # API compatible version required.
-set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG)
+set(GR_REQUIRED_COMPONENTS RUNTIME PMT AUDIO BLOCKS FILTER DIGITAL ANALOG OP25)
 find_package(Gnuradio "3.7.2" REQUIRED)
 
 
