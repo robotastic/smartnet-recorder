@@ -55,7 +55,7 @@ typedef boost::shared_ptr<log_p25> log_p25_sptr;
 
 log_p25_sptr make_log_p25(float f, float c, long t);
 
-class log_p25 : public gr_hier_block2
+class log_p25 : public gr::hier_block2
 {
   friend log_p25_sptr make_log_p25(float f, float c, long t);
 protected:
@@ -82,32 +82,39 @@ private:
 
 char filename[160];
 
+
+	std::vector<float> lpf_taps;
+	std::vector<float> resampler_taps;
+	std::vector<float> sym_taps;
+
     /* GR blocks */
-    	gr_fir_filter_ccf_sptr lpf;
-	gr_fir_filter_fff_sptr sym_filter;
-	gr_freq_xlating_fir_filter_ccf_sptr prefilter;
-	gr_sig_source_c_sptr offset_sig; 
+    	gr::filter::fir_filter_ccf::sptr lpf;
+	gr::filter::fir_filter_fff::sptr sym_filter;
+	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter;
+	gr::analog::sig_source_c::sptr offset_sig;
 
-	gr_multiply_cc_sptr mixer;
-	gr_file_sink_sptr fs;
 
-	gr_rational_resampler_base_ccf_sptr downsample_sig;
-	gr_rational_resampler_base_fff_sptr upsample_audio;
+	gr::blocks::multiply_cc::sptr mixer;
+	gr::blocks::file_sink::sptr fs;
+
+
+
+	gr::filter::rational_resampler_base_ccf::sptr downsample_sig;
+	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
-	gr_quadrature_demod_cf_sptr demod;
-	gr_pwr_squelch_cc_sptr squelch;
-	gr_wavfile_sink_sptr wav_sink;
-	//smartnet_wavsink_sptr wav_sink
-	//gr::blocks::wavfile_sink::sptr wav_sink;
-	gr_null_sink_sptr null_sink;
-	gr_null_source_sptr null_source;
-	gr_head_sptr head_source;
-	gr_kludge_copy_sptr copier;
-	op25_fsk4_demod_ff_sptr op25_demod;
-	op25_decoder_bf_sptr op25_decoder;
-	op25_fsk4_slicer_fb_sptr op25_slicer;
-	gr_msg_queue_sptr tune_queue;
-	gr_msg_queue_sptr traffic_queue;
+	gr::analog::quadrature_demod_cf::sptr demod;
+	dsd_block_ff_sptr dsd;
+	gr::blocks::wavfile_sink::sptr wav_sink;
+	gr::blocks::file_sink::sptr raw_sink;
+	gr::blocks::null_sink::sptr null_sink;
+	gr::blocks::head::sptr head_source;
+
+
+	gr::op25::fsk4_demod_ff_sptr op25_demod;
+	gr::op25::decoder_bf_sptr op25_decoder;
+	gr::op25::fsk4_slicer_fb_sptr op25_slicer;
+	gr::msg_queue::sptr tune_queue;
+	gr::msg_queue::sptr traffic_queue;
 	unsigned GCD(unsigned u, unsigned v);
 	std::vector<float> design_filter(double interpolation, double deci);
 };
