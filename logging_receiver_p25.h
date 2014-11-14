@@ -53,23 +53,28 @@ class log_p25;
 
 typedef boost::shared_ptr<log_p25> log_p25_sptr;
 
-log_p25_sptr make_log_p25(float f, float c, long t);
+log_p25_sptr make_log_p25(float f, float c, long s, long t, int n);
 
 class log_p25 : public gr::hier_block2
 {
-  friend log_p25_sptr make_log_p25(float f, float c, long t);
+  friend log_p25_sptr make_log_p25(float f, float c, long s, long t, int n);
 protected:
-    log_p25(float f, float c, long t);
+    log_p25(float f, float c, long s, long t, int n);
 
 public:
     ~log_p25();
+
 	void tune_offset(float f);
+	void activate(float f, int talkgroup, int num);
+
+	void deactivate();
 	float get_freq();
 	long get_talkgroup();
-	long timeout();
-	void close();
+	bool is_active();
+	int lastupdate();
+	long elapsed();
 	void mute();
-	void unmute();	
+	void unmute();
 	char *get_filename();
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
 

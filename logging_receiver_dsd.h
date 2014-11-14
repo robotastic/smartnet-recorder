@@ -70,7 +70,6 @@ public:
 	bool is_active();
 	int lastupdate();
 	long elapsed();
-	void close();
 	void mute();
 	void unmute();
 	char *get_filename();
