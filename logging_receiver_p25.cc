@@ -84,7 +84,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 
 	downsample_sig = gr::filter::rational_resampler_base_ccf::make(prechannel_rate, system_channel_rate, resampler_taps);
 
-
+	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
 	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
 
