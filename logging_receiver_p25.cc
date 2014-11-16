@@ -101,7 +101,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	traffic_queue = gr::msg_queue::make();
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
 	std::vector<float> levels( l,l + sizeof( l ) / sizeof( l[0] ) );
-	op25_demod = gr::op25::fsk4_demod_ff::make(tune_queue, channel_rate, symbol_rate);
+	op25_demod = gr::op25::fsk4_demod_ff::make(tune_queue, system_channel_rate, symbol_rate);
 	op25_decoder = gr::op25::decoder_bf::make();
 	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
 	op25_decoder->set_msgq(traffic_queue);
