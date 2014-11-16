@@ -56,7 +56,7 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
         float system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
 		double prechannel_decim = floor(capture_rate / system_channel_rate);
-        double prechannel_rate = floor(capture_rate / channel_decim);
+        double prechannel_rate = floor(capture_rate / prechannel_decim);
         double trans_width = 12500 / 2;
         double trans_centre = trans_width + (trans_width / 2);
 	std::vector<float> sym_taps;
@@ -65,17 +65,21 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
 timestamp = time(NULL);
 	starttime = time(NULL);
 
-std::cout << " Decim: " << channel_decim << " Rate: " << channel_rate << " trans center: " << trans_centre << std::endl;
 
 
 	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(int(prechannel_decim),
 		gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
 		offset, 
 		capture_rate);
+
+std::cout << "Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 	
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
     	system_channel_rate = floor(system_channel_rate  / d);
-    	pre_channel_rate = floor(pre_channel_rate / d);
+    	prechannel_rate = floor(prechannel_rate / d);
+std::cout << "After GCD - Prechannel Decim: " << prehannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
+
+
 	resampler_taps = design_filter(prechannel_rate, system_channel_rate);
 
 	downsample_sig = gr::filter::rational_resampler_base_ccf::make(prechannel_rate, system_channel_rate, resampler_taps);
