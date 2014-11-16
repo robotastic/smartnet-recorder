@@ -75,14 +75,14 @@ timestamp = time(NULL);
 std::cout << "Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 	
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
-    	system_channel_rate = floor(system_channel_rate  / d);
-    	prechannel_rate = floor(prechannel_rate / d);
-std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
+    	small_system_channel_rate = floor(system_channel_rate  / d);
+    	small_prechannel_rate = floor(prechannel_rate / d);
+std::cout << "After GCD - Prechannel Decim: " << small_prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 
 
-	resampler_taps = design_filter(prechannel_rate, system_channel_rate);
+	resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
 
-	downsample_sig = gr::filter::rational_resampler_base_ccf::make(prechannel_rate, system_channel_rate, resampler_taps);
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_prechannel_rate, small_system_channel_rate, resampler_taps);
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
@@ -90,7 +90,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 
 	double symbol_decim = 1;
 
-	std::cout << " FM Gain: " << fm_demod_gain << " Samples per sym: " << samples_per_symbol <<  std::endl;
+	std::cout << " FM Gain: " << fm_demod_gain << " PI: " << pi << " Samples per sym: " << samples_per_symbol <<  std::endl;
 	
 	for (int i=0; i < samples_per_symbol; i++) {
 		sym_taps.push_back(1.0 / samples_per_symbol);
