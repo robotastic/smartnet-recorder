@@ -53,7 +53,7 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
         
         float symbol_rate = 4800;
         double samples_per_symbol = 10;
-        float system_channel_rate = symbol_rate * samples_per_symbol;
+        double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
 		double prechannel_decim = floor(capture_rate / system_channel_rate);
         double prechannel_rate = floor(capture_rate / prechannel_decim);
@@ -75,8 +75,8 @@ timestamp = time(NULL);
 std::cout << "Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 	
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
-    	small_system_channel_rate = floor(system_channel_rate  / d);
-    	small_prechannel_rate = floor(prechannel_rate / d);
+    	double small_system_channel_rate = floor(system_channel_rate  / d);
+    	double small_prechannel_rate = floor(prechannel_rate / d);
 std::cout << "After GCD - Prechannel Decim: " << small_prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 
 
