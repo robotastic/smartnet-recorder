@@ -97,13 +97,13 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	}
         //symbol_coeffs = (1.0/samples_per_symbol,)*samples_per_symbol
     sym_filter =  gr::filter::fir_filter_fff::make(symbol_decim, sym_taps);
-	tune_queue = gr::msg_queue::make();
-	traffic_queue = gr::msg_queue::make();
+	tune_queue = gr::msg_queue::make(2);
+	traffic_queue = gr::msg_queue::make(2);
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
 	std::vector<float> levels( l,l + sizeof( l ) / sizeof( l[0] ) );
 	op25_demod = gr::op25::fsk4_demod_ff::make(tune_queue, system_channel_rate, symbol_rate);
-	op25_decoder = gr::op25::decoder_bf::make();
 	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
+	op25_decoder = gr::op25::decoder_bf::make();
 	op25_decoder->set_msgq(traffic_queue);
 
 	tm *ltm = localtime(&starttime);
@@ -189,7 +189,9 @@ void log_p25::deactivate() {
 	connect(self(),0, null_sink,0);
 
 	disconnect(self(), 0, prefilter, 0);
-	disconnect(prefilter, 0, demod, 0);
+
+	disconnect(prefilter, 0, downsample_sig, 0);
+	disconnect(downsample_sig, 0, demod, 0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
@@ -236,8 +238,9 @@ void log_p25::activate(float f, int t, int n) {
 
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
-	connect(prefilter,0, raw_sink,0);
-	connect(prefilter, 0, demod, 0);
+	connect(downsample_sig,0, raw_sink,0);
+	connect(prefilter, 0, downsample_sig, 0);
+	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
