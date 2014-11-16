@@ -77,7 +77,7 @@ std::cout << "Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
     	system_channel_rate = floor(system_channel_rate  / d);
     	prechannel_rate = floor(prechannel_rate / d);
-std::cout << "After GCD - Prechannel Decim: " << prehannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
+std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 
 
 	resampler_taps = design_filter(prechannel_rate, system_channel_rate);
@@ -89,7 +89,7 @@ std::cout << "After GCD - Prechannel Decim: " << prehannel_decim << " Rate: " <<
 	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
 
 	double symbol_decim = 1;
-    double samples_per_symbol = floor(channel_rate / symbol_rate);
+
 	std::cout << " FM Gain: " << fm_demod_gain << " Samples per sym: " << samples_per_symbol <<  std::endl;
 	
 	for (int i=0; i < samples_per_symbol; i++) {
