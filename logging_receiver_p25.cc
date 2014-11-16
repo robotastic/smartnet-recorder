@@ -77,7 +77,7 @@ std::cout << "Prechannel Decim: " << prechannel_decim << " Rate: " << prechannel
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
     	double small_system_channel_rate = floor(system_channel_rate  / d);
     	double small_prechannel_rate = floor(prechannel_rate / d);
-std::cout << "After GCD - Prechannel Decim: " << small_prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
+std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << small_system_channel_rate << std::endl;
 
 
 	resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
