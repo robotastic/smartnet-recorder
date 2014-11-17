@@ -185,13 +185,14 @@ void log_p25::deactivate() {
 	wav_sink->close();
 	
 	raw_sink->close();
-	disconnect(prefilter,0, raw_sink,0);
+	
+	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
 
-	disconnect(self(), 0, prefilter, 0);
-
+	
 	disconnect(prefilter, 0, downsample_sig, 0);
 	disconnect(downsample_sig, 0, demod, 0);
+	disconnect(downsample_sig,0, raw_sink,0);
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
