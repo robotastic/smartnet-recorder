@@ -72,6 +72,8 @@ timestamp = time(NULL);
 		offset, 
 		capture_rate);
 
+	int squelch_db = 40;
+	squelch = gr::analog::pwr_squelch_cc::make(squelch_db, 0.001, 0, true);
 std::cout << "Prechannel Decim: " << floor(capture_rate / system_channel_rate) << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 	
 		unsigned int d = GCD(prechannel_rate, system_channel_rate);
@@ -105,8 +107,8 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
 	op25_decoder = gr::op25::decoder_bf::make();
 	op25_decoder->set_msgq(traffic_queue);
-    converter = gr::blocks::short_to_float::make();
-    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
+    //converter = gr::blocks::short_to_float::make();
+    //multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -191,9 +193,13 @@ void log_p25::deactivate() {
 	connect(self(),0, null_sink,0);
 
 	
-	disconnect(prefilter, 0, downsample_sig, 0);
-	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(downsample_sig,0, raw_sink,0);
+	//disconnect(prefilter, 0, downsample_sig, 0);
+	disconnect(prefilter, 0, squelch, 0);
+	disconnect(squelch, 0, demod, 0);
+	//disconnect(downsample_sig, 0, demod, 0);
+	//disconnect(downsample_sig,0, raw_sink,0);
+	disconnect(prefilter,0, raw_sink,0);
+	
 	disconnect(demod, 0, sym_filter, 0);
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
@@ -242,16 +248,19 @@ void log_p25::activate(float f, int t, int n) {
 
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
-	connect(downsample_sig,0, raw_sink,0);
-	connect(prefilter, 0, downsample_sig, 0);
-	connect(downsample_sig, 0, demod, 0);
+	connect(prefilter,0, raw_sink,0);
+	//connect(downsample_sig,0, raw_sink,0);
+	//connect(prefilter, 0, downsample_sig, 0);
+	connect(prefilter, 0, squelch, 0);
+	connect(squelch, 0, demod, 0);
+	//connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_decoder,0);
-    connect(op25_decoder, 0, converter,0);
-    connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);
+    connect(op25_decoder, 0, wav_sink,0);
+   // connect(converter, 0, multiplier,0);
+    //connect(multiplier, 0, wav_sink,0);
 	
 	unlock();
 	active = true;
