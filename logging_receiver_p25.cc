@@ -52,7 +52,7 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
 	
         
         float symbol_rate = 4800;
-        double samples_per_symbol = 6;
+        double samples_per_symbol = 10;
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
 		double prechannel_decim = 160; //floor(capture_rate / system_channel_rate);
@@ -105,7 +105,8 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
 	op25_decoder = gr::op25::decoder_bf::make();
 	op25_decoder->set_msgq(traffic_queue);
-
+    converter = gr::blocks::short_to_float::make();
+    multiplier = gr::block::muliply_const_ff::make(1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -197,7 +198,9 @@ void log_p25::deactivate() {
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_decoder,0);
-	disconnect(op25_decoder, 0, wav_sink,0);
+	disconnect(op25_decoder, 0, converter,0);
+    disconnect(converter, 0, multiplier,0);
+    disconnect(multiplier, 0, wav_sink,0);
 	
 
 	unlock();
@@ -246,7 +249,9 @@ void log_p25::activate(float f, int t, int n) {
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_decoder,0);
-	connect(op25_decoder, 0, wav_sink,0);
+    connect(op25_decoder, 0, converter,0);
+    connect(converter, 0, multiplier,0);
+    connect(multiplier, 0, wav_sink,0);
 	
 	unlock();
 	active = true;

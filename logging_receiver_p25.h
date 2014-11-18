@@ -34,6 +34,8 @@
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
 #include <gnuradio/blocks/null_sink.h>
+#include <gnuradio/blocks/multiply_ff.h>
+#include <gnuradio/blocks/short_to_float.h>
 
 #include <op25/decoder_bf.h>
 #include <op25/fsk4_demod_ff.h>
@@ -117,7 +119,8 @@ char filename[160];
 	gr::blocks::file_sink::sptr raw_sink;
 	gr::blocks::null_sink::sptr null_sink;
 	gr::blocks::head::sptr head_source;
-
+	gr::blocks::short_to_float::sptr converter;
+    gr::blocks::muliply_const_ff::sptr multiplier;
 
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
 	gr::op25::decoder_bf::sptr op25_decoder;
