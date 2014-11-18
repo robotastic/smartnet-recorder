@@ -34,7 +34,7 @@
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
 #include <gnuradio/blocks/null_sink.h>
-#include <gnuradio/blocks/multiply_ff.h>
+#include <gnuradio/blocks/multiply_const_ff.h>
 #include <gnuradio/blocks/short_to_float.h>
 
 #include <op25/decoder_bf.h>
