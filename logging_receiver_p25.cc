@@ -106,7 +106,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	op25_decoder = gr::op25::decoder_bf::make();
 	op25_decoder->set_msgq(traffic_queue);
     converter = gr::blocks::short_to_float::make();
-    multiplier = gr::block::multiply_const_ff::make(1/32768.0);
+    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
