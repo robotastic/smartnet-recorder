@@ -120,7 +120,7 @@ char filename[160];
 	gr::blocks::null_sink::sptr null_sink;
 	gr::blocks::head::sptr head_source;
 	gr::blocks::short_to_float::sptr converter;
-    gr::blocks::muliply_const_ff::sptr multiplier;
+    gr::blocks::multiply_const_ff::sptr multiplier;
 
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
 	gr::op25::decoder_bf::sptr op25_decoder;
