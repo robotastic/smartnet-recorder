@@ -28,7 +28,9 @@
 #include <gnuradio/analog/quadrature_demod_cf.h>
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/sig_source_c.h>
-#include <gnuradio/analog/pwr_squelch_cc.h>
+//#include <gnuradio/analog/squelch_base_cc.h>
+//#include <gnuradio/analog/pwr_squelch_cc.h>
+
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/blocks/file_sink.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
@@ -123,7 +125,7 @@ char filename[160];
 	gr::blocks::head::sptr head_source;
 	gr::blocks::short_to_float::sptr converter;
     gr::blocks::multiply_const_ff::sptr multiplier;
-    gr::analog::pwr_squelch_cc::sptr squelch;
+    //gr::analog::pwr_squelch_cc::sptr squelch;
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
 	gr::op25::decoder_bf::sptr op25_decoder;
 	gr::op25::fsk4_slicer_fb::sptr op25_slicer;
