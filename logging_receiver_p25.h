@@ -82,6 +82,8 @@ public:
 	void mute();
 	void unmute();
 	char *get_filename();
+	gr::msg_queue::sptr tune_queue;
+	gr::msg_queue::sptr traffic_queue;
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
 
 private:
@@ -129,8 +131,7 @@ char filename[160];
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
 	gr::op25::decoder_bf::sptr op25_decoder;
 	gr::op25::fsk4_slicer_fb::sptr op25_slicer;
-	gr::msg_queue::sptr tune_queue;
-	gr::msg_queue::sptr traffic_queue;
+
 	unsigned GCD(unsigned u, unsigned v);
 	std::vector<float> design_filter(double interpolation, double deci);
 };

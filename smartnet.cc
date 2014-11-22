@@ -591,6 +591,7 @@ int main(int argc, char **argv)
 
 
 	gr::message::sptr msg;
+	gr::message::sptr traf;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
 			printf("\n Signal caught!\n");
@@ -604,7 +605,10 @@ int main(int argc, char **argv)
 		parse_message(msg->to_string());
 		msg.reset();
 			//delete(sentence);
-
+		traf = loggers[0]->traffic_queue->delete_head_nowait();
+		if (traf != null) {
+			cout << traf->to_string() << endl;
+		}
 
 	}
 
