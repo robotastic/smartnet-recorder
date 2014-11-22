@@ -55,9 +55,9 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
         double samples_per_symbol = 10;
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
-		double prechannel_decim = 160; //floor(capture_rate / system_channel_rate);
+		double prechannel_decim = 80; //floor(capture_rate / system_channel_rate);
         double prechannel_rate = floor(capture_rate / prechannel_decim);
-        double trans_width = 12500 / 2;
+        double trans_width = 14000 / 2;
         double trans_centre = trans_width + (trans_width / 2);
 	std::vector<float> sym_taps;
 	const double pi = M_PI; //boost::math::constants::pi<double>();
@@ -72,7 +72,7 @@ timestamp = time(NULL);
 		offset, 
 		capture_rate);
 
-	int squelch_db = 40;
+	//int squelch_db = 40;
 	// squelch = gr::analog::pwr_squelch_cc::make(squelch_db, 0.001, 0, true);
 std::cout << "Prechannel Decim: " << floor(capture_rate / system_channel_rate) << " Rate: " << prechannel_rate << " system_channel_rate: " << system_channel_rate << std::endl;
 	
@@ -88,7 +88,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
-	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
+	demod = gr::analog::quadrature_demod_cf::make(1.6); //fm_demod_gain);
 
 	double symbol_decim = 1;
 
