@@ -204,9 +204,9 @@ void log_p25::deactivate() {
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_decoder,0);
-	disconnect(op25_decoder, 0, converter,0);
-    disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);
+	disconnect(op25_decoder, 0, wav_sink,0);
+    /*disconnect(converter, 0, multiplier,0);
+    disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
