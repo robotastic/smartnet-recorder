@@ -117,6 +117,8 @@ log_dsd::~log_dsd() {
 // from: /gnuradio/grc/grc_gnuradio/blks2/selector.py
 void log_dsd::unmute() {
 	// this function gets called everytime their is a TG continuation command. This keeps the timestamp updated.
+	std::cout<< "logging_receiver_dsd.cc: Refreshing Logger [ " << num << " ] - Elapsed[ " << time(NULL) - timestamp << "]  " << std::endl; 
+
 	timestamp = time(NULL);
 
 }
@@ -166,7 +168,7 @@ void log_dsd::deactivate() {
 
   lock();
 
-	//wav_sink->close();
+	wav_sink->close();
 	
 		raw_sink->close();
 		disconnect(prefilter,0, raw_sink,0);
