@@ -606,7 +606,7 @@ int main(int argc, char **argv)
 		msg.reset();
 			//delete(sentence);
 		traf = loggers[0]->traffic_queue->delete_head_nowait();
-		if (traf != null) {
+		if (traf) {
 			cout << traf->to_string() << endl;
 		}
 
