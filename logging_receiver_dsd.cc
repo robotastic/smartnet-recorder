@@ -166,7 +166,7 @@ void log_dsd::deactivate() {
 
   lock();
 
-	wav_sink->close();
+	//wav_sink->close();
 	
 		raw_sink->close();
 		disconnect(prefilter,0, raw_sink,0);
