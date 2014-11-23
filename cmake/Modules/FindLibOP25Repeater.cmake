@@ -10,7 +10,7 @@ if(NOT LIBOP25_REPEATER_FOUND)
   )
 
   find_library(LIBOP25_REPEATER_LIBRARIES
-    NAMES gnuradio-op25
+    NAMES gnuradio-op25_repeater
     HINTS ${LIBOP25_REPEATER_PKG_LIBRARY_DIRS}
     PATHS /usr/lib
           /usr/local/lib
