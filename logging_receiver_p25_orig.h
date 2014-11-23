@@ -44,11 +44,6 @@
 #include <op25/decoder_bf.h>
 #include <op25/fsk4_demod_ff.h>
 #include <op25/fsk4_slicer_fb.h>
-#include <op25_repeater/fsk4_slicer_fb.h>
-#include <op25_repeater/p25_frame_assembler.h>
-#include <op25_repeater/gardner_costas_cc.h>
-#include <op25_repeater/vocoder.h>
-
 #include <gnuradio/msg_queue.h>
 #include <gnuradio/message.h>
 
@@ -89,7 +84,6 @@ public:
 	char *get_filename();
 	gr::msg_queue::sptr tune_queue;
 	gr::msg_queue::sptr traffic_queue;
-	gr::msg_queue::sptr rx_queue;
 	//void forecast(int noutput_items, gr_vector_int &ninput_items_required);
 
 private:
@@ -135,10 +129,8 @@ char filename[160];
     gr::blocks::multiply_const_ff::sptr multiplier;
     //gr::analog::pwr_squelch_cc::sptr squelch;
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
-	gr::op25_repeater::p25_frame_assembler::sptr p25_frame_assembler;
-
-	gr::op25_repeater::fsk4_slicer_fb::sptr op25_slicer;
-	gr::op25_repeater::vocoder::sptr op25_vocoder;
+	gr::op25::decoder_bf::sptr op25_decoder;
+	gr::op25::fsk4_slicer_fb::sptr op25_slicer;
 
 	unsigned GCD(unsigned u, unsigned v);
 	std::vector<float> design_filter(double interpolation, double deci);

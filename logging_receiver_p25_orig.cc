@@ -1,5 +1,5 @@
 
-#include "logging_receiver_p25_repeater.h"
+#include "logging_receiver_p25.h"
 
 
 log_p25_sptr make_log_p25(float freq, float center, long s, long t, int n)
@@ -101,23 +101,14 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
     sym_filter =  gr::filter::fir_filter_fff::make(symbol_decim, sym_taps);
 	tune_queue = gr::msg_queue::make(2);
 	traffic_queue = gr::msg_queue::make(2);
-	rx_queue = gr::msg_queue::make(100);
 	const float l[] = { -2.0, 0.0, 2.0, 4.0 };
 	std::vector<float> levels( l,l + sizeof( l ) / sizeof( l[0] ) );
 	op25_demod = gr::op25::fsk4_demod_ff::make(tune_queue, system_channel_rate, symbol_rate);
-	op25_slicer = gr::op25_repeater::fsk4_slicer_fb::make(levels);
-
-	int udp_port = 0;
-	int verbosity = 10;
-	char * wireshark_host="127.0.0.1";
-	int do_imbe = 1;
-	int do_output = 1;
-	int do_msgq = 1;
-	op25_decoder = gr::op25_repeater::p25_frame_assembler::make(wireshark_host,udp_port,verbosity,do_imbe, do_output, do_msgq, rx_queue);
-	op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, '', 0, 0);
-
-    converter = gr::blocks::short_to_float::make();
-    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
+	op25_slicer = gr::op25::fsk4_slicer_fb::make(levels);
+	op25_decoder = gr::op25::decoder_bf::make();
+	op25_decoder->set_msgq(traffic_queue);
+    //converter = gr::blocks::short_to_float::make();
+    //multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -213,10 +204,9 @@ void log_p25::deactivate() {
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_decoder,0);
-	disconnect(op25_decoder, 0, op25_vocoder,0);
-	disconnect(op25_vocoder,0, converter,0);
-    disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);
+	disconnect(op25_decoder, 0, wav_sink,0);
+    /*disconnect(converter, 0, multiplier,0);
+    disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
@@ -268,10 +258,9 @@ void log_p25::activate(float f, int t, int n) {
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_decoder,0);
-	connect(op25_decoder, 0, op25_vocoder,0);
-	connect(op25_vocoder,0, converter,0);
-    connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);
+    connect(op25_decoder, 0, wav_sink,0);
+   // connect(converter, 0, multiplier,0);
+    //connect(multiplier, 0, wav_sink,0);
 	
 	unlock();
 	active = true;
