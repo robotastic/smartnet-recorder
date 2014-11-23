@@ -68,7 +68,7 @@ timestamp = time(NULL);
 
 
 	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(int(prechannel_decim),
-		gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
+		gr::filter::firdes::low_pass(1.0, capture_rate, 15000, 1500, gr::filter::firdes::WIN_HANN), //gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
 		offset, 
 		capture_rate);
 
