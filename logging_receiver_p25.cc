@@ -119,7 +119,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	//op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, "", 0, 0);
 
     converter = gr::blocks::short_to_float::make();
-    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
+    multiplier = gr::blocks::multiply_const_ff::make(1);//1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
