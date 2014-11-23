@@ -88,7 +88,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
-	demod = gr::analog::quadrature_demod_cf::make(1.6); //fm_demod_gain);
+	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
 
 	double symbol_decim = 1;
 
