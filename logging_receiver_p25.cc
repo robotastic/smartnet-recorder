@@ -119,7 +119,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	//op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, "", 0, 0);
 
     converter = gr::blocks::short_to_float::make();
-    multiplier = gr::blocks::multiply_const_ff::make(1);//1/32768.0);
+    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -215,9 +215,10 @@ void log_p25::deactivate() {
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_frame_assembler,0);
-	disconnect(op25_frame_assembler, 0,  converter,0);
+	disconnect(op25_frame_assembler, 0,  wav_sink,0);
+	/*disconnect(op25_frame_assembler, 0,  converter,0);
     disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);
+    disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
@@ -269,9 +270,10 @@ void log_p25::activate(float f, int t, int n) {
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_frame_assembler,0);
-	connect(op25_frame_assembler, 0,  converter,0);
+	connect(op25_frame_assembler, 0, wav_sink, 0);
+	/*connect(op25_frame_assembler, 0,  converter,0);
     connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);
+    connect(multiplier, 0, wav_sink,0);*/
 	
 	unlock();
 	active = true;
