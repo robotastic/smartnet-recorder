@@ -120,7 +120,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
+	raw_sink = gr::blocks::file_sink::make(sizeof(gr_float), raw_filename);
 
 
 
@@ -197,7 +197,7 @@ void log_p25::deactivate() {
 	//disconnect(prefilter, 0, squelch, 0);
 	//disconnect(squelch, 0, demod, 0);
 	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(downsample_sig,0, raw_sink,0);
+	disconnect(sym_filter,0, raw_sink,0);
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);
@@ -249,7 +249,7 @@ void log_p25::activate(float f, int t, int n) {
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
 	//connect(prefilter,0, raw_sink,0);
-	connect(downsample_sig,0, raw_sink,0);
+	connect(sym_filter,0, raw_sink,0);
 	connect(prefilter, 0, downsample_sig, 0);
 	//connect(prefilter, 0, squelch, 0);
 	//connect(squelch, 0, demod, 0);
