@@ -52,7 +52,7 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
 	
         
         float symbol_rate = 4800;
-        double samples_per_symbol = 5;
+        double samples_per_symbol = 10;
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
 		double prechannel_decim = floor(capture_rate / system_channel_rate);
@@ -68,7 +68,7 @@ timestamp = time(NULL);
 
 
 	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(int(prechannel_decim),
-		gr::filter::firdes::low_pass(1.0, capture_rate, 15000, 1500, gr::filter::firdes::WIN_HANN), //gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
+		gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
 		offset, 
 		capture_rate);
 
