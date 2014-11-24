@@ -56,7 +56,7 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
 		double prechannel_decim = floor(capture_rate / system_channel_rate);
-        double prechannel_rate = floor(capture_rate / prechannel_decim);
+        double prechannel_rate = capture_rate / prechannel_decim;
         double trans_width = 14000 / 2;
         double trans_centre = trans_width + (trans_width / 2);
 	std::vector<float> sym_taps;
@@ -82,9 +82,12 @@ std::cout << "Prechannel Decim: " << floor(capture_rate / system_channel_rate) <
 std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << small_system_channel_rate << std::endl;
 
 
-	resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
+	resampler_taps = design_filter(small_system_channel_rate, small_prechannel_rate);
 
-	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_prechannel_rate, small_system_channel_rate, resampler_taps);
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_system_channel_rate, small_prechannel_rate, resampler_taps);
+	//resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
+
+	//downsample_sig = gr::filter::pfb_arb_resampler_ccf::make(float(system_channel_rate) / float(prechannel_rate));
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
