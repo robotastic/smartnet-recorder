@@ -103,7 +103,7 @@ bool console  = false;
 
 
  vector<log_p25_sptr> loggers;
- unsigned int max_loggers = 1;
+ unsigned int max_loggers = 5;
  unsigned int num_loggers = 0;
  vector<log_p25_sptr> active_loggers;
 
