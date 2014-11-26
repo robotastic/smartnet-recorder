@@ -52,10 +52,10 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
 	
         
         float symbol_rate = 4800;
-        double samples_per_symbol = 10;
+        double samples_per_symbol = 6;
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
-		double prechannel_decim = floor(capture_rate / system_channel_rate);
+		double prechannel_decim = 80; //floor(capture_rate / system_channel_rate);
         double prechannel_rate = capture_rate / prechannel_decim;
         double trans_width = 14000 / 2;
         double trans_centre = trans_width + (trans_width / 2);
