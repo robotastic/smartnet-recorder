@@ -133,7 +133,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
-	dump_sink = gr::blocks::null_sink::make(sizeof(short));
+	dump_sink = gr::blocks::null_sink::make(sizeof(char));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
