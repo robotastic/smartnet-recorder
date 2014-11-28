@@ -133,6 +133,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
+	dump_sink = gr::blocks::null_sink::make(sizeof(float));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
@@ -216,12 +217,15 @@ void log_p25::deactivate() {
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);
+	disconnect(sym_filter, 0, dump_sink 0);
+
+	/*
 	disconnect(sym_filter, 0, op25_demod, 0);
 	disconnect(op25_demod,0, op25_slicer, 0);
 	disconnect(op25_slicer,0, op25_frame_assembler,0);
 	disconnect(op25_frame_assembler, 0,  converter,0);
     disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);
+    disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
@@ -270,12 +274,15 @@ void log_p25::activate(float f, int t, int n) {
 	//connect(squelch, 0, demod, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
+	connect(sym_filter, 0, dump_sink 0);
+
+	/*
 	connect(sym_filter, 0, op25_demod, 0);
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(op25_slicer,0, op25_frame_assembler,0);
 	connect(op25_frame_assembler, 0,  converter,0);
     connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);
+    connect(multiplier, 0, wav_sink,0);*/
 	
 	unlock();
 	active = true;

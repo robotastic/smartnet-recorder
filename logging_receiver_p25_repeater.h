@@ -131,6 +131,7 @@ char filename[160];
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	gr::blocks::file_sink::sptr raw_sink;
 	gr::blocks::null_sink::sptr null_sink;
+	gr::blocks::null_sink::sptr dump_sink;
 	gr::blocks::head::sptr head_source;
 	gr::blocks::short_to_float::sptr converter;
     gr::blocks::multiply_const_ff::sptr multiplier;
