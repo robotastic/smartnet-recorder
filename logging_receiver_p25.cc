@@ -281,10 +281,10 @@ void log_p25::activate(float f, int t, int n) {
 
 	
 
-	connect(op25_demod, 0, dump_sink, 0);
-
+	
 	connect(op25_demod,0, op25_slicer, 0);
-	connect(sym_filter, 0, op25_slicer, 0);
+	connect(sym_filter, 0, op25_demod, 0);
+connect(op25_slicer, 0, dump_sink, 0);
 
 /*
 	connect(op25_slicer,0, op25_frame_assembler,0);
