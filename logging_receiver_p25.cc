@@ -217,7 +217,7 @@ void log_p25::deactivate() {
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, dump_sink 0);
+	disconnect(sym_filter, 0, dump_sink, 0);
 
 	/*
 	disconnect(sym_filter, 0, op25_demod, 0);
@@ -274,7 +274,7 @@ void log_p25::activate(float f, int t, int n) {
 	//connect(squelch, 0, demod, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, dump_sink 0);
+	connect(sym_filter, 0, dump_sink, 0);
 
 	/*
 	connect(sym_filter, 0, op25_demod, 0);
