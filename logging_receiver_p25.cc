@@ -113,7 +113,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	int udp_port = 0;
 	int verbosity = 10;
 	const char * wireshark_host="127.0.0.1";
-	bool do_imbe = 1;
+	bool do_imbe = 0;
 	bool do_output = 1;
 	bool do_msgq = 0;
 	bool do_audio_output = 1;
@@ -203,7 +203,7 @@ void log_p25::deactivate() {
 
 	wav_sink->close();
 	
-	raw_sink->close();
+	//raw_sink->close();
 	
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
@@ -213,7 +213,8 @@ void log_p25::deactivate() {
 	//disconnect(prefilter, 0, squelch, 0);
 	//disconnect(squelch, 0, demod, 0);
 	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(downsample_sig,0, raw_sink,0);
+	
+	//disconnect(downsample_sig,0, raw_sink,0);
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);
@@ -259,19 +260,21 @@ void log_p25::activate(float f, int t, int n) {
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
 	
-	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
     
 	
 	lock();
 
-	raw_sink->open(raw_filename);
+	//raw_sink->open(raw_filename);
 	wav_sink->open(filename);
 
 
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
+
 	//connect(prefilter,0, raw_sink,0);
-	connect(downsample_sig,0, raw_sink,0);
+	//connect(downsample_sig,0, raw_sink,0);
+
 	connect(prefilter, 0, downsample_sig, 0);
 	//connect(prefilter, 0, squelch, 0);
 	//connect(squelch, 0, demod, 0);
