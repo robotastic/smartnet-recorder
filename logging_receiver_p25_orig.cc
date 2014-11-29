@@ -68,7 +68,7 @@ timestamp = time(NULL);
 
 
 	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(int(prechannel_decim),
-		gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
+		gr::filter::firdes::low_pass(1.0, capture_rate, 15000,1500, gr::filter::firdes::WIN_HANN),  //trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
 		offset, 
 		capture_rate);
 
@@ -82,13 +82,14 @@ std::cout << "Prechannel Decim: " << floor(capture_rate / system_channel_rate) <
 std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << small_system_channel_rate << std::endl;
 
 
-	resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
+	resampler_taps = design_filter(small_system_channel_rate, small_prechannel_rate);
 
-	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_prechannel_rate, small_system_channel_rate, resampler_taps);
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_system_channel_rate, small_prechannel_rate, resampler_taps);
+	//resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
-	demod = gr::analog::quadrature_demod_cf::make(1.6); //fm_demod_gain);
+	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
 
 	double symbol_decim = 1;
 
@@ -118,6 +119,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
+	dump_sink = gr::blocks::null_sink::make(sizeof(char));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	raw_sink = gr::blocks::file_sink::make(sizeof(float), raw_filename);
@@ -197,7 +199,8 @@ void log_p25::deactivate() {
 	//disconnect(prefilter, 0, squelch, 0);
 	//disconnect(squelch, 0, demod, 0);
 	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(sym_filter,0, raw_sink,0);
+	
+	//disconnect(downsample_sig,0, raw_sink,0);
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);

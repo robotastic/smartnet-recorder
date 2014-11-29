@@ -33,7 +33,6 @@
 
 #include <gnuradio/blocks/multiply_cc.h>
 #include <gnuradio/blocks/file_sink.h>
-#include <gnuradio/filter/pfb_arb_resampler_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_ccf.h>
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
@@ -123,21 +122,21 @@ char filename[160];
 	gr::blocks::file_sink::sptr fs;
 
 
-	//gr::filter::pfb_arb_resampler_ccf downsample_sig;
+
 	gr::filter::rational_resampler_base_ccf::sptr downsample_sig;
 	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
 	gr::analog::quadrature_demod_cf::sptr demod;
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	gr::blocks::file_sink::sptr raw_sink;
-	gr::blocks::null_sink::sptr null_sink;
+	gr::blocks::null_sink::sptr null_sink; 
 	gr::blocks::null_sink::sptr dump_sink;
 	gr::blocks::head::sptr head_source;
 	gr::blocks::short_to_float::sptr converter;
     gr::blocks::multiply_const_ff::sptr multiplier;
     //gr::analog::pwr_squelch_cc::sptr squelch;
 	gr::op25::fsk4_demod_ff::sptr op25_demod;
-	gr::op25_repeater::p25_frame_assembler::sptr op25_frame_assembler;
+	gr::op25_repeater::p25_frame_assembler::sptr p25_frame_assembler;
 
 	gr::op25_repeater::fsk4_slicer_fb::sptr op25_slicer;
 	gr::op25_repeater::vocoder::sptr op25_vocoder;

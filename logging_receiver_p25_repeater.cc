@@ -55,8 +55,8 @@ log_p25::log_p25(float f, float c, long s, long t, int n)
         double samples_per_symbol = 10;
         double system_channel_rate = symbol_rate * samples_per_symbol;
         double symbol_deviation = 600.0;
-		double prechannel_decim = 80; //floor(capture_rate / system_channel_rate);
-        double prechannel_rate = floor(capture_rate / prechannel_decim);
+		double prechannel_decim = floor(capture_rate / system_channel_rate);
+        double prechannel_rate = capture_rate / prechannel_decim;
         double trans_width = 14000 / 2;
         double trans_centre = trans_width + (trans_width / 2);
 	std::vector<float> sym_taps;
@@ -68,7 +68,7 @@ timestamp = time(NULL);
 
 
 	prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(int(prechannel_decim),
-		gr::filter::firdes::low_pass(1.0, capture_rate, trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
+		gr::filter::firdes::low_pass(1.0, capture_rate, 15000,1500, gr::filter::firdes::WIN_HANN),  //trans_centre, trans_width, gr::filter::firdes::WIN_HANN),
 		offset, 
 		capture_rate);
 
@@ -82,13 +82,16 @@ std::cout << "Prechannel Decim: " << floor(capture_rate / system_channel_rate) <
 std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " << small_prechannel_rate << " system_channel_rate: " << small_system_channel_rate << std::endl;
 
 
-	resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
+	resampler_taps = design_filter(small_system_channel_rate, small_prechannel_rate);
 
-	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_prechannel_rate, small_system_channel_rate, resampler_taps);
+	downsample_sig = gr::filter::rational_resampler_base_ccf::make(small_system_channel_rate, small_prechannel_rate, resampler_taps);
+	//resampler_taps = design_filter(small_prechannel_rate, small_system_channel_rate);
+
+	//downsample_sig = gr::filter::pfb_arb_resampler_ccf::make(float(system_channel_rate) / float(prechannel_rate));
 
 	
 	double fm_demod_gain = floor(system_channel_rate / (2.0 * pi * symbol_deviation));
-	demod = gr::analog::quadrature_demod_cf::make(1.6); //fm_demod_gain);
+	demod = gr::analog::quadrature_demod_cf::make(fm_demod_gain);
 
 	double symbol_decim = 1;
 
@@ -110,14 +113,17 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	int udp_port = 0;
 	int verbosity = 10;
 	const char * wireshark_host="127.0.0.1";
-	int do_imbe = 1;
-	int do_output = 1;
-	int do_msgq = 1;
-	op25_decoder = gr::op25_repeater::p25_frame_assembler::make(wireshark_host,udp_port,verbosity,do_imbe, do_output, do_msgq, rx_queue);
-	op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, '', 0, 0);
+	bool do_imbe = 1;
+	bool do_output = 1;
+	bool do_msgq = 0;
+	bool do_audio_output = 1;
+	bool do_tdma = 0;
+	op25_frame_assembler = gr::op25_repeater::p25_frame_assembler::make(wireshark_host,udp_port,verbosity,do_imbe, do_output, do_msgq, rx_queue, do_audio_output, do_tdma);
+	//op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, "", 0, 0);
 
     converter = gr::blocks::short_to_float::make();
-    multiplier = gr::blocks::multiply_const_ff::make(1/32768.0);
+    float convert_num = float(1.0)/float(32768.0);
+    multiplier = gr::blocks::multiply_const_ff::make(convert_num);
 	tm *ltm = localtime(&starttime);
 
 	std::stringstream path_stream;
@@ -127,9 +133,10 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
+	dump_sink = gr::blocks::null_sink::make(sizeof(char));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	raw_sink = gr::blocks::file_sink::make(sizeof(float), raw_filename);
+	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
 
 
 
@@ -196,7 +203,7 @@ void log_p25::deactivate() {
 
 	wav_sink->close();
 	
-	raw_sink->close();
+	//raw_sink->close();
 	
 	disconnect(self(), 0, prefilter, 0);
 	connect(self(),0, null_sink,0);
@@ -206,15 +213,21 @@ void log_p25::deactivate() {
 	//disconnect(prefilter, 0, squelch, 0);
 	//disconnect(squelch, 0, demod, 0);
 	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(sym_filter,0, raw_sink,0);
+	
+	//disconnect(downsample_sig,0, raw_sink,0);
 	//disconnect(prefilter,0, raw_sink,0);
 	
 	disconnect(demod, 0, sym_filter, 0);
+	
+	
 	disconnect(sym_filter, 0, op25_demod, 0);
+		
+
 	disconnect(op25_demod,0, op25_slicer, 0);
-	disconnect(op25_slicer,0, op25_decoder,0);
-	disconnect(op25_decoder, 0, op25_vocoder,0);
-	disconnect(op25_vocoder,0, converter,0);
+	//disconnect(op25_slicer, 0, dump_sink, 0);
+	
+	disconnect(op25_slicer,0, op25_frame_assembler,0);
+	disconnect(op25_frame_assembler, 0,  converter,0);
     disconnect(converter, 0, multiplier,0);
     disconnect(multiplier, 0, wav_sink,0);
 	
@@ -247,29 +260,38 @@ void log_p25::activate(float f, int t, int n) {
 	boost::filesystem::create_directories(path_stream.str());
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
 	
-	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
     
 	
 	lock();
 
-	raw_sink->open(raw_filename);
+	//raw_sink->open(raw_filename);
 	wav_sink->open(filename);
 
 
 	disconnect(self(),0, null_sink, 0);
 	connect(self(),0, prefilter,0);
+
 	//connect(prefilter,0, raw_sink,0);
-	connect(sym_filter,0, raw_sink,0);
+	//connect(downsample_sig,0, raw_sink,0);
+
 	connect(prefilter, 0, downsample_sig, 0);
 	//connect(prefilter, 0, squelch, 0);
 	//connect(squelch, 0, demod, 0);
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, op25_demod, 0);
+	
+
+	
+
+	
 	connect(op25_demod,0, op25_slicer, 0);
-	connect(op25_slicer,0, op25_decoder,0);
-	connect(op25_decoder, 0, op25_vocoder,0);
-	connect(op25_vocoder,0, converter,0);
+	connect(sym_filter, 0, op25_demod, 0);
+//connect(op25_slicer, 0, dump_sink, 0);
+
+
+	connect(op25_slicer,0, op25_frame_assembler,0);
+	connect(op25_frame_assembler, 0,  converter,0);
     connect(converter, 0, multiplier,0);
     connect(multiplier, 0, wav_sink,0);
 	
