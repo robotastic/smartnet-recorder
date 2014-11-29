@@ -113,10 +113,10 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	int udp_port = 0;
 	int verbosity = 10;
 	const char * wireshark_host="127.0.0.1";
-	bool do_imbe = 1;
-	bool do_output = 1;
+	bool do_imbe = 0;
+	bool do_output = 0;
 	bool do_msgq = 0;
-	bool do_audio_output = 1;
+	bool do_audio_output = 0;
 	bool do_tdma = 0;
 	op25_frame_assembler = gr::op25_repeater::p25_frame_assembler::make(wireshark_host,udp_port,verbosity,do_imbe, do_output, do_msgq, rx_queue, do_audio_output, do_tdma);
 	//op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, "", 0, 0);
@@ -201,7 +201,7 @@ void log_p25::deactivate() {
 
   lock();
 
-	wav_sink->close();
+	//wav_sink->close();
 	
 	//raw_sink->close();
 	
@@ -227,9 +227,9 @@ void log_p25::deactivate() {
 	//disconnect(op25_slicer, 0, dump_sink, 0);
 	
 	disconnect(op25_slicer,0, op25_frame_assembler,0);
-	disconnect(op25_frame_assembler, 0,  converter,0);
+	/*disconnect(op25_frame_assembler, 0,  converter,0);
     disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);
+    disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
@@ -266,7 +266,7 @@ void log_p25::activate(float f, int t, int n) {
 	lock();
 
 	//raw_sink->open(raw_filename);
-	wav_sink->open(filename);
+	//wav_sink->open(filename);
 
 
 	disconnect(self(),0, null_sink, 0);
@@ -291,9 +291,9 @@ void log_p25::activate(float f, int t, int n) {
 
 
 	connect(op25_slicer,0, op25_frame_assembler,0);
-	connect(op25_frame_assembler, 0,  converter,0);
+	/*connect(op25_frame_assembler, 0,  converter,0);
     connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);
+    connect(multiplier, 0, wav_sink,0);*/
 	
 	unlock();
 	active = true;
