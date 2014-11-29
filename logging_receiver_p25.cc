@@ -114,7 +114,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	int verbosity = 10;
 	const char * wireshark_host="127.0.0.1";
 	bool do_imbe = 0;
-	bool do_output = 0;
+	bool do_output = 1;
 	bool do_msgq = 0;
 	bool do_audio_output = 0;
 	bool do_tdma = 0;
