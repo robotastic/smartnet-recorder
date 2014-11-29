@@ -40,7 +40,7 @@
 #include <gnuradio/blocks/multiply_const_ff.h>
 
 #include <gnuradio/blocks/short_to_float.h>
-
+#include <gnuradio/blocks/char_to_float.h>
 #include <op25/decoder_bf.h>
 #include <op25/fsk4_demod_ff.h>
 #include <op25/fsk4_slicer_fb.h>
@@ -132,7 +132,8 @@ char filename[160];
 	gr::blocks::null_sink::sptr null_sink; 
 	gr::blocks::null_sink::sptr dump_sink;
 	gr::blocks::head::sptr head_source;
-	gr::blocks::short_to_float::sptr converter;
+	//gr::blocks::short_to_float::sptr converter;
+	gr::blocks::char_to_float::sptr converter;
     gr::blocks::multiply_const_ff::sptr multiplier;
     //gr::analog::pwr_squelch_cc::sptr squelch;
 	gr::op25::fsk4_demod_ff::sptr op25_demod;

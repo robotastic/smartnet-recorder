@@ -121,7 +121,8 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	op25_frame_assembler = gr::op25_repeater::p25_frame_assembler::make(wireshark_host,udp_port,verbosity,do_imbe, do_output, do_msgq, rx_queue, do_audio_output, do_tdma);
 	//op25_vocoder = gr::op25_repeater::vocoder::make(0, 0, 0, "", 0, 0);
 
-    converter = gr::blocks::short_to_float::make();
+    //converter = gr::blocks::short_to_float::make();
+    converter = gr::blocks::char_to_float::make();
     float convert_num = float(1.0)/float(32768.0);
     multiplier = gr::blocks::multiply_const_ff::make(convert_num);
 	tm *ltm = localtime(&starttime);
@@ -133,7 +134,7 @@ std::cout << "After GCD - Prechannel Decim: " << prechannel_decim << " Rate: " <
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
 	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
-	dump_sink = gr::blocks::null_sink::make(sizeof(char));
+	dump_sink = gr::blocks::null_sink::make(sizeof(float));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
@@ -224,12 +225,12 @@ void log_p25::deactivate() {
 		
 
 	disconnect(op25_demod,0, op25_slicer, 0);
-	//disconnect(op25_slicer, 0, dump_sink, 0);
+	disconnect(multiplier, 0, dump_sink, 0);
 	
 	disconnect(op25_slicer,0, op25_frame_assembler,0);
-	/*disconnect(op25_frame_assembler, 0,  converter,0);
+	disconnect(op25_frame_assembler, 0,  converter,0);
     disconnect(converter, 0, multiplier,0);
-    disconnect(multiplier, 0, wav_sink,0);*/
+    /*disconnect(multiplier, 0, wav_sink,0);*/
 	
 
 	unlock();
@@ -287,13 +288,13 @@ void log_p25::activate(float f, int t, int n) {
 	
 	connect(op25_demod,0, op25_slicer, 0);
 	connect(sym_filter, 0, op25_demod, 0);
-//connect(op25_slicer, 0, dump_sink, 0);
+	connect(multiplier, 0, dump_sink, 0);
 
 
 	connect(op25_slicer,0, op25_frame_assembler,0);
-	/*connect(op25_frame_assembler, 0,  converter,0);
+	connect(op25_frame_assembler, 0,  converter,0);
     connect(converter, 0, multiplier,0);
-    connect(multiplier, 0, wav_sink,0);*/
+    /*connect(multiplier, 0, wav_sink,0);*/
 	
 	unlock();
 	active = true;
