@@ -54,6 +54,8 @@
 #include <osmosdr/source.h>
 #include <osmosdr/sink.h>
 
+#include <gnuradio/uhd/usrp_source.h>
+
 #include <boost/program_options.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -87,46 +89,50 @@
 #include <gnuradio/analog/sig_source_c.h>
 
 
- namespace po = boost::program_options;
+namespace po = boost::program_options;
 
- using namespace std;
+using namespace std;
 
 
- int lastcmd = 0;
- long lastaddress = 0;
- int thread_num=0;
- double center_freq;
+int lastcmd = 0;
+long lastaddress = 0;
+int thread_num=0;
+double center_freq;
 bool console  = false;
 
 
-
-
-
- vector<log_dsd_sptr> loggers;
- unsigned int max_loggers = 6;
- unsigned int num_loggers = 0;
- vector<log_dsd_sptr> active_loggers;
+vector<log_dsd_sptr> loggers;
+unsigned int max_loggers = 6;
+unsigned int num_loggers = 0;
+vector<log_dsd_sptr> active_loggers;
 
 gr::top_block_sptr tb;
-osmosdr::source::sptr src;
+osmosdr::source::sptr osmo_src;
+gr::uhd::usrp_source::sptr usrp_src;
 
- vector<Talkgroup *> talkgroups;
- vector<Talkgroup *> active_tg;
- char **menu_choices;
- char status[150];
- ITEM **tg_menu_items;
+const int SRC_TYPE_HACKRF=0;
+const int SRC_TYPE_USRP=1;
 
-
- WINDOW *active_tg_win;
- WINDOW *tg_menu_win;
- WINDOW *status_win;
- MENU *tg_menu;
+int src_type;
 
 
- volatile sig_atomic_t exit_flag = 0;
+vector<Talkgroup *> talkgroups;
+vector<Talkgroup *> active_tg;
+char **menu_choices;
+char status[150];
+ITEM **tg_menu_items;
 
 
- void update_active_tg_win() {
+WINDOW *active_tg_win;
+WINDOW *tg_menu_win;
+WINDOW *status_win;
+MENU *tg_menu;
+
+
+volatile sig_atomic_t exit_flag = 0;
+
+
+void update_active_tg_win() {
  	werase(active_tg_win);
  	box(active_tg_win, 0, 0);
  	int i=0;
@@ -151,12 +157,14 @@ osmosdr::source::sptr src;
 	wrefresh(active_tg_win);
 
 }
+
 void update_status_win(char *c) {
 	wclear(status_win);
 	//wattron(status_win,A_REVERSE);
 	mvwprintw(status_win,0,2,"%s",c);
 	wrefresh(status_win);
 }
+
 void create_status_win() {
 	int startx, starty, width, height;
 
@@ -167,6 +175,7 @@ void create_status_win() {
 
 	status_win = newwin(height, width, starty, startx);
 }
+
 void create_active_tg_win() {
 	int startx, starty, width, height;
 
@@ -230,23 +239,25 @@ void create_tg_menu() {
 }
 
 
-
-
-
-
-
 void exit_interupt(int sig){ // can be called asynchronously
   exit_flag = 1; // set flag
 }
 
 void init_loggers(int num, float center_freq, long samp_rate) {
 
-// static loggers
+	// static loggers
 	for (int i = 0; i < num; i++) {
-		log_dsd_sptr log = make_log_dsd( center_freq, center_freq, samp_rate, 0, i);
+		log_dsd_sptr log = make_log_dsd(center_freq, center_freq, samp_rate, 0, i);
 
 		loggers.push_back(log);
-		tb->connect(src, 0, log, 0);
+		if (src_type==SRC_TYPE_HACKRF) {
+			tb->connect(osmo_src, 0, log, 0);
+		} else if (src_type==SRC_TYPE_USRP) {
+			tb->connect(usrp_src, 0, log, 0);
+		} else {
+			std::cout << "undefined source!" << std::endl;
+			exit(0);	
+		}
 		std::cout << "Created and connect logger: " << i << " address: " << log << std::endl;
 	}
 
@@ -266,6 +277,8 @@ float getfreq(int cmd) {
 }
 
 void parse_file(string filename) {
+	int numErrors = 0;
+
 	ifstream in(filename.c_str());
 	if (!in.is_open()) return;
 
@@ -277,16 +290,19 @@ void parse_file(string filename) {
 
 	while (getline(in,line))
 	{
-
 		t_tokenizer tok(line, sep);
-	//Tokenizer tok(line);
+
 		vec.assign(tok.begin(),tok.end());
-		if (vec.size() < 8) continue;
+		if (vec.size() < 8) {
+			numErrors++;	
+			continue;
+		}
 
 		Talkgroup *tg = new Talkgroup(atoi( vec[0].c_str()), vec[2].at(0),vec[3].c_str(),vec[4].c_str(),vec[5].c_str() ,vec[6].c_str(),atoi(vec[7].c_str()) );
 
 		talkgroups.push_back(tg);
 	}
+	std::cout << "Parsed " << talkgroups.size() << " talkgroup entries. Skipped " << numErrors << " rows due to errors." << std::endl;
 }
 
 
@@ -308,47 +324,11 @@ void parse_status(int command, int address, int groupflag) {
 	}
 }
 
-float parse_message(string s) {
-	float retfreq = 0;
-	bool rxfound = false;
-	std::vector<std::string> x;
-	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
+void stop_inactive_loggers() {
 
-	long address = atoi( x[0].c_str() ) & 0xFFF0;
-	//int groupflag = atoi( x[1].c_str() );
-	int command = atoi( x[2].c_str() );
 	char shell_command[200];
 
-	x.clear();
-	vector<string>().swap(x);
- //std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
-
-	if (command < 0x2d0) {
-
-		if ( lastcmd == 0x308) {
-		        // Channel Grant
-			if (  (address != 56016) && (address != 8176)) {
-				retfreq = getfreq(command);
-				//std::cout << "Channel Grant: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd << std::endl;
-			}
-		} else {
-			// Call continuation
-			if  ( (address != 56016) && (address != 8176))  {
-				retfreq = getfreq(command);
-				//std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
-
-			}
-		}
-	}
-
-	if (command == 0x03c0) {
-		//parse_status(command, address,groupflag);
-	}
-
-
-
-	if (retfreq) {
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+ 	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
 	      log_dsd_sptr rx = *it;
 
 	      if (rx->is_active() && (rx->lastupdate() > 4.0)) {
@@ -360,10 +340,10 @@ float parse_message(string s) {
 	              active_tg.erase(tg_it);
 	              break;
 	            }
-	          }
+	          }//for
 
 	          update_active_tg_win();
-	        }
+	        }//if console
 	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
 			//std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
 
@@ -371,45 +351,95 @@ float parse_message(string s) {
 	        num_loggers--;
 			
 	        system(shell_command);
-	      }
-	    }
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
-			log_dsd_sptr rx = *it;
+	      }//if rx is active
+    	}//foreach loggers
+}
 
-			if (rx->is_active())
-			{
-				if (rx->get_talkgroup() == address) {
-					if (rx->get_freq() != retfreq) {
-						if (console) {
-							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
-							update_status_win(status);
-						}
-						//std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+float parse_message(string s) {
+	float retfreq = 0;
+	bool rxfound = false;
+	std::vector<std::string> x;
+	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
 
-						rx->tune_offset(retfreq);
-					}
-					rx->unmute();
+	long address = atoi( x[0].c_str() ) & 0xFFF0;
+	//int groupflag = atoi( x[1].c_str() );
+	int command = atoi( x[2].c_str() );
 
-					rxfound = true;
-				} else {
-					if (rx->get_freq() == retfreq) {
-						if (console) {
-							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
-							update_status_win(status);
-						}
-						//std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+	x.clear();
+	vector<string>().swap(x);
+	
+	if (!console) {
+  		std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
+	}
+	
 
-						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
-						rx->mute();
-					}
+	if (command < 0x2d0) {
+
+		if ( lastcmd == 0x308) {
+		        // Channel Grant
+			if (  (address != 56016) && (address != 8176) && (address != 8144)) {
+				retfreq = getfreq(command);
+				if (!console) {
+					std::cout << "Channel Grant: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd << std::endl;
+				}
+			}
+		} else {
+			// Call continuation
+			if  ( (address != 56016) && (address != 8176) && (address != 8144))  {
+				retfreq = getfreq(command);
+				if (!console) {
+					std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 				}
 			}
 		}
+	}
+
+	if (command == 0x03c0) { //What is this?
+		//parse_status(command, address,groupflag);
+	}
+
+
+
+	if (retfreq) {
+
+		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {//for all loggers
+			log_dsd_sptr rx = *it;
+
+			if (rx->is_active()) //if active
+			{
+				if (rx->get_talkgroup() == address) { //and talkgroup is the one in current command
+					if (rx->get_freq() != retfreq) { // and the logger is not at the frequency the command specifies
+						if (console) {
+							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
+							update_status_win(status);
+						} else {
+							std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+						}
+						rx->tune_offset(retfreq); // then retune it.
+					}
+					rx->unmute(); //? keep timestamp updated
+
+					rxfound = true; //mark as found (meaning, no need to create new one)
+				} else if (rx->get_freq() == retfreq) { 
+					if (console) {
+						sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
+						update_status_win(status);
+					} else {
+						std::cout << "Overlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
+					}
+
+					//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
+					rx->mute();  //?this doesn't do anything!? shouldn't we stop?
+				} // freq overlap
+				
+			}// if active
+		} //foreach-logger
 
 
 		if ((!rxfound)){
-			Talkgroup *rx_talkgroup = NULL;
+			/*Talkgroup *rx_talkgroup = NULL;
 			bool record_tg = false;
+
 			for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {
 				Talkgroup *tg = (Talkgroup *) *it;
 				if (tg->number == address) {
@@ -419,6 +449,7 @@ float parse_message(string s) {
 
 			}
 			if (rx_talkgroup) {
+				record_tg = true;
 				if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
 					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
 					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
@@ -430,23 +461,25 @@ float parse_message(string s) {
 			} else {
 				record_tg = false;
 			}
-		}
+			}*/
 
-		if (record_tg){
-			for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-				log_dsd_sptr rx = *it;
-				if (!rx->is_active())
-				{
-					num_loggers++;
+		//if (record_tg){
+		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+			log_dsd_sptr rx = *it;
+			if (!rx->is_active())
+			{
+				num_loggers++;
 
-					rx->activate(retfreq, address,num_loggers);
-					//std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
-
-					break;
+				rx->activate(retfreq, address,num_loggers);
+				if (!console) {
+					std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
 				}
-			}
 
+				break;
+			}
 		}
+
+		//}
 
 
 	}
@@ -466,14 +499,20 @@ return retfreq;
 int main(int argc, char **argv)
 {
 
-	std::string device_addr;
+	std::string device_addr, antenna_str, talkgroup_file;
 	double  samp_rate, chan_freq, error;
 	int if_gain, bb_gain, rf_gain;
+	
+	char device_instructions[100];
+	sprintf(device_instructions, "the device to use. default HackRF [%d for HackRF, %d for USRP]", SRC_TYPE_HACKRF, SRC_TYPE_USRP); 
+
     //setup the program options
 	po::options_description desc("Allowed options");
 	desc.add_options()
 	("help", "help message")
+	("device", po::value<int>(&src_type)->default_value(SRC_TYPE_HACKRF), device_instructions)
 	("arg", po::value<std::string>(&device_addr)->default_value(""), "the device arguments in string format")
+	("ant", po::value<std::string>(&antenna_str)->default_value(""), "[USRP] the antenna to use")
 	("rate", po::value<double>(&samp_rate)->default_value(1e6), "the sample rate in samples per second")
 	("center", po::value<double>(&center_freq)->default_value(10e6), "the center frequency in Hz")
 	("error", po::value<double>(&error)->default_value(0), "the Error in frequency in Hz")
@@ -481,12 +520,14 @@ int main(int argc, char **argv)
 	("rfgain", po::value<int>(&rf_gain)->default_value(14), "RF Gain")
 	("bbgain", po::value<int>(&bb_gain)->default_value(25), "BB Gain")
 	("ifgain", po::value<int>(&if_gain)->default_value(25), "IF Gain")
+	("talkgroupfile", po::value<std::string>(&talkgroup_file)->default_value("ChanList.csv"), "Talk-group CSV file")
+	("console", po::value<bool>(&console)->default_value(false), "set to true to use ncurses console")
 	;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
 	po::notify(vm);
 
-    //print the help message
+   //print the help message
 	if (vm.count("help")){
 		std::cout
 		<< boost::format("SmartNet Trunking Reciever %s") % desc << std::endl
@@ -501,25 +542,46 @@ int main(int argc, char **argv)
 
 
 	signal(SIGINT, exit_interupt);
-	parse_file("ChanList.csv");
+	parse_file(talkgroup_file);
 
-    tb = gr::make_top_block("Smartnet");
-    src = osmosdr::source::make();
+    	tb = gr::make_top_block("Smartnet");
 
-	cout << "Setting sample rate to: " << samp_rate << endl;
-	src->set_sample_rate(samp_rate);
-	cout << "Tunning to " << center_freq - error << "hz" << endl;
-	src->set_center_freq(center_freq - error,0);
+	if (src_type==SRC_TYPE_HACKRF) {
+	    	osmo_src = osmosdr::source::make();
 
-	cout << "Setting RF gain to " << rf_gain << endl;
-	cout << "Setting BB gain to " << bb_gain << endl;
-	cout << "Setting IF gain to " << if_gain << endl;
+		cout << "SOURCE TYPE OSMOSDR (HackRF)" << endl;
 
-	src->set_gain(rf_gain);
-	src->set_if_gain(if_gain);
-	src->set_bb_gain(bb_gain);
+		cout << "Setting sample rate to: " << samp_rate << endl;
+		osmo_src->set_sample_rate(samp_rate);
+		cout << "Tunning to " << center_freq - error << "hz" << endl;
+		osmo_src->set_center_freq(center_freq - error,0);
 
+		cout << "Setting RF gain to " << rf_gain << endl;
+		cout << "Setting IF gain to " << if_gain << endl;
+		cout << "Setting BB gain to " << bb_gain << endl;
 
+		osmo_src->set_gain(rf_gain);
+		osmo_src->set_if_gain(if_gain);
+		osmo_src->set_bb_gain(bb_gain);
+
+	} else if (src_type==SRC_TYPE_USRP) {
+		usrp_src = gr::uhd::usrp_source::make(device_addr,uhd::stream_args_t("fc32"));
+
+		cout << "SOURCE TYPE USRP (UHD)" << endl;		
+
+		cout << "Setting sample rate to: " << samp_rate << endl;
+		usrp_src->set_samp_rate(samp_rate);
+		cout << "Tunning to " << center_freq - error << "hz" << endl;
+		usrp_src->set_center_freq(center_freq - error,0);
+		cout << "Setting antenna to [" << antenna_str << "]" << endl;
+		usrp_src->set_antenna(antenna_str,0);
+
+		cout << "Setting gain to " << rf_gain << endl;
+		usrp_src->set_gain(rf_gain);
+	} else {
+		cout << "undefined source. Please specify HackRF or USRP" << endl;
+		return 0;
+	}
 
 
 	float samples_per_second = samp_rate;
@@ -566,7 +628,15 @@ int main(int argc, char **argv)
 
 	smartnet_crc_sptr crc = smartnet_make_crc(queue);
 
-	tb->connect(src,0,prefilter,0);
+	if (src_type==SRC_TYPE_HACKRF) {
+		tb->connect(osmo_src, 0, prefilter, 0);
+	} else if (src_type==SRC_TYPE_USRP) {
+		tb->connect(usrp_src, 0, prefilter, 0);
+	} else {
+		std::cout << "undefined source!" << std::endl;
+		return 0;	
+	}
+
 	tb->connect(prefilter,0,carriertrack,0);
 	tb->connect(carriertrack, 0, pll_demod, 0);
 	tb->connect(pll_demod, 0, softbits, 0);
@@ -577,7 +647,8 @@ int main(int argc, char **argv)
 
 	tb->start();
 
-	parse_file("ChanList.csv");
+	//parse_file(talkgroup_file); <-- not sure why this was here. This is already called earlier. No reason to double-load, right??
+
 	if (console) {
 		initscr();
 		cbreak();
@@ -589,27 +660,25 @@ int main(int argc, char **argv)
 		create_status_win();
 	}
 
-
 	gr::message::sptr msg;
 	while (1) {
 		if(exit_flag){ // my action when signal set it 1
 			printf("\n Signal caught!\n");
 			tb->stop();
-			endwin();
+			if (console) {
+				endwin();
+			}
 			return 0;
 		}
 
-
-		msg = queue->delete_head();
-		parse_message(msg->to_string());
-		msg.reset();
-			//delete(sentence);
-
+		msg = queue->delete_head_nowait();
+		if (0!=msg) {
+			parse_message(msg->to_string());
+			msg.reset();
+		}
+		stop_inactive_loggers();
 
 	}
 
-	endwin();
-
-  // Exit normally.
-	return 0;
+	return 0; //never happens
 }

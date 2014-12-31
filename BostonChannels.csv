@@ -1,0 +1,323 @@
+8272,0,A,Plym Cnty SH,Sheriff,Law Dispatch,Plymouth County,1
+9072,0,A,EOPS,Executive Office of Public Safety,Multi-Talk,Mass Government Miscellaneous,2
+9136,0,A,SFM1,Old State Fire Marshall,Fire-Talk,Mass Government Miscellaneous,2
+9168,0,A,SFM2,Old State Fire Marshall,Fire-Talk,Mass Government Miscellaneous,2
+9264,0,a,Nflk Cnty SH,Sheriff,Law Dispatch,Norfolk County,1
+9296,0,A,DOC,Department of Correction,Corrections,Mass Dept of Corrections DOC,1
+9328,0,A,Bris Cnty SH,Sheriff,Law Dispatch,Bristol County,1
+9360,0,A,DYS,DYS Mass Department of Youth Services Security,Security,Mass Government Miscellaneous,1
+9424,0,A,Insp General,Inspector General,Multi-Talk,Mass Government Miscellaneous,1
+9744,0,A,Massport Tie,Massport Tie Logan Airport Emergency,Emergency Ops,Unclassified,1
+9904,0,A,HOV,Southeast Expressway HOV lane ops,Public Works,Unclassified,2
+10224,0,A,Bldg Alarms,Data  Building Alarms,Data,Unclassified,2
+10480,0,A,DCR ATG,DCR ATG,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10512,0,A,DCR Cent 1,DCR  Central 1,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10544,0,A,DCR Cent 2,DCR  Central 2,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10576,0,A,DCR Cent 3,DCR  Central 3,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10608,0,A,DCR Cent 4,DCR  Central 4 Island District,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10608,0,A,MCCA4,CH4 Parking Garage,Multi-Talk,Mass Convention Center Authority,2
+10640,0,A,MCCA5,CH5,Multi-Talk,Mass Convention Center Authority,2
+10640,0,A,DCR Cent 5,DCR  Central 5 Blue Hills,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10672,0,A,DCR Resv 1,DCR  Reservations 1,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10704,0,A,DCR Resv 2,DCR  Reservations 2,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10736,0,A,DCR FieldOps,DCR Field Ops,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10768,0,A,DCR Recs,DCR  Recreations,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10800,0,A,DCR Emergcy,DCR  Emergency,Emergency Ops,Mass Dept of Conservation  Recreation DCR,1
+10832,0,A,DCR ENG 1,DCR Engineering 1 State House Rangers,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10864,0,A,DCR ENG 2,DCR Engineering 2,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10896,0,A,DCR Ranger1,DCR Ranger 1,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10928,0,A,DCR Ranger2,DCR Ranger 2 Boston Harbor Islands Natl Rec Area,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10960,0,A,DCR Special,DCR Special,Public Works,Mass Dept of Conservation  Recreation DCR,2
+10992,0,A,DCR WaterShd,DCR Water Shed,Public Works,Mass Dept of Conservation  Recreation DCR,2
+11056,0,A,DCR Fire 1,DCR Fire 1,Fire-Talk,Mass Dept of Conservation  Recreation DCR,2
+11088,0,A,DCR Fire 2,DCR Fire 2,Fire-Talk,Mass Dept of Conservation  Recreation DCR,2
+11280,0,A,DEM Towers,DEM Fire Towers,Fire-Talk,Mass Government Miscellaneous,2
+12080,0,A,Ch1A Water1,Ch1A Water1,Public Works,Mass Water Resources Authority MWRA,2
+12112,0,A,Ch2A Water2,Ch2A Water2,Public Works,Mass Water Resources Authority MWRA,2
+12144,0,A,Ch3A Safety,Ch3A Safety,Public Works,Mass Water Resources Authority MWRA,2
+12176,0,A,Ch4A Sewer1,Ch4A Sewer1,Public Works,Mass Water Resources Authority MWRA,2
+12208,0,A,Ch5A Sewer2,Ch5A Sewer2,Public Works,Mass Water Resources Authority MWRA,2
+12240,0,A,Ch6A Sewer3,Ch6A Sewer3,Public Works,Mass Water Resources Authority MWRA,2
+12272,0,A,Ch7A Fleet,Ch7A Fleet Fleet Services,Public Works,Mass Water Resources Authority MWRA,2
+12304,0,A,Ch8A Support,Ch8A Support Support Services,Public Works,Mass Water Resources Authority MWRA,2
+12336,0,A,Ch9A Private,Ch9A Private Car to Car,Public Works,Mass Water Resources Authority MWRA,2
+12368,0,A,Ch10A Emerge,Ch10A Emergency Tie to MSP,Public Works,Mass Water Resources Authority MWRA,2
+12400,0,A,Ch11A Regrou,Ch11A Regroup OTAR Request Channel,Public Works,Mass Water Resources Authority MWRA,2
+12432,0,A,Ch12A Deer I,Ch12A Deer Island Project Special Ops,Public Works,Mass Water Resources Authority MWRA,2
+12464,0,A,Ch13A Direct,Ch13A Direct Car to Car Safety Secondary,Public Works,Mass Water Resources Authority MWRA,2
+12496,0,A,Ch14A Nut Is,Ch14A Nut Island Operations,Public Works,Mass Water Resources Authority MWRA,2
+12528,0,A,Ch15A Deer I,Ch15A Deer Island and Walnut Hill Operations,Public Works,Mass Water Resources Authority MWRA,2
+12944,0,A,ATG All MWRA,ATG All MWRA Talkgroups 1208012944,Public Works,Mass Water Resources Authority MWRA,2
+13040,0,A,MCCA1,Security,Security,Mass Convention Center Authority,2
+13072,0,A,MCCA3,Facilities Electricians Sound Maintenance,Multi-Talk,Mass Convention Center Authority,2
+13104,0,A,MCCA Spare,MCCA,Multi-Talk,Mass Convention Center Authority,2
+13136,0,A,MCCA Spare,MCCA,Multi-Talk,Mass Convention Center Authority,2
+13168,0,A,MCCA Spare,MCCA,Multi-Talk,Mass Convention Center Authority,2
+16432,0,A,Complex CH7,Complex Channel 7,Corrections,MCI Bridgewater,2
+16752,0,A,OCCC,Old Colony Correctional Center,Corrections,MCI Bridgewater,2
+16976,0,A,TreatmentCtr,Treatment Center,Corrections,MCI Bridgewater,2
+17200,0,A,State Hosp,State Hospital,Corrections,MCI Bridgewater,2
+17264,0,A,Complex CH3,Complex Channel 3,Corrections,MCI Bridgewater,2
+17296,0,A,Complex Mnt,Complex Maintenance,Corrections,MCI Bridgewater,2
+17328,0,A,Complex CH5,Complex Channel 5,Corrections,MCI Bridgewater,2
+17424,0,A,Special Ops,Complex Special Ops,Corrections,MCI Bridgewater,2
+17648,0,A,State Hosp,State Hospital,Corrections,MCI Bridgewater,2
+19824,0,A,Pro EMS,Pro EMS Wide Area Emerson Hospital Intercept cars,EMS Dispatch,Cambridge,1
+20272,0,A,CambFD WA,Cambridge Fire Wide Area,Fire-Talk,Cambridge,2
+20304,0,A,CambPD WA,Cambridge Police Wide Area,Law Talk,Cambridge,2
+24208,0,A,DOC Central,DOC Central Transportation Department of Correction Norfolk,Corrections,Mass Dept of Corrections DOC,2
+31248,0,A,MassDOCCntr,DOC Central Operations,Corrections,Mass Dept of Corrections DOC,2
+31280,0,A,FugitiveUnit,DOC fugitive Unit,Corrections,Mass Dept of Corrections DOC,2
+32048,0,A,HelpVans,Help Vans,Transportation,Unclassified,2
+32208,0,A,DOT Weston,DOT Masspike Weston,Multi-Talk,Mass DOT,2
+32240,0,A,TedWilliams,Ted Williams Tunnel IROs,Multi-Talk,Mass DOT,2
+32624,0,A,Masspike,DOT Masspike,Multi-Talk,Mass DOT,2
+32688,0,A,Masspike,DOT Masspike,Multi-Talk,Mass DOT,2
+32784,0,A,MSPEvents 1,Events 1,Interop,Mass Events,2
+32816,0,A,MSPEvents 2,Events 2,Interop,Mass Events,2
+32848,0,A,MSPEvents 3,Events 3,Interop,Mass Events,2
+32880,0,A,MSPEvents 4,Events 4,Interop,Mass Events,2
+32912,0,A,MSPEvents 5,Events 5,Interop,Mass Events,2
+32944,0,A,MSPEvents 6,Events 6,Interop,Mass Events,2
+32976,0,A,MSPEvents 7,Events 7,Interop,Mass Events,2
+33008,0,A,MSPEvents 8,Events 8,Interop,Mass Events,2
+33168,0,A,APTL1,North Dispatch  A A1 A2 A3 A6,Law Dispatch,State Police Troop A  North Greater Boston,1
+33200,0,A,APTL2,South Dispatch  A4 A5,Law Dispatch,State Police Troop A  North Greater Boston,1
+33232,0,A,APTL3,CartoCar Details,Law Tac,State Police Troop A  North Greater Boston,2
+33264,0,A,HPTL1,North Dispatch  H H1 H4 H5 H6,Law Dispatch,State Police Troop H  South Greater Boston,1
+33296,0,A,HPTL2,South Dispatch  H2 H3 H7,Law Dispatch,State Police Troop H  South Greater Boston,1
+33328,0,A,HPTL3,CartoCar Details,Law Talk,State Police Troop H  South Greater Boston,2
+33360,0,A,SOPS1,Special Event Ops 1,Interop,State Police  Statewide,2
+33392,0,A,FPTL1,Details,Law Dispatch,State Police Troop F  Logan Airport,1
+33424,0,A,TRAFFIC,Truck Teams Registry Units No Longer Used,Deprecated,State Police Troop A  North Greater Boston,2
+33456,0,A,EPTL1,East Dispatch  Mass Pike  Tunnels,Law Dispatch,State Police Troop E  Mass Turnpike,2
+33488,0,A,SOPS2,Special Event Ops 2,Interop,State Police  Statewide,2
+33520,0,A,DETA,K9Narcotics,Law Tac,State Police Troop A  North Greater Boston,1
+33552,0,A,AATG,Announcement Group All Talkgroups from Dispatch,Law Talk,State Police Troop H  South Greater Boston,1
+33584,0,A,BPTL1,East Dispatch  B B2 B3 B6 B7 Primary,Law Dispatch,State Police Troop B  Western,2
+33616,0,A,BPTL2,West Dispatch  B1 B4 B5 Primary,Law Dispatch,State Police Troop B  Western,2
+33648,0,A,BPTL3,B Car to Car,Law Tac,State Police Troop B  Western,2
+33680,0,A,SOPS3,Special Event Ops 3,Interop,State Police  Statewide,2
+33712,0,A,SOPS4,Special Event Ops 4,Interop,State Police  Statewide,2
+33744,0,A,BATG,Announcement Group All Talkgroups from Dispatch,Law Tac,State Police Troop B  Western,1
+33776,0,A,CPTL1,East Dispatch  C C2 C4 C6 C9,Law Dispatch,State Police Troop C  Central,2
+33808,0,A,CPTL2,Special EventsCartoCar,Interop,State Police Troop C  Central,2
+33840,0,A,CPTL3,West Dispatch  C1 C3 C5 C7 C8,Law Dispatch,State Police Troop C  Central,2
+33872,0,A,SOPS5,Special Event Ops 5,Interop,State Police  Statewide,2
+33904,0,A,SOPS6,Special Event Ops 6,Interop,State Police  Statewide,2
+33936,0,A,CATG,Announcement Group All Talkgroups from Dispatch,Law Tac,State Police Troop C  Central,1
+33968,0,A,DPTL1,North Dispatch  D D1 D4 Plymouth County,Law Dispatch,State Police Troop D  Southeast,2
+34000,0,A,DPTL2,South Dispatch  D3 Bristol County,Law Dispatch,State Police Troop D  Southeast,2
+34032,0,A,DPTL3,CapeIslands  D2 D7,Law Dispatch,State Police Troop D  Southeast,2
+34064,0,A,DPTL4,Special Events CartoCar,Interop,State Police Troop D  Southeast,2
+34096,0,A,SOPS7,Special Event Ops 7,Interop,State Police  Statewide,2
+34128,0,A,SOPS8,Special Event Ops 8,Interop,State Police  Statewide,2
+34160,0,A,DATG,Announcement Group All Talkgroups from Dispatch,Law Dispatch,State Police Troop D  Southeast,2
+34192,0,A,GANGA,Gang Opsold SOPS2A,Law Tac,State Police Troop A  North Greater Boston,2
+34224,0,A,HOV SE,HOV SE Expressway HOV Lane Operations Old SOPS3A,Law Tac,State Police Troop H  South Greater Boston,2
+34256,0,A,GANGB,Gang Ops old BOPS3,Interop,State Police Troop B  Western,2
+34288,0,A,DETD1,BristolPlymouth Detectives,Law Tac,State Police Troop D  Southeast,2
+34320,0,A,DETD2,Cape Cod Detectives,Law Tac,State Police Troop D  Southeast,2
+34352,0,A,SOPS2H,Special Event Ops Details,Interop,State Police Troop H  South Greater Boston,2
+34384,0,A,GANGA,Gang operations,Law Tac,State Police Troop A  North Greater Boston,1
+34416,0,A,DETH,Detectives,Law Tac,State Police Troop H  South Greater Boston,1
+34448,0,A,SOPS3C,South CartoCar  C2 C3 C5 C7 C8,Law Tac,State Police Troop C  Central,2
+34480,0,A,DETC,Detectives Worcester CPAC AG,Law Tac,State Police Troop C  Central,2
+34512,0,A,SSSA,BIS Special Services Section,Law Tac,State Police Troop H  South Greater Boston,2
+34544,0,A,SSSD,BIS Special Services Section,Law Tac,State Police Troop D  Southeast,2
+34576,0,A,SSSC,BIS Special Services Section,Law Tac,State Police Troop C  Central,2
+34640,0,A,SSSB,BIS Special Services Section,Law Tac,State Police Troop B  Western,2
+34672,0,A,NARCA,Narcotics,Law Talk,State Police Troop H  South Greater Boston,2
+34704,0,A,NARCD,Narcotics,Law Tac,State Police Troop D  Southeast,2
+34736,0,A,DETB,Detectives AG,Law Tac,State Police Troop B  Western,2
+34768,0,A,NARCC,Narcotics,Law Tac,State Police Troop C  Central,2
+34800,0,A,NARCB,Narcotics,Law Tac,State Police Troop B  Western,2
+34832,0,A,VFASA,Violent Fugitive Apprehension SectionA,Deprecated,State Police Troop H  South Greater Boston,2
+34864,0,A,VFASD,Violent Fugitive Apprehension SectionD,Deprecated,State Police Troop D  Southeast,2
+34896,0,A,VFASD,Violent Fugitive Apprehension SectionD,Deprecated,State Police Troop D  Southeast,2
+34928,0,A,VFASC,Violent Fugitive Apprehension SectionC,Deprecated,State Police Troop C  Central,2
+34960,0,A,VFASB,Violent Fugitive Apprehension SectionB,Deprecated,State Police Troop B  Western,2
+34992,0,A,FME,Fire Investigation Unit  Hazmat,Fire-Tac,Mass Fire Services,2
+35024,0,A,FMS,Fire Investigation Unit  Hazmat,Fire-Tac,Mass Fire Services,2
+35088,0,A,FMC,Fire Investigation Unit  Hazmat,Fire-Tac,Mass Fire Services,2
+35120,0,A,FMW,Fire Investigation Unit  Hazmat,Law Tac,Mass Fire Services,2
+35152,0,A,EXECA,Troop AH Governors Security,Law Tac,Mass Governor Security,2
+35184,0,A,EXECD,Troop D Governors Security,Law Tac,Mass Governor Security,2
+35248,0,A,EXECC,Troop C Governors Security,Law Tac,Mass Governor Security,2
+35280,0,A,EXECB,Troop B Governors Security,Law Tac,Mass Governor Security,2
+35312,0,A,TECHA,Troop A Radio Technicians  Greater Boston,Multi-Talk,Radio Technicians,2
+35344,0,A,TECHSW,Radio Technicians StateWide,Multi-Talk,Radio Technicians,2
+35376,0,A,TECHD,Troop D Radio Technicians  Southeastern MA,Multi-Talk,Radio Technicians,2
+35408,0,A,TECHC,Troop C Radio Technicians  Central MA,Multi-Talk,Radio Technicians,2
+35440,0,A,TECHB,Troop B Radio Technicians  Western MA,Multi-Talk,Radio Technicians,2
+35472,0,A,STATE,Statewide Helicopters and Mobiles,Law Talk,State Police  Statewide,2
+35568,0,A,HATG,Announcement Group All Talkgroups from Dispatch  Troop H,Law Dispatch,State Police Troop H  South Greater Boston,1
+35600,0,A,EPTL2,West Dispatch  Mass Pike  Tunnels,Law Dispatch,State Police Troop E  Mass Turnpike,1
+35632,0,A,EPTL3,CartoCar Mass Pike  Tunnels,Law Talk,State Police Troop E  Mass Turnpike,2
+35664,0,A,SOPS1E,Special Event Ops Details,Interop,State Police Troop E  Mass Turnpike,2
+35696,0,A,SOPS2E,Special Event Ops Details,Interop,State Police Troop E  Mass Turnpike,2
+35728,0,A,SOPS3E,Special Event Ops Details,Interop,State Police Troop E  Mass Turnpike,2
+35792,0,A,MSP TALK,Talkaround,Law Tac,State Police  Statewide,2
+35824,0,A,EPTL4,Boston Area,Law Dispatch,State Police Troop E  Mass Turnpike,1
+35856,0,A,EPTL5,EPTL5,Law Dispatch,State Police Troop E  Mass Turnpike,1
+36336,0,A,LOCPS1,Greater Boston Local Public Safety Special Events Tie to SP,Interop,Mutual AidIntersystem,2
+36368,0,A,LOCPS2,Greater Boston Local Public Safety Special Events,Interop,Mutual AidIntersystem,2
+36400,0,A,LOCPS3,BristolPlymouth County Local Public Safety Special Events Tie to SP,Interop,Mutual AidIntersystem,2
+36432,0,A,LOCPS4,BristolPlymouth County Local Public Safety Special Events,Interop,Mutual AidIntersystem,2
+36464,0,A,LOCPS5,Cape Cod Local Public Safety Special Events tie to SP,Interop,Mutual AidIntersystem,2
+36496,0,A,LOCPS6,Cape Cod Local Public Safety Special Events,Interop,Mutual AidIntersystem,2
+36528,0,A,LOCPS7,Central Mass Local Public Safety Special Events Tie to SP,Interop,Mutual AidIntersystem,2
+36560,0,A,LOCPS8,Central Mass Local Public Safety Special Events,Interop,Mutual AidIntersystem,2
+36592,0,A,LOCPS9,Western Mass Local Public Safety Special Events Tie to SP,Interop,Mutual AidIntersystem,2
+36624,0,A,LOCPS10,Western Mass Local Public Safety Special Events,Interop,Mutual AidIntersystem,2
+36656,0,A,Orange PD,Police Department,Law Dispatch,Orange,1
+36752,0,A,Rehoboth PD,Police Department,Law Dispatch,Rehoboth,1
+36784,0,A,C8Fire,New Braintree C8 Small Town FD Brimfield Brookfield New Braintree area,Fire Dispatch,C8 Small Town Group,1
+36816,0,A,C8Police,New Braintree C8 Small Town PD Brimfield Brookfield New Braintree area,Law Dispatch,C8 Small Town Group,1
+36848,0,A,C8Police 2,New Braintree C8 Small Town PD secondary,Law Talk,C8 Small Town Group,2
+36880,0,A,C8  TAC,New Braintree C8 Small Town Tac Operations,Multi-Tac,C8 Small Town Group,2
+36944,0,A,DEM 1,Department of Environmental Management  Environmental Police,Law Talk,Mass Government Miscellaneous,2
+36976,0,A,DEM 2,Department of Environmental Management  Environmental Police,Law Talk,Mass Government Miscellaneous,2
+37040,0,A,SW PRIS TRAN,Statewide Prisoner Transportation Sheriff DOC Parole,Corrections,Mass Dept of Corrections DOC,2
+37104,0,A,Apprehension,Aprehension Unit Department of Correction,Corrections,Mass Dept of Corrections DOC,2
+37136,0,A,B6 SOPS,B6 Special Ops  Coolidge Bridge Renovations in NorthamptonHadley,Multi-Tac,Mass Government Miscellaneous,2
+37168,0,A,Worc Cty Ctl,Worcester County Jail Ops,Corrections,Mass Dept of Corrections DOC,2
+37264,0,A,Brnstable FD,Barnstable Fire Department,Fire Dispatch,Barnstable Town,2
+37296,0,A,Bourne FD,Fire Department,Fire Dispatch,Bourne,2
+37328,0,A,Brewster FD,Fire Department,Fire Dispatch,Brewster,2
+37360,0,A,Chatham FD,Fire Department,Fire Dispatch,Chatham,2
+37392,0,A,CI EMS,Cape and Islands EMS,EMS-Tac,Barnstable County,1
+37424,0,A,COMM FD,CentervilleOstervilleMarstons Mills Fire District,Fire Dispatch,Barnstable Town,2
+37456,0,A,Cotuit FD,Cotuit Fire Department,Fire Dispatch,Barnstable Town,2
+37488,0,A,Dennis FD,Fire Department,Fire Dispatch,Dennis,2
+37520,0,A,Eastham FD,Fire Department,Fire Dispatch,Eastham,2
+37552,0,A,Falmouth FD,Fire Department,Fire Dispatch,Falmouth,2
+37584,0,A,Harwich FD,Fire Department,Fire Dispatch,Harwich,2
+37616,0,A,Hyannis FD,Hyannis Fire Department,Fire Dispatch,Barnstable Town,2
+37648,0,A,Mashpee FD,Fire Department,Fire Dispatch,Mashpee,2
+37680,0,A,Orleans FD,Fire Department,Fire Dispatch,Orleans,2
+37712,0,A,PTown FD,Fire Department,Fire Dispatch,Provincetown,2
+37744,0,A,Sandwich FD,Fire Department,Fire Dispatch,Sandwich,2
+37776,0,A,Truro FD,Fire Department,Fire Dispatch,Truro,2
+37808,0,A,Wellfleet FD,Fire Department,Fire Dispatch,Wellfleet,2
+37840,0,A,WBarns FD,West Barnstable Fire Department,Fire Dispatch,Barnstable Town,2
+37872,0,A,Yarmouth FD,Fire Department,Fire Dispatch,Yarmouth,2
+37904,0,A,MMR FD Crash,MMR Fire and Crash,Fire Dispatch,Mass Military Reservation,2
+37936,0,A,County FD AD,Cape Cod Regional Fire Administration,Fire-Talk,Barnstable County,2
+37968,0,A,County OPS2,Cape Cod Regional Fire Operations 2,Fire-Tac,Barnstable County,2
+38000,0,A,County OPS3,Cape Cod Regional Fire Operations 3,Fire-Tac,Barnstable County,2
+38032,0,A,County Disp,Fire Dispatch,Fire Dispatch,Barnstable County,2
+38064,0,A,County OPS1,Cape Cod Regional Fire Operations 1,Fire-Tac,Barnstable County,2
+38096,0,A,Brnstable PD,Barnstable Police Department Future,Law Dispatch,Barnstable Town,2
+38128,0,A,Bourne PD,Police Department Future,Law Dispatch,Bourne,2
+38160,0,A,Brewster PD,Police Department,Law Dispatch,Brewster,2
+38192,0,A,Chatham PD,Police Department,Law Dispatch,Chatham,2
+38224,0,A,Dennis PD,Police Department,Law Dispatch,Dennis,2
+38256,0,A,Eastham PD,Police Department,Law Dispatch,Eastham,2
+38288,0,A,Falmouth PD,Police Department,Law Dispatch,Falmouth,2
+38320,0,A,Harwich PD,Police Department,Law Dispatch,Harwich,2
+38352,0,A,Mashpee PD,Police Department,Law Dispatch,Mashpee,2
+38384,0,A,Orleans PD,Police Department,Law Dispatch,Orleans,2
+38416,0,A,PTown PD,Police Department,Law Dispatch,Provincetown,2
+38448,0,A,Sandwich PD,Police Department,Law Dispatch,Sandwich,2
+38480,0,A,Truro PD,Police Department,Law Dispatch,Truro,2
+38512,0,A,Wellfleet PD,Police Department,Law Dispatch,Wellfleet,2
+38544,0,A,Yarmouth PD,Police Department CH2,Law Dispatch,Yarmouth,2
+38576,0,A,Police ADM1,Countywide Police Admin CH1 Interoperability,Law Tac,Barnstable County,2
+38608,0,A,Police ADM2,Countywide Police Admin CH2 Interoperability,Law Tac,Barnstable County,2
+38640,0,A,Police ADM3,Countywide Police Admin CH3 Interoperability,Law Tac,Barnstable County,2
+38672,0,A,Cape FD ATG,Cape Cod Fire All Fire Talkgroups 3726438064,Fire-Tac,Barnstable County,2
+38704,0,A,County PD AT,Cape Cod Police All Police Talkgroups 3809638640,Law Tac,Barnstable County,2
+38736,0,A,BCSO Disp,SheriffBCI Patched to 38800,Law Tac,Barnstable County,2
+38768,0,A,BarCtyHealth,Barnstable County Health Department,Public Works,Barnstable County,2
+38800,0,A,Sheriff Ops,SheriffBCI Patched from 36496,Law Tac,Barnstable County,2
+38896,0,A,MEMA Metro,MEMA Metro Boston Ops,Emergency Ops,Mass Emergency Management Agency MEMA,2
+38928,0,A,MEMAE,MEMA East Ops,Emergency Ops,Mass Emergency Management Agency MEMA,2
+38960,0,A,MEMAS,MEMA South Ops,Emergency Ops,Mass Emergency Management Agency MEMA,2
+39024,0,A,MEMAW,MEMA West Ops,Emergency Ops,Mass Emergency Management Agency MEMA,2
+39088,0,A,Pkng Facil,User Unknown Parking Facility,Public Works,Unclassified,2
+39152,0,A,MEP1,MA Environmental Police Common,Law Dispatch,Mass Environmental Police,2
+39184,0,A,MEP2,MA Environmental Police Coastal,Law Tac,Mass Environmental Police,2
+39216,0,A,MEP3,MA Environmental Police Inland,Law Tac,Mass Environmental Police,2
+39312,0,A,Parole CH1,MA Parole Board CH1 East  Boston Area,Corrections,Mass Parole Board,2
+39344,0,A,Parole CH2,MA Parole Board CH2 South  SE Mass Area,Corrections,Mass Parole Board,2
+39376,0,A,Parole CH3,MA Parole Board CH3 Central  Worcester Area,Corrections,Mass Parole Board,2
+39408,0,A,Parole CH4,MA Parole Board CH6 West,Corrections,Mass Parole Board,2
+39952,0,A,DFSE,Department of Fire Services  East,Fire-Tac,Mass Fire Services,2
+40048,0,A,DFS  W,Department of Fire Services  West,Fire-Tac,Mass Fire Services,2
+40176,0,A,DEM,DEM Department of Environmental Management  Administration,Multi-Talk,Mass Government Miscellaneous,2
+40976,0,A,ATG,ATG All MDC Talkgroups 4100841456,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41008,0,A,Central 1,Ch1A Central 1 Central Services,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41040,0,A,Central 2,Ch2A Central 2 Central Services,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41072,0,A,Central 3,Ch3A Central 3 Central Services,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41104,0,A,Central 4,Ch4A Central 4 Central Services,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41136,0,A,Central 5,Ch5A Central 5 Central Services,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41168,0,A,Reservatn 1,Ch6A Reservation 1 Reservations,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41200,0,A,Reservatn 2,Ch7A Reservation 2 Reservations,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41232,0,A,Spec Ops 8A,Ch8A Special Ops Special Operations,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41264,0,A,Ranger FOPS,Ch9A Ranger Field Ops Field Operations,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41296,0,A,Ranger 10A,Ch10A Ranger State House Emergency Rangers at State House,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41328,0,A,Ranger 11A,Ch11A State House Rangers at State House,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41360,0,A,Engineer 1,Ch12A Engineering 1 Engineering,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41392,0,A,Engineer 2,Ch13A Engineering 2 Engineering,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41424,0,A,Recreation 1,Ch14A Recreation 1 Recreation,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41456,0,A,Rangers Car,Ch15A MDC1 Rangers Car to Car,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41488,0,A,Water Shed,Water Shed Water Shed,Deprecated,Mass Dept of Conservation  Recreation DCR,2
+41872,0,A,Pike Admin,MA TurnpikeAdministration,Multi-Talk,Mass DOT,2
+42032,0,A,I93 CONST1,Construction 1 I93 Fast14 Project,Multi-Talk,I93 Fast14 project,2
+42064,0,A,I93 Const2,Construction 2 I93 Fast14 Project,Multi-Talk,I93 Fast14 project,2
+42256,0,A,Pike Weston,Mass Turnpike User with Weston Headquarters Statewide,Multi-Talk,Mass DOT,2
+45168,0,A,Citywide 1,Boston Citywide 1,Interop,Boston,2
+45200,0,A,Citywide 2,Boston Citywide 2,Interop,Boston,2
+45232,0,A,Citywide 3,Boston Citywide 3,Interop,Boston,2
+45264,0,A,Citywide 4,Boston Citywide 4,Interop,Boston,2
+46640,0,A,Bos Pub Fac1,Boston Public Facilities,Public Works,Boston,2
+46672,0,A,Bos Pub Fac2,Boston Public Facilities,Public Works,Boston,2
+46704,0,A,Bos Pub Fac3,Boston Public Facilities,Public Works,Boston,2
+47120,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47152,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47184,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47216,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47248,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47280,0,A,Bos Parks,Boston Parks Department,Public Works,Boston,2
+47408,0,A,SuffPrisTrsp,Suffolk County Prisoner Transport,Corrections,Boston,2
+47472,0,A,SuffAdmin,Suffolk County Sheriff Admin,Corrections,Boston,2
+47536,0,A,SuffSherif,Suffolk County Sheriffs,Corrections,Boston,2
+47664,0,A,BosElderAf,Boston Elder Affairs  Transport Vans,Public Works,Boston,2
+47696,0,A,BosElderAff,Boston Elder Affairs,Public Works,Boston,2
+47888,0,A,BosTransDep1,Boston Transportation Department,Transportation,Boston,2
+47920,0,A,BosTransDep2,Boston Transportation Department,Transportation,Boston,2
+47952,0,A,BosTransDep3,Boston Transportation Department,Transportation,Boston,2
+47984,0,A,BosTransDep4,Boston Transportation Department,Transportation,Boston,2
+48016,0,A,BosTransDep5,Boston Transportation Department,Transportation,Boston,2
+48048,0,A,BosTransDep6,Boston Transportation Department,Transportation,Boston,2
+48080,0,A,BosTransDep7,Boston Transportation Department,Transportation,Boston,2
+48112,0,A,BosTransDep8,Boston Transportation Department,Transportation,Boston,2
+48176,0,A,Boston DPW1,Boston Department of Public Works,Public Works,Boston,2
+48208,0,A,Boston DPW2,Boston Department of Public Works,Public Works,Boston,2
+48240,0,A,Boston DPW3,Boston Department of Public Works,Public Works,Boston,2
+48272,0,A,Boston DPW4,Boston Department of Public Works,Public Works,Boston,2
+48304,0,A,Boston DPW5,Boston Department of Public Works,Public Works,Boston,2
+48336,0,A,Boston DPW6,Boston Department of Public Works,Public Works,Boston,2
+48368,0,A,Boston DPW7,Boston Department of Public Works,Public Works,Boston,2
+48400,0,A,Boston DPW8,Boston Department of Public Works,Public Works,Boston,2
+48528,0,A,BosPubHlth1,Boston Public Health Department,Public Works,Boston,2
+48560,0,A,BosPubHlth2,Boston Public Health Department,Public Works,Boston,2
+48592,0,A,BosPubHlth3,Boston Public Health Department,Public Works,Boston,2
+48656,0,A,BosPubHlth4,Boston Public Health Department,Public Works,Boston,2
+48752,0,A,BosPubHlth5,Boston Public Health Department,Public Works,Boston,2
+50192,0,A,Boston Tech,Boston Radio Techs,Public Works,Boston,2
+50256,0,A,BosAW4,Boston Areawide 4,Interop,Boston,2
+50800,0,A,BostonPDAC,Boston Police All Channels Dispatch,Law Talk,Boston,1
+51056,0,A,Shirley PRIM,Shirley Maximum Security Primary,Corrections,Mass Dept of Corrections DOC,2
+51088,0,A,Shirley SECO,Shirley Maximum Security Secondary,Corrections,Mass Dept of Corrections DOC,2
+53264,0,A,MBTA PD 1,MBTA Transit Police  Ch 1 Simulcast,Law Dispatch,Mass Bay Transportation Authority MBTA,1
+53296,0,A,MBTA PD 2,MBTA Transit Police  Ch 2 Simulcast,Law Talk,Mass Bay Transportation Authority MBTA,1
+53328,0,A,MBTA UNK,MBTA  Unknown Designation,Other,Mass Bay Transportation Authority MBTA,2
+53360,0,A,MBTA WA,MBTA  Wide Area,Interop,Mass Bay Transportation Authority MBTA,2
+53392,0,A,MBTA PD 7,MBTA  Transit Police  Ch 7,Law Tac,Mass Bay Transportation Authority MBTA,2
+53424,0,A,MBTA PD Tac,MBTA  Tactical Division,Law Tac,Mass Bay Transportation Authority MBTA,1
+53456,0,A,MBTA PD UNK,MBTA PD  Unknown Designation,Other,Mass Bay Transportation Authority MBTA,2
+57424,0,D,TECHA P25,Troop A  Digital,Multi-Talk,Radio Technicians,2
+57488,0,D,TECHC P25,Troop C Radio Technicians,Multi-Talk,Radio Technicians,2
+58256,0,D,TECHSW P25,Radio Technicians State Wide  Digital,Multi-Talk,Radio Technicians,2

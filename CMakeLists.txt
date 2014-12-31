@@ -69,6 +69,10 @@ find_package(Gnuradio "3.7.2" REQUIRED)
 find_package(GrOsmoSDR)
 find_package(LibHackRF)
 find_package(LibDSD)
+
+find_package(GnuradioUHD)
+find_package(UHD)
+
 #find_package(LibbladeRF)
 
 
@@ -133,6 +137,8 @@ link_directories(
     ${Boost_LIBRARY_DIRS}
     ${GNURADIO_RUNTIME_LIBRARY_DIRS}
     ${GROSMOSDR_LIBRARIES}
+    ${GNURADIO_UHD_LIBRARIES}
+    ${UHD_LIBRARIES}
     ${LIBDSD_LIBRARIES}
 	  #/usr/local/lib/
 	  #/usr/local/lib/pyton2.7/dist-packages/gnuradio/
@@ -141,4 +147,4 @@ link_directories(
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 add_executable(smartnet smartnet.cc smartnet_crc.cc smartnet_deinterleave.cc logging_receiver_dsd.cc talkgroup.cc)
-target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_PMT_LIBRARIES} ${GNURADIO_FILTER_LIBRARIES} ${GNURADIO_DIGITAL_LIBRARIES} ${GNURADIO_ANALOG_LIBRARIES} ${GNURADIO_AUDIO_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES} ${GROSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} itpp ncurses menu)
+target_link_libraries(smartnet  ${GNURADIO_RUNTIME_LIBRARIES} ${GNURADIO_PMT_LIBRARIES} ${GNURADIO_FILTER_LIBRARIES} ${GNURADIO_DIGITAL_LIBRARIES} ${GNURADIO_ANALOG_LIBRARIES} ${GNURADIO_AUDIO_LIBRARIES} ${GNURADIO_BLOCKS_LIBRARIES} ${GNURADIO_UHD_LIBRARIES} ${UHD_LIBRARIES} ${GROSMOSDR_LIBRARIES} ${Boost_LIBRARIES} ${LIBDSD_LIBRARIES} itpp ncurses menu)
