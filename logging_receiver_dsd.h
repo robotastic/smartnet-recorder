@@ -26,7 +26,7 @@
 #include <gnuradio/filter/firdes.h>
 #include <gnuradio/filter/rational_resampler_base_ccc.h>
 #include <gnuradio/analog/quadrature_demod_cf.h>
-#include "dsd_block_ff.h"
+//#include "dsd_block_ff.h"
 #include <gnuradio/analog/sig_source_f.h>
 #include <gnuradio/analog/sig_source_c.h>
 #include <gnuradio/blocks/multiply_cc.h>
@@ -114,7 +114,7 @@ private:
 	gr::filter::rational_resampler_base_fff::sptr upsample_audio;
 	//gr::analog::quadrature_demod_cf::sptr demod;
 	gr::analog::quadrature_demod_cf::sptr demod;
-	dsd_block_ff_sptr dsd;
+	//dsd_block_ff_sptr dsd;
 	gr::blocks::wavfile_sink::sptr wav_sink;
 	gr::blocks::file_sink::sptr raw_sink;
 	gr::blocks::file_sink::sptr debug_sink;

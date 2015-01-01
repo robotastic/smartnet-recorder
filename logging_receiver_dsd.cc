@@ -195,7 +195,7 @@ log_dsd::~log_dsd() {
 // from: /gnuradio/grc/grc_gnuradio/blks2/selector.py
 void log_dsd::unmute() {
 	// this function gets called everytime their is a TG continuation command. This keeps the timestamp updated.
-	std::cout<< "logging_receiver_dsd.cc: Refreshing Logger [ " << num << " ] - Elapsed[ " << time(NULL) - timestamp << "]  " << std::endl; 
+	//std::cout<< "logging_receiver_dsd.cc: Refreshing Logger [ " << num << " ] - Elapsed[ " << time(NULL) - timestamp << "]  " << std::endl; 
 
 	timestamp = time(NULL);
 
@@ -239,7 +239,7 @@ void log_dsd::tune_offset(float f) {
 }
 
 void log_dsd::deactivate() {
-	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " << std::endl; 
+	//std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " << std::endl; 
 
 	active = false;
 
@@ -285,7 +285,7 @@ void log_dsd::activate(float f, int t, int n) {
 	freq = f;
         //num = n;
   	tm *ltm = localtime(&starttime);
-  	std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ]  "  <<std::endl;
+  	//std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ]  "  <<std::endl;
 
   	//if (logging) {
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7

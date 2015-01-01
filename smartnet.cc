@@ -102,7 +102,7 @@ bool console  = false;
 
 
 vector<log_dsd_sptr> loggers;
-unsigned int max_loggers = 6;
+unsigned int max_loggers = 6;//6
 unsigned int num_loggers = 0;
 vector<log_dsd_sptr> active_loggers;
 
@@ -131,6 +131,7 @@ MENU *tg_menu;
 
 volatile sig_atomic_t exit_flag = 0;
 
+volatile float msgs_decoded_per_second = 0;
 
 void update_active_tg_win() {
  	werase(active_tg_win);
@@ -355,7 +356,21 @@ void stop_inactive_loggers() {
     	}//foreach loggers
 }
 
+time_t lastMsgCountTime = time(NULL);
+int messagesDecodedSinceLastReport = 0;
 float parse_message(string s) {
+	messagesDecodedSinceLastReport++;
+	time_t currentTime = time(NULL);
+   float timeDiff = currentTime - lastMsgCountTime;
+	if (currentTime - lastMsgCountTime >= 3.0) {
+		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
+		messagesDecodedSinceLastReport = 0;
+		lastMsgCountTime = currentTime;
+		if (!console) {
+			std::cout << "Control Channel Message Decode Rate: " << msgs_decoded_per_second << "/sec" << std::endl;
+		}
+	}
+
 	float retfreq = 0;
 	bool rxfound = false;
 	std::vector<std::string> x;
@@ -369,7 +384,7 @@ float parse_message(string s) {
 	vector<string>().swap(x);
 	
 	if (!console) {
-  		std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
+  		//std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 	}
 	
 
@@ -605,8 +620,11 @@ int main(int argc, char **argv)
   
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
-	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 4500, 2000);
-	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
+//	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 4500, 2000);
+	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
+//	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 5000, 6000);
+
+	std::cout << "lpf_taps length: " << lpf_taps.size() << std::endl;
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						       lpf_taps,
@@ -646,6 +664,7 @@ int main(int argc, char **argv)
 	tb->connect(deinterleave, 0, crc, 0);
 
 	tb->start();
+	//tb->dump(); //print the graph
 
 	//parse_file(talkgroup_file); <-- not sure why this was here. This is already called earlier. No reason to double-load, right??
 
