@@ -700,7 +700,7 @@ int main(int argc, char **argv)
 		unsigned int crc_error_count = crc->get_crc_error_count();
 		if (crc_error_count > last_crc_error_count) {
 			if (!console) {
-				std::cout << "CRC ERRORS! [" << (crc_error_count - last_crc_error_count) <<"]"<<std::endl;
+				std::cout << "CRC ERRORS! [" << crc_error_count << " (+"<< (crc_error_count - last_crc_error_count) <<")]"<<std::endl;
 			}
 			last_crc_error_count = crc_error_count;
 		}
