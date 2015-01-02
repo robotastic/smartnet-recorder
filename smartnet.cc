@@ -506,13 +506,13 @@ float parse_message(string s) {
 lastaddress = address;
 lastcmd = command;
 
-
 return retfreq;
 }
 
 
 int main(int argc, char **argv)
 {
+	unsigned int last_crc_error_count=0;
 
 	std::string device_addr, antenna_str, talkgroup_file;
 	double  samp_rate, chan_freq, error;
@@ -696,6 +696,14 @@ int main(int argc, char **argv)
 			msg.reset();
 		}
 		stop_inactive_loggers();
+
+		unsigned int crc_error_count = crc->get_crc_error_count();
+		if (crc_error_count > last_crc_error_count) {
+			if (!console) {
+				std::cout << "CRC ERRORS! [" << (crc_error_count - last_crc_error_count) <<"]"<<std::endl;
+			}
+			last_crc_error_count = crc_error_count;
+		}
 
 	}
 

@@ -71,6 +71,8 @@ private:
  public:
   ~smartnet_crc();  // public destructor
 
+  unsigned int get_crc_error_count();
+
   // Where all the action really happens
 
   int work (int noutput_items,

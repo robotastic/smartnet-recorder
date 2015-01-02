@@ -34,6 +34,8 @@
 
 #define VERBOSE 0
 
+unsigned int crc_error_count = 0;
+
 /*
  * Create a new instance of smartnet_crc and return
  * a boost shared_ptr.  This is effectively the public constructor.
@@ -58,6 +60,11 @@ smartnet_crc::smartnet_crc (gr::msg_queue::sptr queue)
 smartnet_crc::~smartnet_crc ()
 {
     //nothing else required in this example
+}
+
+
+unsigned int smartnet_crc::get_crc_error_count() {
+	return crc_error_count;
 }
 
 static void smartnet_ecc(char *out, const char *in) {
@@ -177,7 +184,15 @@ smartnet_crc::work (int noutput_items,
 	    payload << pkt.address << "," << pkt.groupflag << "," << pkt.command;
 	    gr::message::sptr msg = gr::message::make_from_string(std::string(payload.str()));
 	    d_queue->handle(msg);
-	} else if (VERBOSE) std::cout << "CRC FAILED" << std::endl;
+	} else {
+
+		crc_error_count++;
+
+		if (VERBOSE) { 
+			std::cout << "CRC FAILED" << std::endl; 
+		}
+		
     }
+	}
     return size;
 }
