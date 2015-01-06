@@ -74,6 +74,8 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	downsample_sig = gr::filter::rational_resampler_base_ccf::make(channel_rate, pre_channel_rate, resampler_taps);
 	demod = gr::analog::quadrature_demod_cf::make(1.6); //1.4);
 	levels = gr::blocks::multiply_const_ff::make(1.0); //33);
+	valve = gr::blocks::copy::make(sizeof(gr_complex));
+	valve->set_enabled(false);
 
 	for (int i=0; i < samp_per_sym; i++) {
 		sym_taps.push_back(1.0 / samp_per_sym);
@@ -102,13 +104,22 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
-	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
-
+	
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
 
 
-	connect(self(),0, null_sink,0);
+	connect(self(),0, valve,0);
+	connect(valve,0, prefilter,0);
+	connect(prefilter, 0, downsample_sig, 0);
+
+	connect(prefilter,0, raw_sink,0);
+
+	connect(downsample_sig, 0, demod, 0);
+	connect(demod, 0, sym_filter, 0);
+	connect(sym_filter, 0, levels, 0);
+	connect(levels, 0, dsd, 0);
+	connect(dsd, 0, wav_sink,0);
 }
 
 log_dsd::~log_dsd() {
@@ -163,33 +174,15 @@ void log_dsd::deactivate() {
 	std::cout<< "logging_receiver_dsd.cc: Deactivating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ] " << std::endl; 
 
 	active = false;
-
+	valve->set_enabled(false);
 	//if (logging) {
 
-  lock();
+
 
 	wav_sink->close();
 	
 		raw_sink->close();
-		disconnect(prefilter,0, raw_sink,0);
 
-	
-	disconnect(self(), 0, prefilter, 0);
-	connect(self(),0, null_sink,0);
-
-
-
-
-	disconnect(prefilter, 0, downsample_sig, 0);
-	disconnect(downsample_sig, 0, demod, 0);
-	
-	disconnect(demod, 0, sym_filter, 0);
-	disconnect(sym_filter, 0, levels, 0);
-	disconnect(levels, 0, dsd, 0);
-	disconnect(dsd, 0, wav_sink,0);
-	
-
-	unlock();
 
   dsd_state *state = dsd->get_state();
   ofstream myfile (status_filename);
@@ -228,7 +221,7 @@ void log_dsd::deactivate() {
   }
   else cout << "Unable to open file";
   dsd->reset_state();
-//}
+
 }
 
 void log_dsd::activate(float f, int t, int n) {
@@ -242,7 +235,7 @@ void log_dsd::activate(float f, int t, int n) {
   	tm *ltm = localtime(&starttime);
   	std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ]  "  <<std::endl;
 
-  	//if (logging) {
+ 
 	prefilter->set_center_freq( (f*1000000) - center); // have to flip for 3.7
 
 	if (iam_logging) {
@@ -259,28 +252,12 @@ void log_dsd::activate(float f, int t, int n) {
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
-    
-	
-	lock();
+
 
 	raw_sink->open(raw_filename);
 	wav_sink->open(filename);
 
-
-	disconnect(self(),0, null_sink, 0);
-	connect(self(),0, prefilter,0);
-	connect(prefilter, 0, downsample_sig, 0);
-
-	connect(prefilter,0, raw_sink,0);
-
-	connect(downsample_sig, 0, demod, 0);
-	connect(demod, 0, sym_filter, 0);
-	connect(sym_filter, 0, levels, 0);
-	connect(levels, 0, dsd, 0);
-	connect(dsd, 0, wav_sink,0);
-	
-	unlock();
-	//}
 	active = true;
+	valve->set_enabled(true);
 
 }
