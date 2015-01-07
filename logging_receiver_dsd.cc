@@ -75,6 +75,8 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
      
 	demod = gr::analog::quadrature_demod_cf::make(1.527); //1.6 //1.4);
 	levels = gr::blocks::multiply_const_ff::make(1); //33);
+	valve = gr::blocks::copy::make(sizeof(gr_complex));
+	valve->set_enabled(false);
 
 	float tau = 0.000075; //75us
         float w_p = 1/tau;
@@ -178,7 +180,6 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::wavfile_sink::make(filename,1,8000,16);
-	null_sink = gr::blocks::null_sink::make(sizeof(gr_complex));
 
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	sprintf(debug_filename, "%s/%ld-%ld_%g_debug.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
@@ -186,7 +187,16 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 //	debug_sink = gr::blocks::file_sink::make(sizeof(float), debug_filename);
 
 
-	connect(self(),0, null_sink,0);
+	connect(self(),0, valve,0);
+	connect(valve,0, prefilter,0);
+	connect(prefilter, 0, downsample_sig, 0);
+	connect(downsample_sig,0, raw_sink,0);	
+	connect(downsample_sig, 0, demod, 0);
+	connect(demod, 0, deemph, 0); 
+	connect(deemph, 0, decim_audio, 0); 
+	connect(decim_audio, 0, wav_sink, 0); 
+
+
 }
 
 log_dsd::~log_dsd() {
@@ -243,25 +253,13 @@ void log_dsd::deactivate() {
 
 	active = false;
 
-  	lock();
+	valve->set_enabled(false);
 
 	wav_sink->close();
 	
 	raw_sink->close();
 //	debug_sink->close();
-	disconnect(prefilter,0, raw_sink,0);
 
-
-	disconnect(self(),0, prefilter, 0);
-	connect(self(),0, null_sink,0);
-
-	disconnect(prefilter, 0, downsample_sig, 0);
-	disconnect(downsample_sig, 0, demod, 0);
-	disconnect(demod, 0, deemph, 0);
-	disconnect(deemph, 0, decim_audio, 0);
-	disconnect(decim_audio, 0, wav_sink, 0);
-
-	unlock();
 
 	ofstream myfile (status_filename);
 	if (myfile.is_open())
@@ -303,24 +301,12 @@ void log_dsd::activate(float f, int t, int n) {
 	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	sprintf(debug_filename, "%s/%ld-%ld_%g_debug.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	
-	lock();
-
 	raw_sink->open(raw_filename);
 //	debug_sink->open(debug_filename);
 	wav_sink->open(filename);
 
-	disconnect(self(),0, null_sink, 0);
-	connect(self(),0, prefilter,0);
-	connect(prefilter, 0, downsample_sig, 0);
-	connect(downsample_sig, 0, demod, 0);
-	connect(prefilter,0, raw_sink,0);	
-	connect(demod, 0, deemph, 0); 
-	connect(deemph, 0, decim_audio, 0); 
-	connect(decim_audio, 0, wav_sink, 0); 
-	
-	
-	unlock();
 	//}
 	active = true;
+	valve->set_enabled(true);
 
 }

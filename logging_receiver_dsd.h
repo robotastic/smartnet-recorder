@@ -35,6 +35,7 @@
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
 #include <gnuradio/blocks/null_sink.h>
+#include <gnuradio/blocks/copy.h>
 //Valve
 //#include <gnuradio/blocks/null_sink.h>
 //#include <gnuradio/blocks/null_source.h>
@@ -120,6 +121,7 @@ private:
 	gr::blocks::file_sink::sptr debug_sink;
 	gr::blocks::null_sink::sptr null_sink;
 	gr::blocks::head::sptr head_source;
+	gr::blocks::copy::sptr valve;
 	//gr_kludge_copy_sptr copier;
 
 };
