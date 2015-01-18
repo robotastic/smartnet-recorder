@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <gnuradio/thread/thread.h>
 #include <boost/math/special_functions/round.hpp>
+ #include <stdio.h>
 
 // win32 (mingw/msvc) specific
 #ifdef HAVE_IO_H
