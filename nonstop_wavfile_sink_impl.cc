@@ -25,7 +25,7 @@
 #endif
 
 #include "nonstop_wavfile_sink_impl.h"
-#include "nonstop_wavfile.h"
+#include "nonstop_wavfile_sink.h"
 #include <gnuradio/io_signature.h>
 #include <stdexcept>
 #include <climits>
