@@ -24,6 +24,7 @@
 #define INCLUDED_GR_nonstop_wavfile_SINK_IMPL_H
 
 #include "nonstop_wavfile_sink.h"
+#include <gnuradio/blocks/wavfile.h>
 
 namespace gr {
   namespace blocks {
