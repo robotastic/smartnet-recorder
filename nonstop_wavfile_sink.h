@@ -20,8 +20,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_GR_WAVFILE_SINK_H
-#define INCLUDED_GR_WAVFILE_SINK_H
+#ifndef INCLUDED_GR_NONSTOP_WAVFILE_SINK_H
+#define INCLUDED_GR_NONSTOP_WAVFILE_SINK_H
 
 #include <gnuradio/blocks/api.h>
 #include <gnuradio/sync_block.h>
@@ -37,11 +37,11 @@ namespace gr {
      * Values must be floats within [-1;1].
      * Check gr_make_wavfile_sink() for extra info.
      */
-    class BLOCKS_API wavfile_sink : virtual public sync_block
+    class BLOCKS_API nonstop_wavfile_sink : virtual public sync_block
     {
     public:
       // gr::blocks::wavfile_sink::sptr
-      typedef boost::shared_ptr<wavfile_sink> sptr;
+      typedef boost::shared_ptr<nonstop_wavfile_sink> sptr;
 
       /*
        * \param filename The .wav file to be opened
