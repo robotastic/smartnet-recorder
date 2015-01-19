@@ -556,7 +556,7 @@ int main(int argc, char **argv)
 
   std::vector<float> lpf_taps;
 
-  init_loggers(max_loggers, center_freq, samp_rate);
+  //init_loggers(max_loggers, center_freq, samp_rate);
   
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
@@ -619,10 +619,10 @@ int main(int argc, char **argv)
 	currentTime = time(NULL);
 	if ((currentTime - lastTalkgroupPurge) >= 1.0 )
 	{	
-		stop_inactive_loggers();
+		//stop_inactive_loggers();
 		lastTalkgroupPurge = currentTime;
 	}
-	parse_message(msg->to_string());
+	//parse_message(msg->to_string());
 	msg.reset();
 	
 		/*unsigned int crc_error_count = crc->get_crc_error_count();
