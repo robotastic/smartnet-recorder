@@ -251,8 +251,8 @@ void log_dsd::activate(float f, int t, int n) {
 	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 
 
-	raw_sink->open(raw_filename);
-	//wav_sink->open(filename);
+	//raw_sink->open(raw_filename);
+	wav_sink->open(filename);
 
 	active = true;
 	valve->set_enabled(true);
