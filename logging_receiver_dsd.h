@@ -35,9 +35,7 @@
 #include <gnuradio/filter/rational_resampler_base_fff.h>
 #include <gnuradio/block.h>
 #include <gnuradio/blocks/null_sink.h>
-//#include <gnuradio/blocks/copy.h>
-#include "copy.h"
-
+#include <gnuradio/blocks/copy.h>
 
 //Valve
 //#include <gnuradio/blocks/null_sink.h>
