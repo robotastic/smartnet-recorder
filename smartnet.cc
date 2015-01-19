@@ -96,7 +96,7 @@
  long lastaddress = 0;
  int thread_num=0;
  double center_freq;
-bool console  = true;
+bool console  = false;
 
 
 
