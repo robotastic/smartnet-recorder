@@ -479,7 +479,7 @@ return retfreq;
 
 int main(int argc, char **argv)
 {
-
+	unsigned int last_crc_error_count=0;
 	std::string device_addr;
 	double  samp_rate, chan_freq, error;
 	int if_gain, bb_gain, rf_gain;
@@ -617,7 +617,13 @@ int main(int argc, char **argv)
 	parse_message(msg->to_string());
 	msg.reset();
 	
-
+		unsigned int crc_error_count = crc->get_crc_error_count();
+		if (crc_error_count > last_crc_error_count) {
+			if (!console) {
+				std::cout << "CRC ERRORS! [" << crc_error_count << " (+"<< (crc_error_count - last_crc_error_count) <<")]"<<std::endl;
+			}
+			last_crc_error_count = crc_error_count;
+		}
 
 	}
 

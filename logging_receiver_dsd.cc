@@ -175,13 +175,9 @@ void log_dsd::deactivate() {
 
 	active = false;
 	valve->set_enabled(false);
-	//if (logging) {
-
-
 
 	wav_sink->close();
-	
-		raw_sink->close();
+	raw_sink->close();
 
 
   dsd_state *state = dsd->get_state();
@@ -221,7 +217,7 @@ void log_dsd::deactivate() {
   }
   else cout << "Unable to open file";
   dsd->reset_state();
-
+  std::cout << "logging_receiver_dsd.cc: Finished Deactivating Logger" << std::endl;
 }
 
 void log_dsd::activate(float f, int t, int n) {
@@ -231,7 +227,7 @@ void log_dsd::activate(float f, int t, int n) {
 
 	talkgroup = t;
 	freq = f;
-  //num = n;
+
   	tm *ltm = localtime(&starttime);
   	std::cout<< "logging_receiver_dsd.cc: Activating Logger [ " << num << " ] - freq[ " << freq << "] \t talkgroup[ " << talkgroup << " ]  "  <<std::endl;
 
@@ -259,5 +255,5 @@ void log_dsd::activate(float f, int t, int n) {
 
 	active = true;
 	valve->set_enabled(true);
-
+	std::cout << "logging_receiver_dsd.cc: Finished Activating Logger" << std::endl;
 }
