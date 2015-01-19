@@ -256,18 +256,6 @@ void init_loggers(int num, float center_freq, long samp_rate) {
 
 }
 
-float getfreq(int cmd) {
-	float freq;
-	if (cmd < 0x1b8) {
-		freq = float(cmd * 0.025 + 851.0125);
-	} else if (cmd < 0x230) {
-		freq = float(cmd * 0.025 + 851.0125 - 10.9875);
-	} else {
-		freq = 0;
-	}
-
-	return freq;
-}
 
 void parse_file(string filename) {
 	ifstream in(filename.c_str());
@@ -294,180 +282,7 @@ void parse_file(string filename) {
 }
 
 
-void parse_status(int command, int address, int groupflag) {
-	int Value = address << 1 | (groupflag ? (1) : 0);
-	int GroupTimeout = Value & (0x1f);
-	Value >>= 5;
-	int ConnecTimeout = Value & (0x1f);
-	Value >>= 5;
-	int DispatchTimeout = Value & 0xf;
-	Value >>= 4;
-	int Power = Value & 1;
-	Value >>= 1;
-	int OpCode = Value;
 
-	if (console) {
-		sprintf(status, "Status: %d \tPower: %d \tDispatchTimeout: %d \tConnectTimeOut: %d \tGroupTimeOut: %d", OpCode, Power, DispatchTimeout, ConnecTimeout, GroupTimeout);
-		update_status_win(status);
-	}
-}
-
-void stop_inactive_loggers() {
-
-	char shell_command[200];
-
- 	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-	      log_dsd_sptr rx = *it;
-
-	      if (rx->is_active() && (rx->lastupdate() > 4.0)) {
-
-	        if (console) {
-	          for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
-	            Talkgroup *tg = (Talkgroup *) *tg_it;
-	            if (tg->number == rx->get_talkgroup()) {
-	              active_tg.erase(tg_it);
-	              break;
-	            }
-	          }//for
-
-	          update_active_tg_win();
-	        }//if console
-	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-		
-	        rx->deactivate();
-	        num_loggers--;
-			
-	        system(shell_command);
-	      }//if rx is active
-    	}//foreach loggers
-}
-
-float parse_message(string s) {
-	messagesDecodedSinceLastReport++;
-
-	float retfreq = 0;
-	bool rxfound = false;
-	std::vector<std::string> x;
-	boost::split(x, s, boost::is_any_of(","), boost::token_compress_on);
-
-	long address = atoi( x[0].c_str() ) & 0xFFF0;
-	//int groupflag = atoi( x[1].c_str() );
-	int command = atoi( x[2].c_str() );
-	char shell_command[200];
-
-	x.clear();
-	vector<string>().swap(x);
- 
-	if (command < 0x2d0) {
-
-		if ( lastcmd == 0x308) {
-		        // Channel Grant
-			if (  (address != 56016) && (address != 8176)) {
-				retfreq = getfreq(command);
-			}
-		} else {
-			// Call continuation
-			if  ( (address != 56016) && (address != 8176))  {
-				retfreq = getfreq(command);
-			}
-		}
-	}
-
-/*
-	if (command == 0x03c0) {
-		parse_status(command, address,groupflag);
-	}
-*/
-
-/*
-	if (retfreq) {
-
-		
-
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
-			log_dsd_sptr rx = *it;
-
-			if (rx->is_active())
-			{
-				if (rx->get_talkgroup() == address) {
-					if (rx->get_freq() != retfreq) {
-						if (console) {
-							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
-							update_status_win(status);
-						}
-					
-						rx->tune_offset(retfreq);
-					}
-					rx->unmute();
-
-					rxfound = true;
-				} else {
-					if (rx->get_freq() == retfreq) {
-						if (console) {
-							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
-							update_status_win(status);
-						}
-					}
-				}
-			}
-		}
-
-
-		if ((!rxfound)){
-			Talkgroup *rx_talkgroup = NULL;
-			bool record_tg = false;
-			for(std::vector<Talkgroup *>::iterator it = talkgroups.begin(); it != talkgroups.end(); ++it) {
-				Talkgroup *tg = (Talkgroup *) *it;
-				if (tg->number == address) {
-					rx_talkgroup = tg;
-					break;
-				}
-
-			}
-			if (rx_talkgroup && (num_loggers < max_loggers)) {*/
-				/*if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
-					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
-					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
-					record_tg = true;
-				if (console) {
-					active_tg.push_back(rx_talkgroup);
-					update_active_tg_win();
-				}
-			} else {
-				record_tg = false;
-			}*/ /*
-			record_tg = true;
-		}
-
-		if (record_tg){
-			for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-				log_dsd_sptr rx = *it;
-				if (!rx->is_active())
-				{
-					num_loggers++;
-
-					rx->activate(retfreq, address,num_loggers);
-					//std::cout << "Creating TG: " << address << " retfreq " << retfreq << " Loggers: " << num_loggers << " Tg: " << rx << std::endl;
-
-					break;
-				}
-			}
-
-		}
-
-
-	}
-
-}*/
-
-
-
-lastaddress = address;
-lastcmd = command;
-
-
-return retfreq;
-}
 
 
 int main(int argc, char **argv)
@@ -613,11 +428,10 @@ int main(int argc, char **argv)
 		//stop_inactive_loggers();
 		lastTalkgroupPurge = currentTime;
 	}
-
-	parse_message(msg->to_string());
+	messagesDecodedSinceLastReport++;
 		
    float timeDiff = currentTime - lastMsgCountTime;
-	if (currentTime - lastMsgCountTime >= 3.0) {
+	if (timeDiff >= 3.0) {
 		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
 		messagesDecodedSinceLastReport = 0;
 		lastMsgCountTime = currentTime;
@@ -627,14 +441,7 @@ int main(int argc, char **argv)
 	}
 	msg.reset();
 	
-		/*unsigned int crc_error_count = crc->get_crc_error_count();
-		if (crc_error_count > last_crc_error_count) {
-			if (!console) {
-				std::cout << "CRC ERRORS! [" << crc_error_count << " (+"<< (crc_error_count - last_crc_error_count) <<")]"<<std::endl;
-			}
-			last_crc_error_count = crc_error_count;
-		}*/
-
+	
 	}
 
 	endwin();
