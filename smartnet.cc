@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
- #include <ncurses.h>
+#include <ncurses.h>
 #include <menu.h>
 #include "logging_receiver_dsd.h"
 #include "smartnet_crc.h"
@@ -247,7 +247,6 @@ void init_loggers(int num, float center_freq, long samp_rate) {
 
 		loggers.push_back(log);
 		tb->connect(src, 0, log, 0);
-		std::cout << "Created and connect logger: " << i << " address: " << log << std::endl;
 	}
 
 }
@@ -279,7 +278,7 @@ void parse_file(string filename) {
 	{
 
 		t_tokenizer tok(line, sep);
-	//Tokenizer tok(line);
+	
 		vec.assign(tok.begin(),tok.end());
 		if (vec.size() < 8) continue;
 
@@ -336,7 +335,6 @@ float parse_message(string s) {
 			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
 				//std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
-
 			}
 		}
 	}
@@ -544,7 +542,6 @@ int main(int argc, char **argv)
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
 	lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 4500, 2000);
-	//lpf_taps =  gr::filter::firdes::low_pass(1, samp_rate, 10000, 12000);
 
 	gr::filter::freq_xlating_fir_filter_ccf::sptr prefilter = gr::filter::freq_xlating_fir_filter_ccf::make(decim,
 						       lpf_taps,
@@ -554,7 +551,6 @@ int main(int argc, char **argv)
 	gr::digital::fll_band_edge_cc::sptr carriertrack = gr::digital::fll_band_edge_cc::make(sps, 0.6, 64, 0.35);
 
 	gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 1*pi/clockrec_oversample, -1*pi/clockrec_oversample);
-	//gr::analog::pll_freqdet_cf::sptr pll_demod = gr::analog::pll_freqdet_cf::make(2.0 / clockrec_oversample, 2*pi/clockrec_oversample, -2*pi/clockrec_oversample);
 
 	gr::digital::clock_recovery_mm_ff::sptr softbits = gr::digital::clock_recovery_mm_ff::make(sps, 0.25 * gain_mu * gain_mu, mu, gain_mu, omega_relative_limit);
 
@@ -600,10 +596,10 @@ int main(int argc, char **argv)
 		}
 
 
-		msg = queue->delete_head();
-		parse_message(msg->to_string());
-		msg.reset();
-			//delete(sentence);
+	msg = queue->delete_head();
+	parse_message(msg->to_string());
+	msg.reset();
+	
 
 
 	}
