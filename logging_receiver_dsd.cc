@@ -105,15 +105,15 @@ log_dsd::log_dsd(float f, float c, long s, long t, int n)
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	wav_sink = gr::blocks::nonstop_wavfile_sink::make(filename,1,8000,16);
 	
-	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
-	raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
+	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	//raw_sink = gr::blocks::file_sink::make(sizeof(gr_complex), raw_filename);
 
 
 	connect(self(),0, valve,0);
 	connect(valve,0, prefilter,0);
 	connect(prefilter, 0, downsample_sig, 0);
 
-	connect(prefilter,0, raw_sink,0);
+	//connect(prefilter,0, raw_sink,0);
 
 	connect(downsample_sig, 0, demod, 0);
 	connect(demod, 0, sym_filter, 0);
@@ -176,8 +176,8 @@ void log_dsd::deactivate() {
 	active = false;
 	valve->set_enabled(false);
 
-	wav_sink->close();
-	raw_sink->close();
+	
+	//raw_sink->close();
 
 
   dsd_state *state = dsd->get_state();
@@ -217,6 +217,7 @@ void log_dsd::deactivate() {
   }
   else cout << "Unable to open file";
   dsd->reset_state();
+  wav_sink->close();
   std::cout << "logging_receiver_dsd.cc: Finished Deactivating Logger" << std::endl;
 }
 
@@ -247,11 +248,11 @@ void log_dsd::activate(float f, int t, int n) {
 	sprintf(filename, "%s/%ld-%ld_%g.wav", path_stream.str().c_str(),talkgroup,timestamp,f);
 	sprintf(status_filename, "%s/%ld-%ld_%g.json", path_stream.str().c_str(),talkgroup,timestamp,freq);
 	
-	sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
+	//sprintf(raw_filename, "%s/%ld-%ld_%g.raw", path_stream.str().c_str(),talkgroup,timestamp,freq);
 
 
 	raw_sink->open(raw_filename);
-	wav_sink->open(filename);
+	//wav_sink->open(filename);
 
 	active = true;
 	valve->set_enabled(true);
