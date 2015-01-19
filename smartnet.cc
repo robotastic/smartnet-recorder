@@ -103,7 +103,7 @@ bool console  = false;
 
 
  vector<log_dsd_sptr> loggers;
- unsigned int max_loggers = 0;
+ unsigned int max_loggers = 6;
  unsigned int num_loggers = 0;
  vector<log_dsd_sptr> active_loggers;
 
@@ -379,7 +379,7 @@ float parse_message(string s) {
 	}
 */
 
-/*
+
 	if (retfreq) {
 
 		
@@ -424,7 +424,7 @@ float parse_message(string s) {
 				}
 
 			}
-			if (rx_talkgroup && (num_loggers < max_loggers)) {*/
+			if (rx_talkgroup && (num_loggers < max_loggers)) {
 				/*if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
 					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
 					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
@@ -435,7 +435,7 @@ float parse_message(string s) {
 				}
 			} else {
 				record_tg = false;
-			}*/ /*
+			}*/ 
 			record_tg = true;
 		}
 
@@ -458,7 +458,7 @@ float parse_message(string s) {
 
 	}
 
-}*/
+}
 
 
 
@@ -547,7 +547,7 @@ int main(int argc, char **argv)
 
   std::vector<float> lpf_taps;
 
-  //init_loggers(max_loggers, center_freq, samp_rate);
+  init_loggers(max_loggers, center_freq, samp_rate);
   
   gr::msg_queue::sptr queue = gr::msg_queue::make();
 
@@ -610,12 +610,12 @@ int main(int argc, char **argv)
 	currentTime = time(NULL);
 	if ((currentTime - lastTalkgroupPurge) >= 1.0 )
 	{	
-		//stop_inactive_loggers();
+		stop_inactive_loggers();
 		lastTalkgroupPurge = currentTime;
 	}
 
 	parse_message(msg->to_string());
-		
+
    float timeDiff = currentTime - lastMsgCountTime;
 	if (currentTime - lastMsgCountTime >= 3.0) {
 		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
