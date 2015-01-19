@@ -122,6 +122,9 @@ osmosdr::source::sptr src;
  WINDOW *status_win;
  MENU *tg_menu;
 
+ time_t lastMsgCountTime = time(NULL);
+int messagesDecodedSinceLastReport = 0;
+
 
  volatile sig_atomic_t exit_flag = 0;
 
@@ -307,7 +310,48 @@ void parse_status(int command, int address, int groupflag) {
 	}
 }
 
+void stop_inactive_loggers() {
+
+	char shell_command[200];
+
+ 	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
+	      log_dsd_sptr rx = *it;
+
+	      if (rx->is_active() && (rx->lastupdate() > 4.0)) {
+
+	        if (console) {
+	          for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
+	            Talkgroup *tg = (Talkgroup *) *tg_it;
+	            if (tg->number == rx->get_talkgroup()) {
+	              active_tg.erase(tg_it);
+	              break;
+	            }
+	          }//for
+
+	          update_active_tg_win();
+	        }//if console
+	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+		
+	        rx->deactivate();
+	        num_loggers--;
+			
+	        system(shell_command);
+	      }//if rx is active
+    	}//foreach loggers
+}
+
 float parse_message(string s) {
+	messagesDecodedSinceLastReport++;
+	time_t currentTime = time(NULL);
+   float timeDiff = currentTime - lastMsgCountTime;
+	if (currentTime - lastMsgCountTime >= 3.0) {
+		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
+		messagesDecodedSinceLastReport = 0;
+		lastMsgCountTime = currentTime;
+		if (!console) {
+			std::cout << "Control Channel Message Decode Rate: " << msgs_decoded_per_second << "/sec" << std::endl;
+		}
+	}
 	float retfreq = 0;
 	bool rxfound = false;
 	std::vector<std::string> x;
@@ -320,57 +364,33 @@ float parse_message(string s) {
 
 	x.clear();
 	vector<string>().swap(x);
- //std::cout << "Message: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
-
+ 
 	if (command < 0x2d0) {
 
 		if ( lastcmd == 0x308) {
 		        // Channel Grant
 			if (  (address != 56016) && (address != 8176)) {
 				retfreq = getfreq(command);
-				//std::cout << "Channel Grant: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd << std::endl;
 			}
 		} else {
 			// Call continuation
 			if  ( (address != 56016) && (address != 8176))  {
 				retfreq = getfreq(command);
-				//std::cout << "Call Continue: " << lastaddress << " Address: " << address << " Command: " << command << " Last Command: " << lastcmd <<  std::endl;
 			}
 		}
 	}
 
+/*
 	if (command == 0x03c0) {
-		//parse_status(command, address,groupflag);
+		parse_status(command, address,groupflag);
 	}
-
+*/
 
 
 	if (retfreq) {
-		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
-	      log_dsd_sptr rx = *it;
 
-	      if (rx->is_active() && (rx->lastupdate() > 4.0)) {
+		stop_inactive_loggers();
 
-	        if (console) {
-	          for(std::vector<Talkgroup *>::iterator tg_it = active_tg.begin(); tg_it != active_tg.end(); ++tg_it) {
-	            Talkgroup *tg = (Talkgroup *) *tg_it;
-	            if (tg->number == rx->get_talkgroup()) {
-	              active_tg.erase(tg_it);
-	              break;
-	            }
-	          }
-
-	          update_active_tg_win();
-	        }
-	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
-			//std::cout << "Ending TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
-
-	        rx->deactivate();
-	        num_loggers--;
-			
-	        system(shell_command);
-	      }
-	    }
 		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
 			log_dsd_sptr rx = *it;
 
@@ -382,8 +402,7 @@ float parse_message(string s) {
 							sprintf(status, "Retuning TG: %ld \tOld Freq: %g \tNew Freq: %g \t TG last update %d seconds ago",rx->get_talkgroup(),rx->get_freq(),retfreq,rx->lastupdate());
 							update_status_win(status);
 						}
-						//std::cout << "Retuning TG: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
-
+					
 						rx->tune_offset(retfreq);
 					}
 					rx->unmute();
@@ -395,10 +414,6 @@ float parse_message(string s) {
 							sprintf(status, "%g \t- Freq overlap: Existing TG %ld \tNew TG %ld \tTG Updated %d seconds ago",rx->get_freq(),rx->get_talkgroup(),address,rx->lastupdate());
 							update_status_win(status);
 						}
-						//std::cout << "OVerlapping Freq: " << rx->get_talkgroup() << " After: " << rx->elapsed() <<  " address: " << address << " retfreq " << retfreq << " Tg: " << rx << std::endl;
-
-						//cout << "  !! Someone else is on my Channel - My TG: "<< rx->get_talkgroup() << " Freq: " <<rx->get_freq() << " Intruding TG: " << address << endl;
-						rx->mute();
 					}
 				}
 			}
@@ -416,8 +431,8 @@ float parse_message(string s) {
 				}
 
 			}
-			if (rx_talkgroup) {
-				if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
+			if (rx_talkgroup && (num_loggers < max_loggers)) {
+				/*if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
 					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
 					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
 					record_tg = true;
@@ -427,7 +442,8 @@ float parse_message(string s) {
 				}
 			} else {
 				record_tg = false;
-			}
+			}*/
+			record_tg = true;
 		}
 
 		if (record_tg){
@@ -597,6 +613,7 @@ int main(int argc, char **argv)
 
 
 	msg = queue->delete_head();
+
 	parse_message(msg->to_string());
 	msg.reset();
 	
