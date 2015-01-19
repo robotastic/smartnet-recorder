@@ -123,6 +123,7 @@ osmosdr::source::sptr src;
  MENU *tg_menu;
 
  time_t lastMsgCountTime = time(NULL);
+ time_t lastTalkgroupPurge = time(NULL);
 int messagesDecodedSinceLastReport = 0;
 volatile float msgs_decoded_per_second = 0;
 
@@ -390,7 +391,7 @@ float parse_message(string s) {
 
 	if (retfreq) {
 
-		stop_inactive_loggers();
+		
 
 		for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end(); ++it) {
 			log_dsd_sptr rx = *it;
@@ -481,6 +482,7 @@ return retfreq;
 int main(int argc, char **argv)
 {
 	unsigned int last_crc_error_count=0;
+	time_t currentTime = time(NULL);
 	std::string device_addr;
 	double  samp_rate, chan_freq, error;
 	int if_gain, bb_gain, rf_gain;
@@ -614,7 +616,12 @@ int main(int argc, char **argv)
 
 
 	msg = queue->delete_head();
-
+	currentTime = time(NULL);
+	if ((currentTime - lastTalkgroupPurge) >= 1.0 )
+	{	
+		stop_inactive_loggers();
+		lastTalkgroupPurge = currentTime;
+	}
 	parse_message(msg->to_string());
 	msg.reset();
 	
