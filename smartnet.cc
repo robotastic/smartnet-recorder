@@ -124,6 +124,7 @@ osmosdr::source::sptr src;
 
  time_t lastMsgCountTime = time(NULL);
 int messagesDecodedSinceLastReport = 0;
+volatile float msgs_decoded_per_second = 0;
 
 
  volatile sig_atomic_t exit_flag = 0;
@@ -617,13 +618,13 @@ int main(int argc, char **argv)
 	parse_message(msg->to_string());
 	msg.reset();
 	
-		unsigned int crc_error_count = crc->get_crc_error_count();
+		/*unsigned int crc_error_count = crc->get_crc_error_count();
 		if (crc_error_count > last_crc_error_count) {
 			if (!console) {
 				std::cout << "CRC ERRORS! [" << crc_error_count << " (+"<< (crc_error_count - last_crc_error_count) <<")]"<<std::endl;
 			}
 			last_crc_error_count = crc_error_count;
-		}
+		}*/
 
 	}
 
