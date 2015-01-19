@@ -344,16 +344,7 @@ void stop_inactive_loggers() {
 
 float parse_message(string s) {
 	messagesDecodedSinceLastReport++;
-	time_t currentTime = time(NULL);
-   float timeDiff = currentTime - lastMsgCountTime;
-	if (currentTime - lastMsgCountTime >= 3.0) {
-		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
-		messagesDecodedSinceLastReport = 0;
-		lastMsgCountTime = currentTime;
-		if (!console) {
-			std::cout << "Control Channel Message Decode Rate: " << msgs_decoded_per_second << "/sec" << std::endl;
-		}
-	}
+
 	float retfreq = 0;
 	bool rxfound = false;
 	std::vector<std::string> x;
@@ -622,7 +613,18 @@ int main(int argc, char **argv)
 		//stop_inactive_loggers();
 		lastTalkgroupPurge = currentTime;
 	}
+
 	parse_message(msg->to_string());
+		
+   float timeDiff = currentTime - lastMsgCountTime;
+	if (currentTime - lastMsgCountTime >= 3.0) {
+		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
+		messagesDecodedSinceLastReport = 0;
+		lastMsgCountTime = currentTime;
+		if (!console) {
+			std::cout << "Control Channel Message Decode Rate: " << msgs_decoded_per_second << "/sec" << std::endl;
+		}
+	}
 	msg.reset();
 	
 		/*unsigned int crc_error_count = crc->get_crc_error_count();
