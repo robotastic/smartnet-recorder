@@ -422,6 +422,7 @@ int main(int argc, char **argv)
 
 
 	msg = queue->delete_head();
+	std::cout << msg->to_string() << std:endl;
 	currentTime = time(NULL);
 	if ((currentTime - lastTalkgroupPurge) >= 1.0 )
 	{	
