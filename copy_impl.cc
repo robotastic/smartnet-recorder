@@ -96,8 +96,8 @@ namespace gr {
       }
 
       consume_each(noutput_items);
-      return noutput_items;
-      //return n;
+      //return noutput_items;
+      return n;
     }
 
   } /* namespace blocks */
