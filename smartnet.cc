@@ -314,6 +314,7 @@ void parse_status(int command, int address, int groupflag) {
 
 void stop_inactive_loggers() {
 
+
 	char shell_command[200];
 
  	for(vector<log_dsd_sptr>::iterator it = loggers.begin(); it != loggers.end();it++) {
@@ -332,7 +333,7 @@ void stop_inactive_loggers() {
 
 	          update_active_tg_win();
 	        }//if console
-	        sprintf(shell_command,"./encode-upload.sh %s > /dev/null 2>&1 &", rx->get_filename());
+	        sprintf(shell_command,"./encode-upload.sh %s  &", rx->get_filename());
 		
 	        rx->deactivate();
 	        num_loggers--;
@@ -617,7 +618,7 @@ int main(int argc, char **argv)
 	parse_message(msg->to_string());
 
    float timeDiff = currentTime - lastMsgCountTime;
-	if (currentTime - lastMsgCountTime >= 3.0) {
+	if (timeDiff >= 3.0) {
 		msgs_decoded_per_second = messagesDecodedSinceLastReport/timeDiff; 
 		messagesDecodedSinceLastReport = 0;
 		lastMsgCountTime = currentTime;

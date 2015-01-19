@@ -218,7 +218,6 @@ void log_dsd::deactivate() {
   else cout << "Unable to open file";
   dsd->reset_state();
   wav_sink->close();
-  std::cout << "logging_receiver_dsd.cc: Finished Deactivating Logger" << std::endl;
 }
 
 void log_dsd::activate(float f, int t, int n) {
@@ -256,5 +255,4 @@ void log_dsd::activate(float f, int t, int n) {
 
 	active = true;
 	valve->set_enabled(true);
-	std::cout << "logging_receiver_dsd.cc: Finished Activating Logger" << std::endl;
 }
