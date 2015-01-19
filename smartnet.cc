@@ -388,7 +388,7 @@ float parse_message(string s) {
 	}
 */
 
-
+/*
 	if (retfreq) {
 
 		
@@ -433,7 +433,7 @@ float parse_message(string s) {
 				}
 
 			}
-			if (rx_talkgroup && (num_loggers < max_loggers)) {
+			if (rx_talkgroup && (num_loggers < max_loggers)) {*/
 				/*if (((rx_talkgroup->get_priority() == 1) && (num_loggers < max_loggers)) ||
 					((rx_talkgroup->get_priority() == 2) && (num_loggers < 4 )) ||
 					((rx_talkgroup->get_priority() == 3) && (num_loggers < 2 ))) {
@@ -444,7 +444,7 @@ float parse_message(string s) {
 				}
 			} else {
 				record_tg = false;
-			}*/
+			}*/ /*
 			record_tg = true;
 		}
 
@@ -465,7 +465,7 @@ float parse_message(string s) {
 		}
 
 
-	}
+	}*/
 
 }
 
