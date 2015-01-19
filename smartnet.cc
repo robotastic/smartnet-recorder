@@ -622,7 +622,7 @@ int main(int argc, char **argv)
 		//stop_inactive_loggers();
 		lastTalkgroupPurge = currentTime;
 	}
-	//parse_message(msg->to_string());
+	parse_message(msg->to_string());
 	msg.reset();
 	
 		/*unsigned int crc_error_count = crc->get_crc_error_count();
