@@ -31,16 +31,10 @@ The monitoring and recording is being run off of a laptop in my apartment and us
 The webserver is pretty simple. It is written in NodeJs. The audio is stored as WAV files and indexed using MongoDB. The server simply watches for new files being placed in a directory and then moves them and adds them to the DB. Socket.io is used to updated all of the browsers visiting the site that a new transmission has been added.
 
 ###The Code
-The recorder portion of the system is C++ code that uses GnuRadio 3.6.5.1.
+The recorder portion of the system is C++ code that uses GnuRadio 3.7.4
 
 The recorder uses DSD to decode the digital audio. Unfortunately DSD isn’t supported or being developed, isn’t designed to work with GNURadio or SDR. Luckily someone wrapped DSD into a GNURadio block. It works, but it isn’t pretty. I had to futz with it a bit to run concurrently. My version is here.
 
 The final portion is the website for listening to the recordings. The code for that is available here.
 
-###The Punch List
-Right now, I think everything is pretty much stable. I have a small memory leak somewhere, but I can keep it up for long time without it being a problem.
 
- * Upgrade everything to GNURadio 3.7. Right now I am on the 3.6 branch and it will take a bit of work to switch.
- * Get OP25 working nicely. 
- 
-The code is designed to work with GR and is being actively developed.

@@ -165,17 +165,17 @@ namespace gr {
 
     nonstop_wavfile_sink_impl::~nonstop_wavfile_sink_impl()
     {
-      stop();
-    }
-
-    bool nonstop_wavfile_sink_impl::stop()
-    {
       if(d_new_fp) {
         fclose(d_new_fp);
         d_new_fp = NULL;
       }
 
       close();
+    }
+
+    bool nonstop_wavfile_sink_impl::stop()
+    {
+
 
       return true;
     }
